@@ -147,7 +147,7 @@ class NML_Subscriber_Table extends WP_List_Table {
 	/**
 	 * Renders most of the columns in the list table.
 	 *
-	 * @param object $item        Contains all the data of the customers.
+	 * @param object $item        Contains all the data of the subscriber.
 	 * @param string $column_name The name of the column.
 	 *
 	 * @access public
@@ -160,24 +160,22 @@ class NML_Subscriber_Table extends WP_List_Table {
 
 		switch ( $column_name ) {
 
-			case 'email' :
-				// @todo
-				break;
-
-			case 'first_name' :
-				// @todo
+			case 'name' :
+				$value = sprintf( '%s %s', $item->first_name, $item->last_name );
 				break;
 
 			case 'status' :
-				// @todo
+				$value = $item->status; // @todo turn into coloured label
 				break;
 
 			case 'signup_date' :
-				// @todo
+				if ( ! empty( $item->signup_date ) ) {
+					$value = nml_format_mysql_date( $item->signup_date );
+				}
 				break;
 
 			default :
-				$value = isset( $item[ $column_name ] ) ? $item[ $column_name ] : null;
+				$value = isset( $item->$column_name ) ? $item->$column_name : null;
 				break;
 
 		}
@@ -189,7 +187,7 @@ class NML_Subscriber_Table extends WP_List_Table {
 	/**
 	 * Render Checkbox Column
 	 *
-	 * @param array $item Contains all the data of the subscriber.
+	 * @param object $item Contains all the data of the subscriber.
 	 *
 	 * @access public
 	 * @since  1.0
@@ -202,10 +200,10 @@ class NML_Subscriber_Table extends WP_List_Table {
 		}
 
 		?>
-		<label class="screen-reader-text" for="cb-select-<?php echo esc_attr( $item['ID'] ); ?>">
+		<label class="screen-reader-text" for="cb-select-<?php echo esc_attr( $item->ID ); ?>">
 			<?php _e( 'Select this subscriber', 'naked-mailing-list' ) ?>
 		</label>
-		<input id="cb-select-<?php echo esc_attr( $item['ID'] ); ?>" type="checkbox" name="subscribers[]" value="<?php echo esc_attr( $item['ID'] ); ?>">
+		<input id="cb-select-<?php echo esc_attr( $item->ID ); ?>" type="checkbox" name="subscribers[]" value="<?php echo esc_attr( $item->ID ); ?>">
 		<?php
 
 	}
@@ -213,18 +211,18 @@ class NML_Subscriber_Table extends WP_List_Table {
 	/**
 	 * Render Column Name
 	 *
-	 * @param array $item Contains all the data of the subscriber.
+	 * @param object $item Contains all the data of the subscriber.
 	 *
 	 * @access public
 	 * @since  1.0
 	 * @return string
 	 */
 	public function column_email( $item ) {
-		$edit_url = nml_get_admin_page_edit_subscriber( $item['ID'] );
-		$name     = '<a href="' . esc_url( $edit_url ) . '" class="row-title" aria-label="' . esc_attr( sprintf( '%s (Edit)', $item['title'] ) ) . '">' . $item['title'] . '</a>';
+		$edit_url = nml_get_admin_page_edit_subscriber( $item->ID );
+		$name     = '<a href="' . esc_url( $edit_url ) . '" class="row-title" aria-label="' . esc_attr( sprintf( '%s (Edit)', $item->email ) ) . '">' . $item->email . '</a>';
 		$actions  = array(
 			'edit'   => '<a href="' . esc_url( $edit_url ) . '">' . __( 'Edit', 'naked-mailing-list' ) . '</a>',
-			'delete' => '<a href="' . esc_url( nml_get_admin_page_delete_subscriber( $item['ID'] ) ) . '">' . __( 'Delete', 'naked-mailing-list' ) . '</a>'
+			'delete' => '<a href="' . esc_url( nml_get_admin_page_delete_subscriber( $item->ID ) ) . '">' . __( 'Delete', 'naked-mailing-list' ) . '</a>'
 		);
 
 		return $name . $this->row_actions( $actions );
@@ -243,7 +241,7 @@ class NML_Subscriber_Table extends WP_List_Table {
 		$columns = array(
 			'cb'          => '<input type="checkbox">',
 			'email'       => __( 'Email', 'naked-mailing-list' ),
-			'first_name'  => __( 'First Name', 'naked-mailing-list' ),
+			'name'        => __( 'Name', 'naked-mailing-list' ),
 			'status'      => __( 'Status', 'naked-mailing-list' ),
 			'signup_date' => __( 'Signup Date', 'naked-mailing-list' ),
 			'email_count' => __( 'Email Count', 'naked-mailing-list' )

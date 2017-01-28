@@ -281,7 +281,7 @@ class NML_DB_Subscribers extends NML_DB {
 				$ids = intval( $args['ID'] );
 			}
 
-			$where .= " AND `id` IN( {$ids} ) ";
+			$where .= " AND `ID` IN( {$ids} ) ";
 
 		}
 
@@ -367,7 +367,105 @@ class NML_DB_Subscribers extends NML_DB {
 	 */
 	public function count( $args = array() ) {
 
-		// @todo
+		global $wpdb;
+
+		$defaults = array(
+			'number'     => 20,
+			'offset'     => 0,
+			'orderby'    => 'ID',
+			'order'      => 'DESC',
+			'ID'         => null,
+			'email'      => null,
+			'first_name' => null,
+			'last_name'  => null,
+			'status'     => null
+		);
+
+		$args = wp_parse_args( $args, $defaults );
+
+		if ( $args['number'] < 1 ) {
+			$args['number'] = 999999999999;
+		}
+
+		$join  = '';
+		$where = ' WHERE 1=1 ';
+
+		// Specific subscriber(s).
+		if ( ! empty( $args['ID'] ) ) {
+
+			if ( is_array( $args['ID'] ) ) {
+				$ids = implode( ',', array_map( 'intval', $args['ID'] ) );
+			} else {
+				$ids = intval( $args['ID'] );
+			}
+
+			$where .= " AND `ID` IN( {$ids} ) ";
+
+		}
+
+		// Specific subscriber by email.
+		if ( ! empty( $args['email'] ) ) {
+
+			if ( is_array( $args['email'] ) ) {
+
+				$emails_count       = count( $args['email'] );
+				$emails_placeholder = array_fill( 0, $emails_count, '%s' );
+				$emails             = implode( ', ', $emails_placeholder );
+
+				$where .= $wpdb->prepare( " AND `email` IN( $emails ) ", $args['email'] );
+
+			} else {
+
+				$where .= $wpdb->prepare( " AND `email` = %s ", $args['email'] );
+
+			}
+
+		}
+
+		// Specific subscriber by first name.
+		if ( ! empty( $args['first_name'] ) ) {
+			$where .= $wpdb->prepare( " AND `first_name` LIKE '%%%%" . '%s' . "%%%%' ", $args['first_name'] );
+		}
+
+		// Specific subscriber by last name.
+		if ( ! empty( $args['last_name'] ) ) {
+			$where .= $wpdb->prepare( " AND `last_name` LIKE '%%%%" . '%s' . "%%%%' ", $args['last_name'] );
+		}
+
+		// By status
+		if ( ! empty( $args['status'] ) ) {
+
+			if ( is_array( $args['status'] ) ) {
+
+				$status_count       = count( $args['status'] );
+				$status_placeholder = array_fill( 0, $status_count, '%s' );
+				$statuses           = implode( ', ', $status_placeholder );
+
+				$where .= $wpdb->prepare( " AND `status` IN( $statuses ) ", $args['status'] );
+
+			} else {
+
+				$where .= $wpdb->prepare( " AND `status` = %s ", $args['status'] );
+
+			}
+
+		}
+
+		// @todo by date
+
+		// @todo by IP
+
+		$cache_key = md5( 'nml_subscribers_count_' . serialize( $args ) );
+
+		$count = wp_cache_get( $cache_key, 'subscribers' );
+
+		if ( false === $count ) {
+			$query = "SELECT COUNT({$this->primary_key}) FROM  $this->table_name $join $where";
+			$count = $wpdb->get_var( $query );
+			wp_cache_set( $cache_key, $count, 'subscribers', 3600 );
+		}
+
+		return absint( $count );
 
 	}
 
