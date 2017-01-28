@@ -71,7 +71,6 @@ add_action( 'nml_edit_subscriber_info_fields', 'nml_subscriber_field_name' );
 function nml_subscriber_field_notes( $subscriber ) {
 	?>
 	<div class="nml-field">
-
 		<label for="nml_subscriber_notes"><?php _e( 'Notes', 'naked-mailing-list' ); ?></label>
 		<textarea id="nml_subscriber_notes" name="nml_subscriber_notes"><?php echo esc_textarea( $subscriber->notes ); ?></textarea>
 	</div>
@@ -79,3 +78,85 @@ function nml_subscriber_field_notes( $subscriber ) {
 }
 
 add_action( 'nml_edit_subscriber_info_fields', 'nml_subscriber_field_notes' );
+
+/*
+ * Below: Saving Functions
+ */
+
+/**
+ * Save Subscriber
+ *
+ * Triggers after saving a subscriber.
+ *
+ * @since 1.0
+ * @return void
+ */
+function nml_save_subscriber() {
+
+	$nonce = isset( $_POST['nml_save_subscriber_nonce'] ) ? $_POST['nml_save_subscriber_nonce'] : false;
+
+	if ( ! $nonce ) {
+		return;
+	}
+
+	if ( ! wp_verify_nonce( $nonce, 'nml_save_subscriber' ) ) {
+		wp_die( __( 'Failed security check.', 'naked-mailing-list' ) );
+	}
+
+	if ( ! current_user_can( 'edit_posts' ) ) { // @todo maybe change
+		wp_die( __( 'You don\'t have permission to edit subscribers.', 'naked-mailing-list' ) );
+	}
+
+	$subscriber_id = $_POST['subscriber_id'];
+
+	$sub_data = array(
+		'ID' => absint( $subscriber_id )
+	);
+
+	// Email
+	if ( isset( $_POST['nml_subscriber_email'] ) ) {
+		$sub_data['email'] = $_POST['nml_subscriber_email'];
+	}
+
+	// First Name
+	if ( isset( $_POST['nml_subscriber_first_name'] ) ) {
+		$sub_data['first_name'] = $_POST['nml_subscriber_first_name'];
+	}
+
+	// Last Name
+	if ( isset( $_POST['nml_subscriber_last_name'] ) ) {
+		$sub_data['last_name'] = $_POST['nml_subscriber_last_name'];
+	}
+
+	// Status
+	if ( isset( $_POST['nml_subscriber_status'] ) ) {
+		$sub_data['status'] = $_POST['nml_subscriber_status'];
+	}
+
+	// Notes
+	if ( isset( $_POST['nml_subscriber_notes'] ) ) {
+		$sub_data['notes'] = $_POST['nml_subscriber_notes'];
+	}
+
+	// Omit IP address if manually adding the subscriber.
+	if ( empty( $subscriber_id ) ) {
+		$sub_data['ip'] = '';
+	}
+
+	$new_sub_id = nml_insert_subscriber( $sub_data );
+
+	if ( ! $new_sub_id || is_wp_error( $new_sub_id ) ) {
+		wp_die( __( 'An error occurred while inserting the subscriber.', 'naked-mailing-list' ) );
+	}
+
+	$edit_url = add_query_arg( array(
+		'nml-message' => 'subscriber-updated'
+	), nml_get_admin_page_edit_subscriber( absint( $new_sub_id ) ) );
+
+	wp_safe_redirect( $edit_url );
+
+	exit;
+
+}
+
+add_action( 'nml_save_subscriber', 'nml_save_subscriber' );

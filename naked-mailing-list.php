@@ -160,12 +160,14 @@ if ( ! class_exists( 'Naked_Mailing_List' ) ) :
 			require_once NML_PLUGIN_DIR . 'includes/subscribers/class-nml-db-subscribers.php';
 			require_once NML_PLUGIN_DIR . 'includes/subscribers/class-nml-db-subscriber-meta.php';
 			require_once NML_PLUGIN_DIR . 'includes/subscribers/class-nml-subscriber.php';
+			require_once NML_PLUGIN_DIR . 'includes/subscribers/subscriber-functions.php';
 			require_once NML_PLUGIN_DIR . 'includes/error-tracking.php';
 			require_once NML_PLUGIN_DIR . 'includes/misc-functions.php';
 
 			require_once NML_PLUGIN_DIR . 'includes/install.php';
 
 			if ( is_admin() ) {
+				require_once NML_PLUGIN_DIR . 'includes/admin/admin-actions.php';
 				require_once NML_PLUGIN_DIR . 'includes/admin/admin-pages.php';
 				require_once NML_PLUGIN_DIR . 'includes/admin/subscribers/subscriber-actions.php';
 				require_once NML_PLUGIN_DIR . 'includes/admin/subscribers/subscriber-functions.php';

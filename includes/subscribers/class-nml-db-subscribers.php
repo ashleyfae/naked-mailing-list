@@ -57,7 +57,8 @@ class NML_DB_Subscribers extends NML_DB {
 			'signup_date'  => '%s',
 			'confirm_date' => '%s',
 			'ip'           => '%s',
-			'email_count'  => '%d'
+			'email_count'  => '%d',
+			'notes'        => '%s'
 		);
 	}
 
@@ -74,10 +75,11 @@ class NML_DB_Subscribers extends NML_DB {
 			'first_name'   => '',
 			'last_name'    => '',
 			'status'       => 'pending',
-			'signup_date'  => date( 'Y-m-d H:i:s' ),
+			'signup_date'  => gmdate( 'Y-m-d H:i:s' ),
 			'confirm_date' => null,
 			'ip'           => nml_get_ip(),
-			'email_count'  => 0
+			'email_count'  => 0,
+			'notes'        => ''
 		);
 	}
 
@@ -390,6 +392,7 @@ class NML_DB_Subscribers extends NML_DB {
 		confirm_date datetime,
 		ip mediumtext NOT NULL,
 		email_count bigint(20) NOT NULL,
+		notes longtext NOT NULL,
 		PRIMARY KEY (ID),
 		UNIQUE KEY email (email),
 		KEY status (status),

@@ -110,3 +110,36 @@ function nml_get_ip() {
 
 	return apply_filters( 'nml_get_ip', $ip_array[0] );
 }
+
+/**
+ * Format MySQL date for display
+ *
+ * @param string      $mysql_date MySQL date in GMT timezone.
+ * @param bool|string $format     Date format or leave false to use WP date setting.
+ *
+ * @since 1.0
+ * @return bool|int|string Formatted date in blog's timezone.
+ */
+function nml_format_mysql_date( $mysql_date, $format = false ) {
+
+	if ( empty( $mysql_date ) ) {
+		return false;
+	}
+
+	if ( false == $format ) {
+		$format = get_option( 'date_format' );
+	}
+
+	$gmt_date = $mysql_date ? get_date_from_gmt( $mysql_date, 'U' ) : false;
+	$date     = date_i18n( $format, $gmt_date );
+
+	return $date;
+
+}
+
+function nml_full_date_time_format() {
+	$date = get_option( 'date_format' );
+	$time = get_option( 'time_format' );
+
+	return $date . ' ' . $time;
+}
