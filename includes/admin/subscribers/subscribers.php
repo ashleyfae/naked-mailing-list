@@ -58,8 +58,13 @@ function nml_subscribers_list() {
 	$subscriber_table->prepare_items();
 	?>
 	<div class="wrap">
-		<h1><?php _e( 'Subscribers', 'naked-mailing-list' ); ?></h1>
+		<h1>
+			<?php _e( 'Subscribers', 'naked-mailing-list' ); ?>
+			<a href="<?php echo esc_url( nml_get_admin_page_add_subscriber() ); ?>" class="page-title-action"><?php _e( 'Add New', 'naked-mailing-list' ); ?></a>
+		</h1>
+
 		<?php do_action( 'nml_subscribers_table_top' ); ?>
+
 		<form id="nml-subscribers-filter" method="GET" action="<?php echo admin_url( 'edit.php?post_type=download&page=edd-customers' ); ?>">
 			<?php
 			$subscriber_table->search_box( __( 'Search Subscribers', 'naked-mailing-list' ), 'nml-subscribers' );
@@ -68,6 +73,7 @@ function nml_subscribers_list() {
 			<input type="hidden" name="page" value="nml-newsletters"/>
 			<input type="hidden" name="view" value="subscribers"/>
 		</form>
+
 		<?php do_action( 'nml_subscribers_table_bottom' ); ?>
 	</div>
 	<?php
@@ -157,7 +163,7 @@ function nml_subscribers_edit_view( $subscriber ) {
 								<div class="submitbox" id="submitpost">
 									<div id="minor-publishing">
 										<div id="misc-publishing-actions">
-											<div id="nml-subscriber-status" class="misc-pub-section">
+											<div id="nml-subscriber-status" class="nml-field misc-pub-section">
 												<label for="nml_subscriber_status"><?php _e( 'Status', 'naked-mailing-list' ); ?></label>
 												<select id="nml_subscriber_status" name="nml_subscriber_status">
 													<?php foreach ( nml_get_subscriber_statuses() as $key => $name ) : ?>
@@ -166,17 +172,17 @@ function nml_subscribers_edit_view( $subscriber ) {
 												</select>
 											</div>
 
-											<div id="nml-subscriber-signup-date" class="misc-pub-section">
+											<div id="nml-subscriber-signup-date" class="nml-field misc-pub-section">
 												<label for="nml_subscriber_signup_date"><?php _e( 'Signup Date:', 'naked-mailing-list' ); ?></label>
 												<span><?php echo ! empty( $subscriber->signup_date ) ? nml_format_mysql_date( $subscriber->signup_date, nml_full_date_time_format() ) : __( 'n/a', 'naked-mailing-list' ); ?></span>
 											</div>
 
-											<div id="nml-subscriber-confirm-date" class="misc-pub-section">
+											<div id="nml-subscriber-confirm-date" class="nml-field misc-pub-section">
 												<label for="nml_subscriber_confirm_date"><?php _e( 'Confirm Date:', 'naked-mailing-list' ); ?></label>
 												<span><?php echo ! empty( $subscriber->confirm_date ) ? nml_format_mysql_date( $subscriber->confirm_date, nml_full_date_time_format() ) : __( 'n/a', 'naked-mailing-list' ); ?></span>
 											</div>
 
-											<div id="nml-subscriber-ip" class="misc-pub-section">
+											<div id="nml-subscriber-ip" class="nml-field misc-pub-section">
 												<label for="nml_subscriber_ip"><?php _e( 'IP Address:', 'naked-mailing-list' ); ?></label>
 												<span><?php echo $subscriber->ip; ?></span>
 											</div>

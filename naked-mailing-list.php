@@ -60,6 +60,12 @@ if ( ! class_exists( 'Naked_Mailing_List' ) ) :
 		public $subscriber_meta;
 
 		/**
+		 * @var NML_DB_Activity
+		 * @since 1.0
+		 */
+		public $activity;
+
+		/**
 		 * Main Naked_Mailing_List Instance
 		 *
 		 * Ensures that only one instance of Naked_Mailing_List exists in memory at any one
@@ -81,6 +87,7 @@ if ( ! class_exists( 'Naked_Mailing_List' ) ) :
 				self::$instance->includes();
 				self::$instance->subscribers     = new NML_DB_Subscribers();
 				self::$instance->subscriber_meta = new NML_DB_Subscriber_Meta();
+				self::$instance->activity        = new NML_DB_Activity();
 			}
 
 			return self::$instance;
@@ -157,6 +164,7 @@ if ( ! class_exists( 'Naked_Mailing_List' ) ) :
 			// @todo settings here
 
 			require_once NML_PLUGIN_DIR . 'includes/class-nml-db.php';
+			require_once NML_PLUGIN_DIR . 'includes/activity/class-nml-db-activity.php';
 			require_once NML_PLUGIN_DIR . 'includes/subscribers/class-nml-db-subscribers.php';
 			require_once NML_PLUGIN_DIR . 'includes/subscribers/class-nml-db-subscriber-meta.php';
 			require_once NML_PLUGIN_DIR . 'includes/subscribers/class-nml-subscriber.php';
@@ -168,6 +176,7 @@ if ( ! class_exists( 'Naked_Mailing_List' ) ) :
 
 			if ( is_admin() ) {
 				require_once NML_PLUGIN_DIR . 'includes/admin/admin-actions.php';
+				require_once NML_PLUGIN_DIR . 'includes/admin/admin-assets.php';
 				require_once NML_PLUGIN_DIR . 'includes/admin/admin-pages.php';
 				require_once NML_PLUGIN_DIR . 'includes/admin/subscribers/subscriber-actions.php';
 				require_once NML_PLUGIN_DIR . 'includes/admin/subscribers/subscriber-functions.php';

@@ -57,6 +57,7 @@ class NML_DB_Subscribers extends NML_DB {
 			'signup_date'  => '%s',
 			'confirm_date' => '%s',
 			'ip'           => '%s',
+			'referrer'     => '%s',
 			'email_count'  => '%d',
 			'notes'        => '%s'
 		);
@@ -78,6 +79,7 @@ class NML_DB_Subscribers extends NML_DB {
 			'signup_date'  => gmdate( 'Y-m-d H:i:s' ),
 			'confirm_date' => null,
 			'ip'           => nml_get_ip(),
+			'referrer'     => 'manual',
 			'email_count'  => 0,
 			'notes'        => ''
 		);
@@ -260,7 +262,9 @@ class NML_DB_Subscribers extends NML_DB {
 			'email'      => null,
 			'first_name' => null,
 			'last_name'  => null,
-			'status'     => null
+			'status'     => null,
+			'referrer'   => null,
+			'ip'         => null
 		);
 
 		$args = wp_parse_args( $args, $defaults );
@@ -333,9 +337,17 @@ class NML_DB_Subscribers extends NML_DB {
 
 		}
 
+		// By referrer
+		if ( ! empty( $args['referrer'] ) ) {
+			$where .= $wpdb->prepare( " AND `referrer` = %s ", $args['referrer'] );
+		}
+
 		// @todo by date
 
-		// @todo by IP
+		// By IP
+		if ( ! empty( $args['ip'] ) ) {
+			$where .= $wpdb->prepare( " AND `ip` = %s ", $args['ip'] );
+		}
 
 		$args['orderby'] = ! array_key_exists( $args['orderby'], $this->get_columns() ) ? 'ID' : $args['orderby'];
 
@@ -370,15 +382,15 @@ class NML_DB_Subscribers extends NML_DB {
 		global $wpdb;
 
 		$defaults = array(
-			'number'     => 20,
-			'offset'     => 0,
 			'orderby'    => 'ID',
 			'order'      => 'DESC',
 			'ID'         => null,
 			'email'      => null,
 			'first_name' => null,
 			'last_name'  => null,
-			'status'     => null
+			'status'     => null,
+			'referrer'   => null,
+			'ip'         => false
 		);
 
 		$args = wp_parse_args( $args, $defaults );
@@ -451,9 +463,17 @@ class NML_DB_Subscribers extends NML_DB {
 
 		}
 
+		// By referrer
+		if ( ! empty( $args['referrer'] ) ) {
+			$where .= $wpdb->prepare( " AND `referrer` = %s ", $args['referrer'] );
+		}
+
 		// @todo by date
 
-		// @todo by IP
+		// By IP
+		if ( ! empty( $args['ip'] ) ) {
+			$where .= $wpdb->prepare( " AND `ip` = %s ", $args['ip'] );
+		}
 
 		$cache_key = md5( 'nml_subscribers_count_' . serialize( $args ) );
 
@@ -489,6 +509,7 @@ class NML_DB_Subscribers extends NML_DB {
 		signup_date datetime NOT NULL,
 		confirm_date datetime,
 		ip mediumtext NOT NULL,
+		referrer varchar(255),
 		email_count bigint(20) NOT NULL,
 		notes longtext NOT NULL,
 		PRIMARY KEY (ID),

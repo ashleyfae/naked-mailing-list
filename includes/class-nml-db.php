@@ -157,7 +157,7 @@ abstract class NML_DB {
 	 *
 	 * @access public
 	 * @since  1.0
-	 * @return int
+	 * @return int|false Newly created ID or false on error.
 	 */
 	public function insert( $data, $type = '' ) {
 		global $wpdb;
@@ -180,11 +180,17 @@ abstract class NML_DB {
 		$data_keys      = array_keys( $data );
 		$column_formats = array_merge( array_flip( $data_keys ), $column_formats );
 
-		$wpdb->insert( $this->table_name, $data, $column_formats );
+		$added = $wpdb->insert( $this->table_name, $data, $column_formats );
 
-		do_action( 'nml_post_insert_' . $type, $wpdb->insert_id, $data );
+		$new_id = false;
 
-		return $wpdb->insert_id;
+		if ( $added ) {
+			$new_id = $wpdb->insert_id;
+
+			do_action( 'nml_post_insert_' . $type, $new_id, $data );
+		}
+
+		return $new_id;
 	}
 
 	/**

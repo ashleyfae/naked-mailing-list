@@ -95,6 +95,15 @@ class NML_Subscriber {
 	public $ip;
 
 	/**
+	 * The subscriber's referring path or method
+	 *
+	 * @var string
+	 * @access public
+	 * @since  1.0
+	 */
+	public $referrer;
+
+	/**
 	 * Number of emails the subscriber has received
 	 *
 	 * @var int
@@ -282,11 +291,84 @@ class NML_Subscriber {
 
 			$updated = true;
 
+			// Transition subscriber status.
+			if ( array_key_exists( 'status', $data ) && $data['status'] != $this->status ) {
+				do_action( 'nml_subscriber_transition_status', $this->status, $data['status'], $this->ID, $this );
+			}
+
 		}
 
 		do_action( 'nml_subscriber_post_update', $updated, $this->ID, $data );
 
 		return $updated;
+
+	}
+
+	/**
+	 * Get referrer label
+	 *
+	 * Returns the location where the subscriber opted in. This might be a name like
+	 * "manual insertion" or "import", or the HTML link to an actual page on the site.
+	 *
+	 * @access public
+	 * @since  1.0
+	 * @return string Textual description or formatted link to referring path.
+	 */
+	public function get_referrer() {
+
+		switch ( $this->referrer ) {
+
+			case 'manual' :
+				$referrer = __( 'manual insertion', 'naked-mailing-list' );
+				break;
+
+			case 'import' :
+				$referrer = __( 'import', 'naked-mailing-list' );
+				break;
+
+			case null :
+				$referrer = __( 'unknown', 'naked-mailing-list' );
+				break;
+
+			case '/' :
+				$referrer = __( 'homepage', 'naked-mailing-list' );
+				break;
+
+			default :
+				$referrer = '<a href="' . esc_url( home_url( $this->referrer ) ) . '" target="_blank">' . esc_html( $this->referrer ) . '</a>';
+				break;
+
+		}
+
+		return apply_filters( 'nml_subscriber_referrer', $referrer, $this->ID, $this );
+
+	}
+
+	/**
+	 * Confirm subscriber
+	 *
+	 * Sets confirmation date and updates status to 'subscribed'.
+	 *
+	 * @access public
+	 * @since  1.0
+	 * @return bool
+	 */
+	public function confirm() {
+
+		$data = array(
+			'status'       => 'subscribed',
+			'confirm_date' => gmdate( 'Y-m-d H:i:s' )
+		);
+
+		$updated = $this->update( $data );
+
+		if ( $updated ) {
+			do_action( 'nml_subscriber_confirm', $this->ID, $this );
+
+			return true;
+		}
+
+		return false;
 
 	}
 

@@ -39,5 +39,18 @@ function nml_newsletters_page() {
  * @return bool
  */
 function nml_is_admin_page() {
-	// @todo
+
+	$screen      = get_current_screen();
+	$is_nml_page = false;
+
+	$nml_page_ids = array(
+		'newsletter_page_nml-subscribers'
+	);
+
+	if ( in_array( $screen->id, $nml_page_ids ) ) {
+		$is_nml_page = true;
+	}
+
+	return apply_filters( 'nml_is_admin_page', $is_nml_page, $screen );
+
 }

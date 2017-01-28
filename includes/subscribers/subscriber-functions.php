@@ -76,13 +76,65 @@ function nml_insert_subscriber( $subscriber_data ) {
 	 * Add/update the subscriber.
 	 */
 
-	$sub_id = naked_mailing_list()->subscribers->add( $sub_db_data );
+	if ( array_key_exists( 'ID', $sub_db_data ) ) {
+
+		// Update existing subscriber.
+		$subscriber = new NML_Subscriber( $sub_db_data['ID'] );
+		$subscriber->update( $sub_db_data );
+
+	} else {
+
+		// Insert new subscriber.
+		$sub_id = naked_mailing_list()->subscribers->add( $sub_db_data );
+
+	}
 
 	if ( empty( $sub_id ) ) {
 		return new WP_Error( 'error-inserting-subscriber', __( 'Error inserting subscriber into the database.', 'naked-mailing-list' ) );
 	}
 
 	return $sub_id;
+
+}
+
+/**
+ * Delete a subscriber
+ *
+ * Also deletes all related activity logs and list relationships.
+ *
+ * @param int|string $id_or_email
+ *
+ * @since 1.0
+ * @return true|WP_Error True on successful delete, WP_Error on failure.
+ */
+function nml_subscriber_delete( $id_or_email ) {
+
+	$subscriber_id = 0;
+
+	if ( is_email( $id_or_email ) ) {
+		$subscriber    = naked_mailing_list()->subscribers->get_subscriber_by( 'email', $id_or_email );
+		$subscriber_id = is_object( $subscriber ) ? $subscriber->ID : false;
+	} elseif ( is_numeric( $id_or_email ) ) {
+		$subscriber_id = $id_or_email;
+	}
+
+	if ( empty( $subscriber_id ) ) {
+		return new WP_Error( 'invalid-subscriber', __( 'Invalid subscriber.', 'naked-mailing-list' ) );
+	}
+
+	// First delete the subscriber.
+	$successful = naked_mailing_list()->subscribers->delete( $subscriber_id );
+
+	if ( ! $successful ) {
+		return new WP_Error( 'error-deleting-subscriber', __( 'An error occurred while deleting the subscriber.', 'naked-mailing-list' ) );
+	}
+
+	// Now delete subscriber activity logs.
+	naked_mailing_list()->activity->delete_subscriber_entries( $subscriber_id );
+
+	// @todo delete list relationshipos
+
+	return true;
 
 }
 

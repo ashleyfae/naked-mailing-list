@@ -27,7 +27,7 @@ function nml_subscriber_field_email( $subscriber ) {
 	?>
 	<div class="nml-field">
 		<label for="nml_subscriber_email"><?php _e( 'Email address', 'naked-mailing-list' ); ?></label>
-		<input type="email" id="nml_subscriber_email" name="nml_subscriber_email" value="<?php echo esc_attr( $subscriber->email ); ?>" required>
+		<input type="email" id="nml_subscriber_email" class="regular-text" name="nml_subscriber_email" value="<?php echo esc_attr( $subscriber->email ); ?>" required>
 	</div>
 	<?php
 }
@@ -47,12 +47,12 @@ function nml_subscriber_field_name( $subscriber ) {
 	<div class="nml-field">
 		<div id="nml-subscriber-first-name">
 			<label for="nml_subscriber_first_name"><?php _e( 'First name', 'naked-mailing-list' ); ?></label>
-			<input type="text" id="nml_subscriber_first_name" name="nml_subscriber_first_name" value="<?php echo esc_attr( $subscriber->first_name ); ?>">
+			<input type="text" id="nml_subscriber_first_name" class="regular-text" name="nml_subscriber_first_name" value="<?php echo esc_attr( $subscriber->first_name ); ?>">
 		</div>
 
 		<div id="nml-subscriber-last-name">
 			<label for="nml_subscriber_last_name"><?php _e( 'Last name', 'naked-mailing-list' ); ?></label>
-			<input type="text" id="nml_subscriber_last_name" name="nml_subscriber_last_name" value="<?php echo esc_attr( $subscriber->last_name ); ?>">
+			<input type="text" id="nml_subscriber_last_name" class="regular-text" name="nml_subscriber_last_name" value="<?php echo esc_attr( $subscriber->last_name ); ?>">
 		</div>
 	</div>
 	<?php
@@ -72,12 +72,76 @@ function nml_subscriber_field_notes( $subscriber ) {
 	?>
 	<div class="nml-field">
 		<label for="nml_subscriber_notes"><?php _e( 'Notes', 'naked-mailing-list' ); ?></label>
-		<textarea id="nml_subscriber_notes" name="nml_subscriber_notes"><?php echo esc_textarea( $subscriber->notes ); ?></textarea>
+		<textarea id="nml_subscriber_notes" class="large-text" name="nml_subscriber_notes" rows="10" cols="50"><?php echo esc_textarea( $subscriber->notes ); ?></textarea>
 	</div>
 	<?php
 }
 
 add_action( 'nml_edit_subscriber_info_fields', 'nml_subscriber_field_notes' );
+
+/**
+ * Box: Display subscriber activity
+ *
+ * @param NML_Subscriber $subscriber
+ *
+ * @since 1.0
+ * @return void
+ */
+function nml_subscriber_activity_box( $subscriber ) {
+
+	if ( empty( $subscriber->ID ) ) {
+		return;
+	}
+
+	$activity = naked_mailing_list()->activity->get_activity( array( 'subscriber_id' => $subscriber->ID ) );
+
+	if ( empty( $activity ) || ! is_array( $activity ) ) {
+		return;
+	}
+
+	$name = ! empty( $subscriber->first_name ) ? $subscriber->first_name : __( 'This person', 'naked-mailing-list' );
+	?>
+	<div class="postbox">
+		<h2><?php _e( 'Recent Activity', 'naked-mailing-list' ); ?></h2>
+		<div class="inside">
+			<ul>
+				<?php foreach ( $activity as $entry ) : ?>
+					<li class="nml-activity-entry nml-activity-entry-<?php echo sanitize_html_class( $entry->type ); ?>">
+						<span class="nml-activity-date">
+							<?php echo nml_format_mysql_date( $entry->date, nml_full_date_time_format() ); ?>
+						</span>
+
+						<span class="nml-activity-description">
+							<?php
+							switch ( $entry->type ) {
+
+								case 'new_subscriber' :
+									printf(
+										_x( '%1$s subscribed via %2$s.', '%1$s is the name of the subscriber, %2$s is the method', 'naked-mailing-list' ),
+										esc_html( $name ),
+										$subscriber->get_referrer()
+									);
+									break;
+
+								case 'subscriber_confirm' :
+									printf(
+										__( '%s confirmed their subscription.', 'naked-mailing-list' ),
+										esc_html( $name )
+									);
+
+							}
+							?>
+						</span>
+					</li>
+				<?php endforeach; ?>
+			</ul>
+		</div>
+	</div>
+	<?php
+
+}
+
+add_action( 'nml_edit_subscriber_after_info_fields', 'nml_subscriber_activity_box' );
 
 /*
  * Below: Saving Functions

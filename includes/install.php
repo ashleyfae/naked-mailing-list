@@ -52,6 +52,7 @@ function nml_run_install() {
 
 	@naked_mailing_list()->subscribers->create_table();
 	@naked_mailing_list()->subscriber_meta->create_table();
+	@naked_mailing_list()->activity->create_table();
 }
 
 //add_action('admin_init', 'nml_run_install');
