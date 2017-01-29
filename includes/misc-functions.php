@@ -13,6 +13,86 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/*
+ * Below: Newsletter Pages
+ */
+
+/**
+ * Get admin page: subscribers list
+ *
+ * @since 1.0
+ * @return string
+ */
+function nml_get_admin_page_newsletters() {
+	$url = admin_url( 'admin.php?page=nml-newsletters' );
+
+	return apply_filters( 'nml_admin_page_newsletters', $url );
+}
+
+/**
+ * Get admin page: add newsletter
+ *
+ * @param string $type Type of newsletter to add.
+ *
+ * @since 1.0
+ * @return string
+ */
+function nml_get_admin_page_add_newsletter( $type = 'newsletter' ) {
+	$newsletter_page = nml_get_admin_page_newsletters();
+
+	$add_newsletter_page = add_query_arg( array(
+		'view' => 'add',
+		'type' => urlencode( $type )
+	), $newsletter_page );
+
+	return apply_filters( 'nml_admin_page_add_newsletter', $add_newsletter_page );
+}
+
+/**
+ * Get admin page: edit newsletter
+ *
+ * @param int $newsletter_id ID of the newsletter to edit.
+ *
+ * @since 1.0
+ * @return string
+ */
+function nml_get_admin_page_edit_newsletter( $newsletter_id ) {
+	$newsletter_page = nml_get_admin_page_newsletters();
+
+	$edit_newsletter_page = add_query_arg( array(
+		'view' => 'edit',
+		'ID'   => absint( $newsletter_id )
+	), $newsletter_page );
+
+	return apply_filters( 'nml_admin_page_edit_newsletter', $edit_newsletter_page );
+}
+
+/**
+ * Get admin page: delete newsletter
+ *
+ * @todo  actually make this work
+ *
+ * @param int $newsletter_id ID of the newsletter to delete.
+ *
+ * @since 1.0
+ * @return string
+ */
+function nml_get_admin_page_delete_newsletter( $newsletter_id ) {
+	$newsletter_page = nml_get_admin_page_newsletters();
+
+	$delete_newsletter_page = add_query_arg( array(
+		'nml_action' => urlencode( 'delete_newsletter' ),
+		'ID'         => absint( $newsletter_id ),
+		'nonce'      => wp_create_nonce( 'nml_delete_newsletter' )
+	), $newsletter_page );
+
+	return apply_filters( 'nml_admin_page_delete_newsletter', $delete_newsletter_page );
+}
+
+/*
+ * Below: Subscriber Pages
+ */
+
 /**
  * Get admin page: subscribers list
  *
@@ -137,6 +217,14 @@ function nml_format_mysql_date( $mysql_date, $format = false ) {
 
 }
 
+/**
+ * Get full date and time format
+ *
+ * Joins together the 'date' and 'time' settings.
+ *
+ * @since 1.0
+ * @return string
+ */
 function nml_full_date_time_format() {
 	$date = get_option( 'date_format' );
 	$time = get_option( 'time_format' );

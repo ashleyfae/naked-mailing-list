@@ -31,8 +31,8 @@ if ( ! defined( 'ABSPATH' ) ) {
  *                               `email_count` - Number of emails the subscriber has received. Leave blank to calculate
  *                               automatically.
  *                               `notes` - Subscriber notes (optional).
- *                               `lists` - Array of list IDs to add the subscriber to. @todo
- *                               `tags` - Array of tag names to add to the subscriber. @todo
+ *                               `lists` - Array of list IDs to add the subscriber to.
+ *                               `tags` - Array of tag names to add to the subscriber.
  *
  * @since 1.0
  * @return int|WP_Error ID of the subscriber inserted or updated, or WP_Error on failure.
@@ -93,6 +93,21 @@ function nml_insert_subscriber( $subscriber_data ) {
 		return new WP_Error( 'error-inserting-subscriber', __( 'Error inserting subscriber into the database.', 'naked-mailing-list' ) );
 	}
 
+	/*
+	 * Set lists.
+	 */
+
+	if ( array_key_exists( 'lists', $subscriber_data ) ) {
+		nml_set_subscriber_lists( $sub_id, $subscriber_data['lists'], 'list', false );
+	}
+	if ( array_key_exists( 'tags', $subscriber_data ) ) {
+		nml_set_subscriber_lists( $sub_id, $subscriber_data['tags'], 'tag', false );
+	}
+
+	/*
+	 * Return the subscriber ID.
+	 */
+
 	return $sub_id;
 
 }
@@ -122,6 +137,8 @@ function nml_subscriber_delete( $id_or_email ) {
 		return new WP_Error( 'invalid-subscriber', __( 'Invalid subscriber.', 'naked-mailing-list' ) );
 	}
 
+	do_action( 'nml_pre_subscriber_delete', $subscriber_id );
+
 	// First delete the subscriber.
 	$successful = naked_mailing_list()->subscribers->delete( $subscriber_id );
 
@@ -129,10 +146,21 @@ function nml_subscriber_delete( $id_or_email ) {
 		return new WP_Error( 'error-deleting-subscriber', __( 'An error occurred while deleting the subscriber.', 'naked-mailing-list' ) );
 	}
 
+	// Delete all subscriber meta.
+	naked_mailing_list()->subscriber_meta->delete_all_subscriber_meta( $subscriber_id );
+
 	// Now delete subscriber activity logs.
 	naked_mailing_list()->activity->delete_subscriber_entries( $subscriber_id );
 
-	// @todo delete list relationshipos
+	// Delete subscriber list relationships.
+	naked_mailing_list()->list_relationships->delete_subscriber_relationships( $subscriber_id );
+
+	// Update list count.
+	foreach ( nml_get_subscriber_lists( $subscriber_id, false, array( 'fields' => 'ids' ) ) as $list_id ) {
+		nml_update_list_count( $list_id );
+	}
+
+	do_action( 'nml_after_subscriber_delete', $subscriber_id );
 
 	return true;
 
@@ -144,6 +172,7 @@ function nml_subscriber_delete( $id_or_email ) {
  * Pending: Awaiting double opt-in confirmation.
  * Subscribed: Actively subscribed to at least one list.
  * Unsubscribed: Not subscribed to any lists.
+ * Bounced: Email(s) could not be delivered.
  *
  * @since 1.0
  * @return array
@@ -153,7 +182,8 @@ function nml_get_subscriber_statuses() {
 	$statuses = array(
 		'pending'      => esc_html__( 'Pending', 'naked-mailing-list' ),
 		'subscribed'   => esc_html__( 'Subscribed', 'naked-mailing-list' ),
-		'unsubscribed' => esc_html__( 'Unsubscribed', 'naked-mailing-list' )
+		'unsubscribed' => esc_html__( 'Unsubscribed', 'naked-mailing-list' ),
+		'bounced'      => esc_html__( 'Bounced', 'naked-mailing-list' )
 	);
 
 	return apply_filters( 'nml_subscriber_statuses', $statuses );

@@ -1,6 +1,6 @@
 <?php
 /**
- * Subscribers
+ * Subscribers Admin Page
  *
  * @package   naked-mailing-list
  * @copyright Copyright (c) 2017, Ashley Gibson
@@ -65,7 +65,7 @@ function nml_subscribers_list() {
 
 		<?php do_action( 'nml_subscribers_table_top' ); ?>
 
-		<form id="nml-subscribers-filter" method="GET" action="<?php echo admin_url( 'edit.php?post_type=download&page=edd-customers' ); ?>">
+		<form id="nml-subscribers-filter" method="GET" action="<?php echo esc_url( nml_get_admin_page_subscribers() ); ?>">
 			<?php
 			$subscriber_table->search_box( __( 'Search Subscribers', 'naked-mailing-list' ), 'nml-subscribers' );
 			$subscriber_table->display();
@@ -208,7 +208,7 @@ function nml_subscribers_edit_view( $subscriber ) {
 						<div id="nml-subscriber-lists" class="postbox">
 							<h2 class="hndle ui-sortable handle"><?php _e( 'Lists', 'naked-mailing-list' ); ?></h2>
 							<div class="inside">
-								Lists here
+								<?php do_action( 'nml_edit_subscriber_lists_box', $subscriber ); ?>
 							</div>
 						</div>
 
@@ -217,7 +217,7 @@ function nml_subscribers_edit_view( $subscriber ) {
 						<div id="nml-subscriber-tags" class="postbox">
 							<h2 class="hndle ui-sortable handle"><?php _e( 'Tags', 'naked-mailing-list' ); ?></h2>
 							<div class="inside">
-								Tags here
+								<?php do_action( 'nml_edit_subscriber_tags_box', $subscriber ); ?>
 							</div>
 						</div>
 

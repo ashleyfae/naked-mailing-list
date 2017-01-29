@@ -28,10 +28,6 @@ function nml_add_menu_pages() {
 
 add_action( 'admin_menu', 'nml_add_menu_pages' );
 
-function nml_newsletters_page() {
-	// @todo move
-}
-
 /**
  * Determines whether the current admin page is a Naked Mailing List page.
  *

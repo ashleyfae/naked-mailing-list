@@ -48,11 +48,14 @@ register_activation_hook( NML_PLUGIN_FILE, 'nml_install' );
  * @return void
  */
 function nml_run_install() {
-	global $wpdb;
-
 	@naked_mailing_list()->subscribers->create_table();
 	@naked_mailing_list()->subscriber_meta->create_table();
 	@naked_mailing_list()->activity->create_table();
+	@naked_mailing_list()->lists->create_table();
+	@naked_mailing_list()->list_relationships->create_table();
+	@naked_mailing_list()->newsletters->create_table();
+	@naked_mailing_list()->newsletter_list_relationships->create_table();
+	@naked_mailing_list()->queue->create_table();
 }
 
 //add_action('admin_init', 'nml_run_install');

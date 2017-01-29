@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Subscriber Table Class
+ * Newsletter Table Class
  *
  * @package   naked-mailing-list
  * @copyright Copyright (c) 2017, Ashley Gibson
@@ -20,13 +20,13 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
 }
 
 /**
- * Class NML_Subscriber_Table
+ * Class NML_Newsletter_Table
  *
- * Renders the subscriber table.
+ * Renders the newsletter table.
  *
  * @since 1.0
  */
-class NML_Subscriber_Table extends WP_List_Table {
+class NML_Newsletter_Table extends WP_List_Table {
 
 	/**
 	 * Number of items per page
@@ -74,7 +74,7 @@ class NML_Subscriber_Table extends WP_List_Table {
 	private $display_delete_message = false;
 
 	/**
-	 * NML_Subscriber_Table constructor.
+	 * NML_Newsletter_Table constructor.
 	 *
 	 * @see    WP_List_Table::__construct()
 	 *
@@ -87,8 +87,8 @@ class NML_Subscriber_Table extends WP_List_Table {
 		global $status, $page;
 
 		parent::__construct( array(
-			'singular' => esc_html__( 'Subscriber', 'naked-mailing-list' ),
-			'plural'   => esc_html__( 'Subscribers', 'naked-mailing-list' ),
+			'singular' => esc_html__( 'Newsletter', 'naked-mailing-list' ),
+			'plural'   => esc_html__( 'Newsletters', 'naked-mailing-list' ),
 			'ajax'     => false
 		) );
 
@@ -116,16 +116,12 @@ class NML_Subscriber_Table extends WP_List_Table {
 			echo '<input type="hidden" name="order" value="' . esc_attr( $_REQUEST['order'] ) . '">';
 		}
 
-		$first_name = isset( $_REQUEST['first_name'] ) ? wp_unslash( $_REQUEST['first_name'] ) : '';
-		$email      = isset( $_REQUEST['email'] ) ? wp_unslash( $_REQUEST['email'] ) : '';
+		$search = isset( $_REQUEST['s'] ) ? wp_unslash( $_REQUEST['s'] ) : '';
 
 		?>
 		<p class="search-box">
-			<label class="screen-reader-text" for="<?php echo esc_attr( $input_id ); ?>-first-name"><?php esc_html_e( 'Search by first name', 'naked-mailing-list' ); ?></label>
-			<input type="search" id="<?php echo esc_attr( $input_id ); ?>-first-name" name="first_name" value="<?php echo esc_attr( $first_name ); ?>" placeholder="<?php esc_attr_e( 'First name', 'naked-mailing-list' ); ?>">
-
-			<label class="screen-reader-text" for="<?php echo esc_attr( $input_id ); ?>-email"><?php esc_html_e( 'Search by email', 'naked-mailing-list' ); ?></label>
-			<input type="search" id="<?php echo esc_attr( $input_id ); ?>-email" name="email" value="<?php echo esc_attr( $email ); ?>" placeholder="<?php esc_attr_e( 'Email address', 'naked-mailing-list' ); ?>">
+			<label class="screen-reader-text" for="<?php echo esc_attr( $input_id ); ?>"><?php esc_html_e( 'Search', 'naked-mailing-list' ); ?></label>
+			<input type="search" id="<?php echo esc_attr( $input_id ); ?>" name="s" value="<?php echo esc_attr( $search ); ?>" placeholder="<?php esc_attr_e( 'Search', 'naked-mailing-list' ); ?>">
 
 			<?php submit_button( $text, 'button', false, false, array( 'ID' => 'search-submit' ) ); ?>
 		</p>
@@ -141,13 +137,13 @@ class NML_Subscriber_Table extends WP_List_Table {
 	 * @return string
 	 */
 	protected function get_primary_column_name() {
-		return 'email';
+		return 'subject';
 	}
 
 	/**
 	 * Renders most of the columns in the list table.
 	 *
-	 * @param object $item        Contains all the data of the subscriber.
+	 * @param object $item        Contains all the data of the newsletter.
 	 * @param string $column_name The name of the column.
 	 *
 	 * @access public
@@ -160,17 +156,17 @@ class NML_Subscriber_Table extends WP_List_Table {
 
 		switch ( $column_name ) {
 
-			case 'name' :
-				$value = sprintf( '%s %s', $item->first_name, $item->last_name );
-				break;
-
 			case 'status' :
-				$value = $item->status; // @todo turn into coloured label
+				$value = $item->status;
 				break;
 
-			case 'signup_date' :
-				if ( ! empty( $item->signup_date ) ) {
-					$value = nml_format_mysql_date( $item->signup_date );
+			case 'lists' :
+				$value = ''; // @todo
+				break;
+
+			case 'updated_date' :
+				if ( ! empty( $item->updated_date ) ) {
+					$value = nml_format_mysql_date( $item->updated_date );
 				}
 				break;
 
@@ -180,14 +176,14 @@ class NML_Subscriber_Table extends WP_List_Table {
 
 		}
 
-		return apply_filters( 'nml_subscriber_table_column_' . $column_name, $value, $item );
+		return apply_filters( 'nml_newsletter_table_column_' . $column_name, $value, $item );
 
 	}
 
 	/**
 	 * Render Checkbox Column
 	 *
-	 * @param object $item Contains all the data of the subscriber.
+	 * @param object $item Contains all the data of the newsletter.
 	 *
 	 * @access public
 	 * @since  1.0
@@ -201,9 +197,9 @@ class NML_Subscriber_Table extends WP_List_Table {
 
 		?>
 		<label class="screen-reader-text" for="cb-select-<?php echo esc_attr( $item->ID ); ?>">
-			<?php _e( 'Select this subscriber', 'naked-mailing-list' ) ?>
+			<?php _e( 'Select this newsletter', 'naked-mailing-list' ) ?>
 		</label>
-		<input id="cb-select-<?php echo esc_attr( $item->ID ); ?>" type="checkbox" name="subscribers[]" value="<?php echo esc_attr( $item->ID ); ?>">
+		<input id="cb-select-<?php echo esc_attr( $item->ID ); ?>" type="checkbox" name="newsletters[]" value="<?php echo esc_attr( $item->ID ); ?>">
 		<?php
 
 	}
@@ -211,18 +207,18 @@ class NML_Subscriber_Table extends WP_List_Table {
 	/**
 	 * Render Column Name
 	 *
-	 * @param object $item Contains all the data of the subscriber.
+	 * @param object $item Contains all the data of the newsletter.
 	 *
 	 * @access public
 	 * @since  1.0
 	 * @return string
 	 */
 	public function column_email( $item ) {
-		$edit_url = nml_get_admin_page_edit_subscriber( $item->ID );
-		$name     = '<a href="' . esc_url( $edit_url ) . '" class="row-title" aria-label="' . esc_attr( sprintf( '%s (Edit)', $item->email ) ) . '">' . $item->email . '</a>';
+		$edit_url = nml_get_admin_page_edit_newsletter( $item->ID );
+		$name     = '<a href="' . esc_url( $edit_url ) . '" class="row-title" aria-label="' . esc_attr( sprintf( '%s (Edit)', $item->subject ) ) . '">' . $item->subject . '</a>';
 		$actions  = array(
 			'edit'   => '<a href="' . esc_url( $edit_url ) . '">' . __( 'Edit', 'naked-mailing-list' ) . '</a>',
-			'delete' => '<a href="' . esc_url( nml_get_admin_page_delete_subscriber( $item->ID ) ) . '">' . __( 'Delete', 'naked-mailing-list' ) . '</a>'
+			'delete' => '<a href="' . esc_url( nml_get_admin_page_delete_newsletter( $item->ID ) ) . '">' . __( 'Delete', 'naked-mailing-list' ) . '</a>'
 		);
 
 		return $name . $this->row_actions( $actions );
@@ -239,15 +235,14 @@ class NML_Subscriber_Table extends WP_List_Table {
 	 */
 	public function get_columns() {
 		$columns = array(
-			'cb'          => '<input type="checkbox">',
-			'email'       => __( 'Email', 'naked-mailing-list' ),
-			'name'        => __( 'Name', 'naked-mailing-list' ),
-			'status'      => __( 'Status', 'naked-mailing-list' ),
-			'signup_date' => __( 'Signup Date', 'naked-mailing-list' ),
-			'email_count' => __( 'Email Count', 'naked-mailing-list' )
+			'cb'           => '<input type="checkbox">',
+			'subject'      => __( 'Subject', 'naked-mailing-list' ),
+			'status'       => __( 'Status', 'naked-mailing-list' ),
+			'lists'        => __( 'Lists', 'naked-mailing-list' ),
+			'updated_date' => __( 'Last Modified', 'naked-mailing-list' )
 		);
 
-		return apply_filters( 'nml_subscriber_table_columns', $columns );
+		return apply_filters( 'nml_newsletter_table_columns', $columns );
 	}
 
 	/**
@@ -259,11 +254,9 @@ class NML_Subscriber_Table extends WP_List_Table {
 	 */
 	public function get_sortable_columns() {
 		return array(
-			'email'       => array( 'email', true ),
-			'first_name'  => array( 'first_name', true ),
-			'status'      => array( 'status', true ),
-			'signup_date' => array( 'signup_date', true ),
-			'email_count' => array( 'email_count', true )
+			'subject'      => array( 'subject', true ),
+			'status'       => array( 'status', true ),
+			'updated_date' => array( 'updated_date', true )
 		);
 	}
 
@@ -288,7 +281,7 @@ class NML_Subscriber_Table extends WP_List_Table {
 		if ( 'top' == $which && true === $this->display_delete_message ) {
 			?>
 			<div id="message" class="updated notice notice-success">
-				<p><?php _e( 'Subscribers successfully deleted.', 'naked-mailing-list' ); ?></p>
+				<p><?php _e( 'Newsletters successfully deleted.', 'naked-mailing-list' ); ?></p>
 			</div>
 			<?php
 		}
@@ -323,7 +316,7 @@ class NML_Subscriber_Table extends WP_List_Table {
 			'delete' => __( 'Delete Permanently', 'naked-mailing-list' )
 		);
 
-		return apply_filters( 'nml_subscribers_table_bulk_actions', $actions );
+		return apply_filters( 'nml_newsletters_table_bulk_actions', $actions );
 	}
 
 	/**
@@ -344,13 +337,11 @@ class NML_Subscriber_Table extends WP_List_Table {
 
 			// Checek capability.
 			if ( ! current_user_can( 'delete_posts' ) ) {
-				wp_die( __( 'You don\'t have permission to delete subscribers.', 'naked-mailing-list' ) );
+				wp_die( __( 'You don\'t have permission to delete newsletters.', 'naked-mailing-list' ) );
 			}
 
-			if ( isset( $_GET['subscribers'] ) && is_array( $_GET['subscribers'] ) && count( $_GET['subscribers'] ) ) {
-				foreach ( $_GET['subscribers'] as $subscriber_id ) {
-					nml_subscriber_delete( absint( $subscriber_id ) );
-				}
+			if ( isset( $_GET['newsletters'] ) && is_array( $_GET['newsletters'] ) && count( $_GET['newsletters'] ) ) {
+				naked_mailing_list()->newsletters->delete_by_ids( $_GET['newsletters'] ); // @todo move to dedicated deletion function
 
 				// Display the delete message.
 				$this->display_delete_message = true;
@@ -383,13 +374,13 @@ class NML_Subscriber_Table extends WP_List_Table {
 	}
 
 	/**
-	 * Build all the subscriber data.
+	 * Build all the newsletter data.
 	 *
 	 * @access public
 	 * @since  1.0
-	 * @return array Array of subscribers.
+	 * @return array Array of newsletters.
 	 */
-	public function subscribers_data() {
+	public function newsletter_data() {
 
 		$paged   = $this->get_paged();
 		$offset  = $this->per_page * ( $paged - 1 );
@@ -403,14 +394,9 @@ class NML_Subscriber_Table extends WP_List_Table {
 			'orderby' => $orderby,
 		);
 
-		// Filter by email
-		if ( isset( $_GET['email'] ) ) {
-			$args['email'] = sanitize_email( $_GET['email'] );
-		}
-
-		// Filter by first name
-		if ( isset( $_GET['first_name'] ) ) {
-			$args['first_name'] = sanitize_text_field( $_GET['first_name'] );
+		// Filter by subject
+		if ( isset( $_GET['s'] ) ) {
+			$args['subject'] = sanitize_text_field( $_GET['s'] );
 		}
 
 		// Filter by status
@@ -419,9 +405,9 @@ class NML_Subscriber_Table extends WP_List_Table {
 		}
 
 		$this->args  = $args;
-		$subscribers = naked_mailing_list()->subscribers->get_subscribers( $args );
+		$newsletters = naked_mailing_list()->newsletters->get_newsletters( $args );
 
-		return $subscribers;
+		return $newsletters;
 
 	}
 
@@ -430,9 +416,9 @@ class NML_Subscriber_Table extends WP_List_Table {
 	 *
 	 * Setup the final data for the table.
 	 *
-	 * @uses   NML_Subscribers_Table::get_columns()
+	 * @uses   NML_Newsletter_Table::get_columns()
 	 * @uses   WP_List_Table::get_sortable_columns()
-	 * @uses   NML_Subscribers_Table::subscribers_data()
+	 * @uses   NML_Newsletter_Table::subscribers_data()
 	 * @uses   WP_List_Table::set_pagination_args()
 	 *
 	 * @access public
@@ -450,9 +436,9 @@ class NML_Subscriber_Table extends WP_List_Table {
 
 		$this->_column_headers = array( $columns, $hidden, $sortable );
 
-		$this->items = $this->subscribers_data();
+		$this->items = $this->newsletter_data();
 
-		$this->total = naked_mailing_list()->subscribers->count( $this->args );
+		$this->total = naked_mailing_list()->newsletters->count( $this->args );
 
 		$this->set_pagination_args( array(
 			'total_items' => $this->total,
@@ -471,8 +457,8 @@ class NML_Subscriber_Table extends WP_List_Table {
 	 */
 	public function no_items() {
 		printf(
-			__( 'No subscribers found. Would you like to %sadd one?%', 'naked-mailing-list' ),
-			'<a href="' . esc_url( nml_get_admin_page_add_subscriber() ) . '">',
+			__( 'No newsletters found. Would you like to %sadd one?%', 'naked-mailing-list' ),
+			'<a href="' . esc_url( nml_get_admin_page_add_newsletter() ) . '">',
 			'</a>'
 		);
 	}

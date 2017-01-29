@@ -173,6 +173,28 @@ class NML_DB_Subscriber_Meta extends NML_DB {
 	}
 
 	/**
+	 * Delete all meta data associated with a subscriber.
+	 *
+	 * @param int $subscriber_id ID of the subscriber.
+	 *
+	 * @access public
+	 * @since  1.0
+	 * @return bool|false|int
+	 */
+	public function delete_all_subscriber_meta( $subscriber_id ) {
+
+		$subscriber_id = $this->sanitize_subscriber_id( $subscriber_id );
+		if ( false === $subscriber_id ) {
+			return false;
+		}
+
+		global $wpdb;
+
+		return $wpdb->delete( $this->table_name, array( 'subscriber_id' => $subscriber_id ), array( '%d' ) );
+
+	}
+
+	/**
 	 * Create the table
 	 *
 	 * @access public

@@ -127,6 +127,8 @@ class NML_DB_Subscribers extends NML_DB {
 	 * NOTE: This should not be called directly as it does not make necessary changes to
 	 * the subscriber meta, activity, or lists. Use nml_subscriber_delete() instead.
 	 *
+	 * @see nml_subscriber_delete()
+	 *
 	 * @param int|string $id_or_email Subscriber's ID number or email address.
 	 *
 	 * @access public
@@ -151,6 +153,31 @@ class NML_DB_Subscribers extends NML_DB {
 		} else {
 			return false;
 		}
+
+	}
+
+	/**
+	 * Delete multiple subscribers by IDs
+	 *
+	 * @param array $ids Array of review IDs.
+	 *
+	 * @access public
+	 * @since  1.0
+	 * @return int|false Number of rows deleted or false if none.
+	 */
+	public function delete_by_ids( $ids ) {
+
+		global $wpdb;
+
+		if ( is_array( $ids ) ) {
+			$ids = implode( ',', array_map( 'intval', $ids ) );
+		} else {
+			$ids = intval( $ids );
+		}
+
+		$results = $wpdb->query( "DELETE FROM  $this->table_name WHERE `ID` IN( {$ids} )" );
+
+		return $results;
 
 	}
 

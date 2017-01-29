@@ -66,6 +66,36 @@ if ( ! class_exists( 'Naked_Mailing_List' ) ) :
 		public $activity;
 
 		/**
+		 * @var NML_DB_Lists
+		 * @since 1.0
+		 */
+		public $lists;
+
+		/**
+		 * @var NML_DB_List_Relationships
+		 * @since 1.0
+		 */
+		public $list_relationships;
+
+		/**
+		 * @var NML_DB_Newsletters
+		 * @since 1.0
+		 */
+		public $newsletters;
+
+		/**
+		 * @var NML_DB_Newsletter_List_Relationships
+		 * @since 1.0
+		 */
+		public $newsletter_list_relationships;
+
+		/**
+		 * @var NML_DB_Queue
+		 * @since 1.0
+		 */
+		public $queue;
+
+		/**
 		 * Main Naked_Mailing_List Instance
 		 *
 		 * Ensures that only one instance of Naked_Mailing_List exists in memory at any one
@@ -85,9 +115,14 @@ if ( ! class_exists( 'Naked_Mailing_List' ) ) :
 				add_action( 'plugins_loaded', array( self::$instance, 'load_textdomain' ) );
 
 				self::$instance->includes();
-				self::$instance->subscribers     = new NML_DB_Subscribers();
-				self::$instance->subscriber_meta = new NML_DB_Subscriber_Meta();
-				self::$instance->activity        = new NML_DB_Activity();
+				self::$instance->subscribers                   = new NML_DB_Subscribers();
+				self::$instance->subscriber_meta               = new NML_DB_Subscriber_Meta();
+				self::$instance->activity                      = new NML_DB_Activity();
+				self::$instance->lists                         = new NML_DB_Lists();
+				self::$instance->list_relationships            = new NML_DB_List_Relationships();
+				self::$instance->newsletters                   = new NML_DB_Newsletters();
+				self::$instance->newsletter_list_relationships = new NML_DB_Newsletter_List_Relationships();
+				self::$instance->queue                         = new NML_DB_Queue();
 			}
 
 			return self::$instance;
@@ -165,6 +200,14 @@ if ( ! class_exists( 'Naked_Mailing_List' ) ) :
 
 			require_once NML_PLUGIN_DIR . 'includes/class-nml-db.php';
 			require_once NML_PLUGIN_DIR . 'includes/activity/class-nml-db-activity.php';
+			require_once NML_PLUGIN_DIR . 'includes/lists/class-nml-db-lists.php';
+			require_once NML_PLUGIN_DIR . 'includes/lists/class-nml-db-list-relationships.php';
+			require_once NML_PLUGIN_DIR . 'includes/lists/list-functions.php';
+			require_once NML_PLUGIN_DIR . 'includes/newsletters/class-nml-db-newsletters.php';
+			require_once NML_PLUGIN_DIR . 'includes/newsletters/class-nml-db-newsletter-list-relationships.php';
+			require_once NML_PLUGIN_DIR . 'includes/newsletters/class-nml-newsletter.php';
+			require_once NML_PLUGIN_DIR . 'includes/newsletters/newsletter-functions.php';
+			require_once NML_PLUGIN_DIR . 'includes/queue/class-nml-db-queue.php';
 			require_once NML_PLUGIN_DIR . 'includes/subscribers/class-nml-db-subscribers.php';
 			require_once NML_PLUGIN_DIR . 'includes/subscribers/class-nml-db-subscriber-meta.php';
 			require_once NML_PLUGIN_DIR . 'includes/subscribers/class-nml-subscriber.php';
@@ -178,6 +221,9 @@ if ( ! class_exists( 'Naked_Mailing_List' ) ) :
 				require_once NML_PLUGIN_DIR . 'includes/admin/admin-actions.php';
 				require_once NML_PLUGIN_DIR . 'includes/admin/admin-assets.php';
 				require_once NML_PLUGIN_DIR . 'includes/admin/admin-pages.php';
+				require_once NML_PLUGIN_DIR . 'includes/admin/newsletters/newsletter-actions.php';
+				require_once NML_PLUGIN_DIR . 'includes/admin/newsletters/newsletter-functions.php';
+				require_once NML_PLUGIN_DIR . 'includes/admin/newsletters/newsletters.php';
 				require_once NML_PLUGIN_DIR . 'includes/admin/subscribers/subscriber-actions.php';
 				require_once NML_PLUGIN_DIR . 'includes/admin/subscribers/subscriber-functions.php';
 				require_once NML_PLUGIN_DIR . 'includes/admin/subscribers/subscribers.php';

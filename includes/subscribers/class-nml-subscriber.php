@@ -9,7 +9,6 @@
  * @since     1.0
  */
 
-
 // Exit if accessed directly
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
@@ -122,6 +121,24 @@ class NML_Subscriber {
 	public $notes = '';
 
 	/**
+	 * Array of lists the subscriber is added to.
+	 *
+	 * @var array
+	 * @access protected
+	 * @since  1.0
+	 */
+	protected $lists;
+
+	/**
+	 * Array of tags the subscriber has.
+	 *
+	 * @var array
+	 * @access protected
+	 * @since  1.0
+	 */
+	protected $tags;
+
+	/**
 	 * The database abstraction
 	 *
 	 * @var NML_DB_Subscribers
@@ -139,9 +156,13 @@ class NML_Subscriber {
 	 * @since  1.0
 	 * @return void
 	 */
-	public function __construct( $id_or_email ) {
+	public function __construct( $id_or_email = 0 ) {
 
 		$this->db = new NML_DB_Subscribers();
+
+		if ( empty( $id_or_email ) ) {
+			return;
+		}
 
 		if ( is_numeric( $id_or_email ) ) {
 			$field = 'ID';
@@ -230,9 +251,9 @@ class NML_Subscriber {
 		}
 
 		/**
-		 * Fires before a customer is created
+		 * Fires before a subscriber is created
 		 *
-		 * @param array $args Contains customer information such as name and email.
+		 * @param array $args Contains subscriber information such as name and email.
 		 */
 		do_action( 'nml_subscriber_pre_create', $args );
 
@@ -241,7 +262,7 @@ class NML_Subscriber {
 		// The DB class 'add' implies an update if the subscriber being asked to be created already exists.
 		if ( $this->db->add( $data ) ) {
 
-			// We've successfully added/updated the customer, reset the class vars with the new data
+			// We've successfully added/updated the subscriber, reset the class vars with the new data
 			$subscriber = $this->db->get_subscriber_by( 'email', $args['email'] );
 
 			// Setup the subscriber data with the values from the DB.
@@ -257,7 +278,7 @@ class NML_Subscriber {
 		 * @param int   $created If created successfully, the subscriber ID.  Defaults to false.
 		 * @param array $args    Contains subscriber information such as name and email.
 		 */
-		do_action( 'edd_subscriber_post_create', $created, $args );
+		do_action( 'nml_subscriber_post_create', $created, $args );
 
 		return $created;
 
@@ -380,20 +401,44 @@ class NML_Subscriber {
 	 * @return array
 	 */
 	public function get_lists() {
-		// @todo
+
+		if ( ! isset( $this->lists ) ) {
+			$this->lists = nml_get_subscriber_lists( $this->ID, 'list' );
+
+			if ( ! is_array( $this->lists ) ) {
+				$this->lists = array();
+			}
+		}
+
+		return $this->lists;
+
 	}
 
 	/**
 	 * Checks whether or not the subscriber is on a list.
 	 *
-	 * @param int $list_id ID of the list to check.
+	 * @param int|string $list_id_or_name ID or name of the list to check.
 	 *
 	 * @access public
 	 * @since  1.0
 	 * @return bool
 	 */
-	public function is_on_list( $list_id ) {
-		// @todo
+	public function is_on_list( $list_id_or_name ) {
+
+		$lists   = $this->get_lists();
+		$on_list = false;
+
+		if ( is_array( $lists ) ) {
+			$field  = is_numeric( $list_id_or_name ) ? 'ID' : 'name';
+			$values = wp_list_pluck( $lists, $field );
+
+			if ( in_array( $list_id_or_name, $values ) ) {
+				$on_list = true;
+			}
+		}
+
+		return $on_list;
+
 	}
 
 	/**
@@ -403,10 +448,12 @@ class NML_Subscriber {
 	 *
 	 * @access public
 	 * @since  1.0
-	 * @return bool Whether or not the subscriber was successfully added.
+	 * @return void
 	 */
 	public function add_to_list( $list_id ) {
-		// @todo
+		if ( ! $this->is_on_list( $list_id ) ) {
+			nml_set_subscriber_lists( $this->ID, $list_id, 'list', true );
+		}
 	}
 
 	/**
@@ -417,20 +464,44 @@ class NML_Subscriber {
 	 * @return array
 	 */
 	public function get_tags() {
-		// @todo
+
+		if ( ! isset( $this->tags ) ) {
+			$this->tags = nml_get_subscriber_lists( $this->ID, 'tag' );
+
+			if ( ! is_array( $this->tags ) ) {
+				$this->tags = array();
+			}
+		}
+
+		return $this->tags;
+
 	}
 
 	/**
 	 * Checks whether or not the subscriber has a given tag.
 	 *
-	 * @param int $tag_id ID of the tag to check.
+	 * @param int|string $tag_id_or_name ID or name of the tag to check.
 	 *
 	 * @access public
 	 * @since  1.0
 	 * @return bool
 	 */
-	public function has_tag( $tag_id ) {
-		// @todo
+	public function has_tag( $tag_id_or_name ) {
+
+		$tags    = $this->get_tags();
+		$has_tag = false;
+
+		if ( is_array( $tags ) ) {
+			$field  = is_numeric( $tag_id_or_name ) ? 'ID' : 'name';
+			$values = wp_list_pluck( $tags, $field );
+
+			if ( in_array( $tag_id_or_name, $values ) ) {
+				$has_tag = true;
+			}
+		}
+
+		return $has_tag;
+
 	}
 
 	/**
@@ -440,9 +511,13 @@ class NML_Subscriber {
 	 *
 	 * @access public
 	 * @since  1.0
-	 * @return bool
+	 * @return void
 	 */
 	public function tag( $tag_id_or_name ) {
+
+		if ( ! $this->has_tag( $tag_id_or_name ) ) {
+			nml_set_subscriber_lists( $this->ID, $tag_id_or_name, 'tag', true );
+		}
 
 	}
 

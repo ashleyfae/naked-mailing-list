@@ -80,6 +80,61 @@ function nml_subscriber_field_notes( $subscriber ) {
 add_action( 'nml_edit_subscriber_info_fields', 'nml_subscriber_field_notes' );
 
 /**
+ * Field: Lists
+ *
+ * @param NML_Subscriber $subscriber
+ *
+ * @since 1.0
+ * @return void
+ */
+function nml_edit_subscriber_lists_box( $subscriber ) {
+
+	$subscriber_lists    = $subscriber->get_lists();
+	$selected_list_names = wp_list_pluck( $subscriber_lists, 'name' );
+
+	$temp_all_lists = nml_get_lists( array(
+		'number'  => - 1,
+		'type'    => 'list',
+		'fields'  => 'names',
+		'orderby' => 'name',
+		'order'   => 'ASC'
+	) );
+
+	$all_lists = array();
+
+	if ( ! is_array( $temp_all_lists ) ) {
+		$temp_all_lists = array();
+	}
+
+	foreach ( $temp_all_lists as $list_name ) {
+		$all_lists[ $list_name ] = $list_name;
+	}
+
+	?>
+	<div class="nml-field">
+		<div class="nml-multicheck-wrap">
+			<?php foreach ( $all_lists as $list_name ) :
+				$checked = in_array( $list_name, $selected_list_names ) ? ' checked="checked"' : '';
+				?>
+				<label for="nml_subscriber_lists_<?php echo sanitize_html_class( $list_name ); ?>">
+					<input type="checkbox" name="nml_subscriber_lists[]" id="nml_subscriber_lists_<?php echo sanitize_html_class( $list_name ); ?>" value="<?php echo esc_attr( $list_name ); ?>"<?php echo $checked; ?>>
+				</label>
+			<?php endforeach; ?>
+		</div>
+
+		<div class="nml-add-new-list">
+			<label for="nml-add-new-list" class="screen-reader-text"><?php esc_html__( 'Enter the name of the new list', 'naked-mailing-list' ); ?></label>
+			<input type="text" id="nml-add-new-list" name="nml_new_list" class="regular-text nml-new-list-value">
+			<input type="button" class="button" value="<?php esc_attr_e( 'Add', 'naked-mailing-list' ); ?>">
+		</div>
+	</div>
+	<?php
+
+}
+
+add_action( 'nml_edit_subscriber_lists_box', 'nml_edit_subscriber_lists_box' );
+
+/**
  * Box: Display subscriber activity
  *
  * @param NML_Subscriber $subscriber
@@ -205,6 +260,26 @@ function nml_save_subscriber() {
 	// Omit IP address if manually adding the subscriber.
 	if ( empty( $subscriber_id ) ) {
 		$sub_data['ip'] = '';
+	}
+
+	// Lists
+	if ( isset( $_POST['nml_subscriber_lists'] ) ) {
+		if ( is_array( $_POST['nml_subscriber_lists'] ) ) {
+			$list_array = $_POST['nml_subscriber_lists'];
+		} else {
+			$list_array = $_POST['nml_subscriber_lists'] ? explode( ',', $_POST['nml_subscriber_lists'] ) : array();
+		}
+		$sub_data['lists'] = array_map( 'trim', $list_array );
+	}
+
+	// Tags
+	if ( isset( $_POST['nml_subscriber_tags'] ) ) {
+		if ( is_array( $_POST['nml_subscriber_tags'] ) ) {
+			$tag_array = $_POST['nml_subscriber_tags'];
+		} else {
+			$tag_array = $_POST['nml_subscriber_tags'] ? explode( ',', $_POST['nml_subscriber_tags'] ) : array();
+		}
+		$sub_data['tags'] = array_map( 'trim', $tag_array );
 	}
 
 	$new_sub_id = nml_insert_subscriber( $sub_data );
