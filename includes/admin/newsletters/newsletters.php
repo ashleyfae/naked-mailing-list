@@ -162,15 +162,19 @@ function nml_newsletters_edit_view( $newsletter ) {
 							<div class="inside">
 								<div class="submitbox" id="submitpost">
 									<div id="minor-publishing">
-										<div id="misc-publishing-actions">
-											<div id="nml-newsletter-status" class="nml-field misc-pub-section">
-												<label for="nml_newsletter_status"><?php _e( 'Status', 'naked-mailing-list' ); ?></label>
-												<select id="nml_newsletter_status" name="nml_newsletter_status">
-													<?php foreach ( nml_get_newsletter_statuses() as $key => $name ) : ?>
-														<option value="<?php echo esc_attr( $key ); ?>" <?php selected( $newsletter->status, $key ); ?>><?php echo esc_html( $name ); ?></option>
-													<?php endforeach; ?>
-												</select>
+
+										<div id="minor-publishing-actions">
+											<div id="save-action">
+												<input type="submit" name="save" id="save-post" value="<?php esc_attr_e( 'Save Draft', 'naked-mailing-list' ); ?>" class="button">
 											</div>
+											<div id="preview-action">
+												<a class="preview button" href="" target="_blank" id="post-preview"><?php esc_html_e( 'Preview', 'naked-mailing-list' ); ?></a>
+											</div>
+											<div class="clear"></div>
+										</div>
+
+										<div id="misc-publishing-actions">
+
 										</div>
 									</div>
 
@@ -181,7 +185,7 @@ function nml_newsletters_edit_view( $newsletter ) {
 											<?php endif; ?>
 										</div>
 										<div id="publishing-action">
-											<input type="submit" id="nml-save-newsletter" name="save_newsletter" class="button button-primary button-large" value="<?php esc_attr_e( 'Save', 'naked-mailing-list' ); ?>">
+											<input type="submit" id="nml-save-newsletter" name="save_newsletter" class="button button-primary button-large" value="<?php esc_attr_e( 'Send Now', 'naked-mailing-list' ); ?>">
 										</div>
 									</div>
 								</div>
@@ -221,6 +225,15 @@ function nml_newsletters_edit_view( $newsletter ) {
 					</div>
 
 					<?php do_action( 'nml_edit_newsletter_after_info_fields', $newsletter ); ?>
+
+					<div class="postbox">
+						<h2><?php _e( 'Headers', 'naked-mailing-list' ); ?></h2>
+						<div class="inside">
+							<?php do_action( 'nml_edit_newsletter_headers_fields', $newsletter ); ?>
+						</div>
+					</div>
+
+					<?php do_action( 'nml_edit_newsletter_after_headers_fields', $newsletter ); ?>
 				</div>
 			</div>
 		</div>

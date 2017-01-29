@@ -40,6 +40,7 @@ function nml_is_admin_page() {
 	$is_nml_page = false;
 
 	$nml_page_ids = array(
+		'toplevel_page_nml-newsletters',
 		'newsletter_page_nml-subscribers'
 	);
 
