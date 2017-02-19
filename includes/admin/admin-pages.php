@@ -23,6 +23,7 @@ function nml_add_menu_pages() {
 
 	add_menu_page( esc_html__( 'Newsletters', 'naked-mailing-list' ), esc_html__( 'Newsletter', 'naked-mailing-list' ), 'manage_options', 'nml-newsletters', 'nml_newsletters_page', 'dashicons-email-alt' );
 	add_submenu_page( 'nml-newsletters', esc_html__( 'Subscribers', 'naked-mailing-list' ), esc_html__( 'Subscribers', 'naked-mailing-list' ), 'manage_options', 'nml-subscribers', 'nml_subscribers_page' );
+	add_submenu_page( 'nml-newsletters', esc_html__( 'Newsletter Settings', 'naked-mailing-list' ), esc_html__( 'Settings', 'naked-mailing-list' ), 'manage_options', 'nml-settings', 'nml_options_page' );
 
 }
 

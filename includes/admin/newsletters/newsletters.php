@@ -211,6 +211,15 @@ function nml_newsletters_edit_view( $newsletter ) {
 						</div>
 
 						<?php do_action( 'nml_edit_newsletter_after_tags_box', $newsletter ); ?>
+
+						<div id="nml-newsletter-template-tags" class="postbox">
+							<h2 class="hndle ui-sortable handle"><?php _e( 'Template Tags', 'naked-mailing-list' ); ?></h2>
+							<div class="inside">
+								<?php do_action( 'nml_edit_newsletter_template_tags_box', $newsletter ); ?>
+							</div>
+						</div>
+
+						<?php do_action( 'nml_edit_newsletter_after_template_tags_box', $newsletter ); ?>
 					</div>
 				</div>
 

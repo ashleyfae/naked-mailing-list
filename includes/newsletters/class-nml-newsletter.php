@@ -143,6 +143,15 @@ class NML_Newsletter {
 	protected $db;
 
 	/**
+	 * Newsletter/list relationship database abstraction
+	 *
+	 * @var NML_DB_Newsletter_List_Relationships
+	 * @access protected
+	 * @since  1.0
+	 */
+	protected $list_relationships;
+
+	/**
 	 * NML_Newsletter constructor.
 	 *
 	 * @param int $newsletter_id ID of the newsletter.
@@ -153,7 +162,8 @@ class NML_Newsletter {
 	 */
 	public function __construct( $newsletter_id = 0 ) {
 
-		$this->db = new NML_DB_Newsletters();
+		$this->db                 = new NML_DB_Newsletters();
+		$this->list_relationships = new NML_DB_Newsletter_List_Relationships();
 
 		if ( empty( $newsletter_id ) ) {
 			return;
@@ -334,13 +344,56 @@ class NML_Newsletter {
 	/**
 	 * Get an array of lists associated with this newsletter.
 	 *
-	 * @todo
+	 * @param string $type Which to retrive: all, tags, lists.
 	 *
 	 * @access public
 	 * @since  1.0
 	 * @return array
 	 */
-	public function get_lists() {
+	public function get_lists( $type = 'all' ) {
+
+		switch ( $type ) {
+			case 'lists' :
+				$lists = nml_get_object_lists( 'newsletter', $this->ID, 'lists' );
+				break;
+
+			case 'tags' :
+				$lists = nml_get_object_lists( 'newsletter', $this->ID, 'tags' );
+				break;
+
+			default :
+				$lists = nml_get_object_lists( 'newsletter', $this->ID );
+				break;
+		}
+
+		return apply_filters( 'nml_newsletter_get_tags', $lists, $this->ID, $this );
+
+	}
+
+	/**
+	 * Get the subscribers to receive this newsletter
+	 *
+	 * @param array $args Query arguments to override the defaults.
+	 *
+	 * @access public
+	 * @since  1.0
+	 * @return array
+	 */
+	public function get_subscribers( $args = array() ) {
+
+		$newsletter_lists = $this->get_lists();
+		$list_ids         = wp_list_pluck( $newsletter_lists, 'ID' );
+
+		$defaults = array(
+			'list'   => $list_ids,
+			'number' => - 1 // Eeks
+		);
+
+		$args = wp_parse_args( $args, $defaults );
+
+		$subscribers = nml_get_subscribers( $args );
+
+		return $subscribers;
 
 	}
 

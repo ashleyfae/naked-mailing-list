@@ -231,3 +231,17 @@ function nml_full_date_time_format() {
 
 	return $date . ' ' . $time;
 }
+
+/**
+ * Whether or not the site is in test mode
+ *
+ * While in test mode, emails may not be sent (depending on provider).
+ *
+ * @todo  integrate with settings
+ *
+ * @since 1.0
+ * @return bool
+ */
+function nml_test_mode() {
+	return true;
+}

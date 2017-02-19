@@ -71,7 +71,7 @@ class NML_DB_Queue extends NML_DB {
 			'status'          => 'pending',
 			'offset'          => 0,
 			'date_created'    => gmdate( 'Y-m-d H:i:s' ),
-			'date_to_process' => ''
+			'date_to_process' => gmdate( 'Y-m-d H:i:s' )
 		);
 	}
 

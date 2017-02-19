@@ -81,6 +81,7 @@ function nml_insert_subscriber( $subscriber_data ) {
 		// Update existing subscriber.
 		$subscriber = new NML_Subscriber( $sub_db_data['ID'] );
 		$subscriber->update( $sub_db_data );
+		$sub_id = $subscriber->ID;
 
 	} else {
 
@@ -98,10 +99,10 @@ function nml_insert_subscriber( $subscriber_data ) {
 	 */
 
 	if ( array_key_exists( 'lists', $subscriber_data ) ) {
-		nml_set_subscriber_lists( $sub_id, $subscriber_data['lists'], 'list', false );
+		nml_set_object_lists( 'subscriber', $sub_id, $subscriber_data['lists'], 'list', false );
 	}
 	if ( array_key_exists( 'tags', $subscriber_data ) ) {
-		nml_set_subscriber_lists( $sub_id, $subscriber_data['tags'], 'tag', false );
+		nml_set_object_lists( 'subscriber', $sub_id, $subscriber_data['tags'], 'tag', false );
 	}
 
 	/*
@@ -156,7 +157,7 @@ function nml_subscriber_delete( $id_or_email ) {
 	naked_mailing_list()->list_relationships->delete_subscriber_relationships( $subscriber_id );
 
 	// Update list count.
-	foreach ( nml_get_subscriber_lists( $subscriber_id, false, array( 'fields' => 'ids' ) ) as $list_id ) {
+	foreach ( nml_get_object_lists( 'subscriber', $subscriber_id, false, array( 'fields' => 'ids' ) ) as $list_id ) {
 		nml_update_list_count( $list_id );
 	}
 
@@ -200,4 +201,28 @@ function nml_get_default_subscriber_status() {
 	$default = 'pending';
 
 	return apply_filters( 'nml_default_subscriber_status', $default );
+}
+
+/**
+ * Number of subscribers to email at one time
+ *
+ * @since 1.0
+ * @return int
+ */
+function nml_number_subscribers_per_batch() {
+	$number = 1000;
+
+	return apply_filters( 'nml_number_subscribers_per_batch', $number );
+}
+
+/**
+ * Get subscribers
+ *
+ * @param array $args Query arguments.
+ *
+ * @since 1.0
+ * @return array|false
+ */
+function nml_get_subscribers( $args = array() ) {
+	return naked_mailing_list()->subscribers->get_subscribers( $args );
 }

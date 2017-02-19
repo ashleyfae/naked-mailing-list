@@ -268,6 +268,18 @@ class NML_Subscriber {
 			// Setup the subscriber data with the values from the DB.
 			$this->setup_subscriber( $subscriber );
 
+			/**
+			 * Transition subscriber status.
+			 *
+			 * @param string         $new_status    New status.
+			 * @param string         $old_status    Old status.
+			 * @param int            $subscriber_id ID of the subscriber.
+			 * @param NML_Subscriber $subscriber    Subscriber object.
+			 *
+			 * @since 1.0
+			 */
+			do_action( 'nml_subscriber_transition_status', $this->status, '', $this->ID, $this );
+
 			$created = $this->ID;
 
 		}
@@ -312,7 +324,16 @@ class NML_Subscriber {
 
 			$updated = true;
 
-			// Transition subscriber status.
+			/**
+			 * Transition subscriber status.
+			 *
+			 * @param string         $new_status    New status.
+			 * @param string         $old_status    Old status.
+			 * @param int            $subscriber_id ID of the subscriber.
+			 * @param NML_Subscriber $subscriber    Subscriber object.
+			 *
+			 * @since 1.0
+			 */
 			if ( array_key_exists( 'status', $data ) && $data['status'] != $this->status ) {
 				do_action( 'nml_subscriber_transition_status', $this->status, $data['status'], $this->ID, $this );
 			}
@@ -394,6 +415,27 @@ class NML_Subscriber {
 	}
 
 	/**
+	 * Set signup date
+	 *
+	 * @param string $date Desired signup date, in any normal date format.
+	 *
+	 * @access public
+	 * @since  1.0
+	 * @return bool
+	 */
+	public function set_signup_date( $date ) {
+
+		$data = array(
+			'signup_date' => gmdate( 'Y-m-d H:i:s', strtotime( $date ) )
+		);
+
+		$updated = $this->update( $data );
+
+		return $updated ? true : false;
+
+	}
+
+	/**
 	 * Get an array of lists the subscriber is added to.
 	 *
 	 * @access public
@@ -403,7 +445,7 @@ class NML_Subscriber {
 	public function get_lists() {
 
 		if ( ! isset( $this->lists ) ) {
-			$this->lists = nml_get_subscriber_lists( $this->ID, 'list' );
+			$this->lists = nml_get_object_lists( 'subscriber', $this->ID, 'list' );
 
 			if ( ! is_array( $this->lists ) ) {
 				$this->lists = array();
@@ -452,7 +494,7 @@ class NML_Subscriber {
 	 */
 	public function add_to_list( $list_id ) {
 		if ( ! $this->is_on_list( $list_id ) ) {
-			nml_set_subscriber_lists( $this->ID, $list_id, 'list', true );
+			nml_set_object_lists( 'subscriber', $this->ID, $list_id, 'list', true );
 		}
 	}
 
@@ -466,7 +508,7 @@ class NML_Subscriber {
 	public function get_tags() {
 
 		if ( ! isset( $this->tags ) ) {
-			$this->tags = nml_get_subscriber_lists( $this->ID, 'tag' );
+			$this->tags = nml_get_object_lists( 'subscriber', $this->ID, 'tag' );
 
 			if ( ! is_array( $this->tags ) ) {
 				$this->tags = array();
@@ -516,7 +558,7 @@ class NML_Subscriber {
 	public function tag( $tag_id_or_name ) {
 
 		if ( ! $this->has_tag( $tag_id_or_name ) ) {
-			nml_set_subscriber_lists( $this->ID, $tag_id_or_name, 'tag', true );
+			nml_set_object_lists( 'subscriber', $this->ID, $tag_id_or_name, 'tag', true );
 		}
 
 	}

@@ -127,7 +127,7 @@ class NML_DB_Subscribers extends NML_DB {
 	 * NOTE: This should not be called directly as it does not make necessary changes to
 	 * the subscriber meta, activity, or lists. Use nml_subscriber_delete() instead.
 	 *
-	 * @see nml_subscriber_delete()
+	 * @see    nml_subscriber_delete()
 	 *
 	 * @param int|string $id_or_email Subscriber's ID number or email address.
 	 *
@@ -285,13 +285,15 @@ class NML_DB_Subscribers extends NML_DB {
 			'offset'     => 0,
 			'orderby'    => 'ID',
 			'order'      => 'DESC',
+			'fields'     => 'all',
 			'ID'         => null,
 			'email'      => null,
 			'first_name' => null,
 			'last_name'  => null,
 			'status'     => null,
 			'referrer'   => null,
-			'ip'         => null
+			'ip'         => null,
+			'list'       => null
 		);
 
 		$args = wp_parse_args( $args, $defaults );
@@ -376,7 +378,28 @@ class NML_DB_Subscribers extends NML_DB {
 			$where .= $wpdb->prepare( " AND `ip` = %s ", $args['ip'] );
 		}
 
+		// By list(s)
+		if ( ! empty( $args['list'] ) ) {
+
+			if ( is_array( $args['list'] ) ) {
+				$list_ids = implode( ',', array_map( 'intval', $args['list'] ) );
+			} else {
+				$list_ids = intval( $args['list'] );
+			}
+
+			$relationship_table = naked_mailing_list()->list_relationships->table_name;
+
+			$join .= " RIGHT JOIN $relationship_table as r on s.ID = r.subscriber_id AND r.list_id IN( {$list_ids} )";
+
+		}
+
 		$args['orderby'] = ! array_key_exists( $args['orderby'], $this->get_columns() ) ? 'ID' : $args['orderby'];
+
+		// Sort out the selection fields.
+		$select_this = '*';
+		if ( 'all' != $args['fields'] && array_key_exists( $args['fields'], $this->get_columns() ) ) {
+			$select_this = esc_sql( $args['fields'] );
+		}
 
 		$cache_key = md5( 'nml_subscribers_' . serialize( $args ) );
 
@@ -386,8 +409,12 @@ class NML_DB_Subscribers extends NML_DB {
 		$args['order']   = esc_sql( $args['order'] );
 
 		if ( false === $subscribers ) {
-			$query       = $wpdb->prepare( "SELECT * FROM  $this->table_name $join $where GROUP BY $this->primary_key ORDER BY {$args['orderby']} {$args['order']} LIMIT %d,%d;", absint( $args['offset'] ), absint( $args['number'] ) );
-			$subscribers = $wpdb->get_results( $query );
+			$query = $wpdb->prepare( "SELECT $select_this FROM  $this->table_name s $join $where GROUP BY $this->primary_key ORDER BY {$args['orderby']} {$args['order']} LIMIT %d,%d;", absint( $args['offset'] ), absint( $args['number'] ) );
+			if ( 'all' == $args['fields'] ) {
+				$subscribers = $wpdb->get_results( $query );
+			} else {
+				$subscribers = $wpdb->get_col( $query );
+			}
 			wp_cache_set( $cache_key, $subscribers, 'subscribers', 3600 );
 		}
 
@@ -417,7 +444,8 @@ class NML_DB_Subscribers extends NML_DB {
 			'last_name'  => null,
 			'status'     => null,
 			'referrer'   => null,
-			'ip'         => false
+			'ip'         => null,
+			'list'       => null
 		);
 
 		$args = wp_parse_args( $args, $defaults );
@@ -500,6 +528,21 @@ class NML_DB_Subscribers extends NML_DB {
 		// By IP
 		if ( ! empty( $args['ip'] ) ) {
 			$where .= $wpdb->prepare( " AND `ip` = %s ", $args['ip'] );
+		}
+
+		// By list(s)
+		if ( ! empty( $args['list'] ) ) {
+
+			if ( is_array( $args['list'] ) ) {
+				$list_ids = implode( ',', array_map( 'intval', $args['list'] ) );
+			} else {
+				$list_ids = intval( $args['list'] );
+			}
+
+			$relationship_table = naked_mailing_list()->list_relationships->table_name;
+
+			$join .= " RIGHT JOIN $relationship_table as r on s.ID = r.subscriber_id AND r.list_id IN( {$list_ids} )";
+
 		}
 
 		$cache_key = md5( 'nml_subscribers_count_' . serialize( $args ) );

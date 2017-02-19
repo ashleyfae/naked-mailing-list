@@ -133,3 +133,54 @@ function nml_newsletter_field_reply_to_address( $newsletter ) {
 }
 
 add_action( 'nml_edit_newsletter_headers_fields', 'nml_newsletter_field_reply_to_address' );
+
+/**
+ * List of template tags
+ *
+ * @param NML_Newsletter $newsletter
+ *
+ * @since 1.0
+ * @return void
+ */
+function nml_newsletter_template_tags_list( $newsletter ) {
+	?>
+	<p><?php _e( 'The following template tags may be used:', 'naked-mailing-list' ); ?></p>
+	<ul>
+		<?php if ( 'post_notification' == $newsletter->type || ( 'add' == $_GET['view'] && isset( $_GET['type'] ) && 'post_notification' == $_GET['type'] ) ) : ?>
+			<li>
+				<em>%latest_post%</em> - <?php _e( 'Display full contents of latest post.', 'naked-mailing-list' ); ?>
+			</li>
+		<?php endif; ?>
+	</ul>
+	<?php
+}
+
+add_action( 'nml_edit_newsletter_template_tags_box', 'nml_newsletter_template_tags_list' );
+
+/**
+ * Save Newsletter
+ *
+ * @since 1.0
+ * @return void
+ */
+function nml_save_newsletter() {
+
+	$nonce = isset( $_POST['nml_save_newsletter_nonce'] ) ? $_POST['nml_save_newsletter_nonce'] : false;
+
+	if ( ! $nonce ) {
+		return;
+	}
+
+	if ( ! wp_verify_nonce( $nonce, 'nml_save_newsletter' ) ) {
+		wp_die( __( 'Failed security check.', 'naked-mailing-list' ) );
+	}
+
+	if ( ! current_user_can( 'edit_posts' ) ) { // @todo maybe change
+		wp_die( __( 'You don\'t have permission to edit newsletters.', 'naked-mailing-list' ) );
+	}
+
+	$newsletter_id = $_POST['newsletter_id'];
+
+}
+
+add_action( 'nml_save_newsletter', 'nml_save_newsletter' );
