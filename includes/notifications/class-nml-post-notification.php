@@ -206,7 +206,7 @@ class NML_Post_Notification {
 	 * @return bool
 	 */
 	public function is_valid_post_type() {
-		return ( 'any' == $this->post_type || $this->post->post_type == $this->post_type );
+		return ( 'all' == $this->post_type || $this->post->post_type == $this->post_type );
 	}
 
 	/**

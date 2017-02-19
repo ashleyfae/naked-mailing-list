@@ -27,4 +27,8 @@
 #nml-subscribers-page-wrapper #major-publishing-actions {
   overflow: hidden; }
 
+/* Post Notifications */
+#nml-notifications-page-wrapper #titlediv {
+  margin-bottom: 1em; }
+
 /*# sourceMappingURL=admin.css.map */

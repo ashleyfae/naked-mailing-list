@@ -43,6 +43,8 @@ function nml_get_newsletters( $args = array() ) {
 }
 
 /**
+ * Insert or update newsletter
+ *
  * @param array $newsletter_data Array of newsletter data. Arguments include:
  *                               `ID` - To update an existing newsletter (optional).
  *                               `status` - Newsletter status. @see nml_get_newsletter_statuses()

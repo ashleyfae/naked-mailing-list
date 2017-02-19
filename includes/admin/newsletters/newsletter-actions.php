@@ -181,6 +181,51 @@ function nml_save_newsletter() {
 
 	$newsletter_id = $_POST['newsletter_id'];
 
+	$data = array(
+		'ID' => $newsletter_id
+	);
+
+	$fields = array(
+		// @todo more
+		'subject'          => 'nml_newsletter_subject',
+		'body'             => 'nml_newsletter_body',
+		'from_name'        => 'nml_newsletter_from_name',
+		'from_address'     => 'nml_newsletter_from_address',
+		'reply_to_name'    => 'nml_newsletter_reply_to_name',
+		'reply_to_address' => 'nml_newsletter_reply_to_address'
+	);
+
+	foreach ( $fields as $data_field => $post_name ) {
+		if ( isset( $_POST[ $post_name ] ) ) {
+			$data[ $data_field ] = $_POST[ $post_name ];
+		}
+	}
+
+	$newsletter = new NML_Newsletter( $newsletter_id );
+	$new_id     = false;
+
+	if ( ! empty( $newsletter_id ) ) {
+		$result = $newsletter->update( $data );
+
+		if ( $result ) {
+			$new_id = $newsletter->ID;
+		}
+	} else {
+		$new_id = $newsletter->create( $data );
+	}
+
+	if ( ! $new_id || is_wp_error( $new_id ) ) {
+		wp_die( __( 'An error occurred while inserting the newsletter.', 'naked-mailing-list' ) );
+	}
+
+	$edit_url = add_query_arg( array(
+		'nml-message' => 'newsletter-updated'
+	), nml_get_admin_page_edit_newsletter( absint( $new_id ) ) );
+
+	wp_safe_redirect( $edit_url );
+
+	exit;
+
 }
 
 add_action( 'nml_save_newsletter', 'nml_save_newsletter' );
