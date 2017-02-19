@@ -55,6 +55,7 @@ function nml_run_install() {
 	@naked_mailing_list()->list_relationships->create_table();
 	@naked_mailing_list()->newsletters->create_table();
 	@naked_mailing_list()->newsletter_list_relationships->create_table();
+	@naked_mailing_list()->notifications->create_table();
 	@naked_mailing_list()->queue->create_table();
 }
 

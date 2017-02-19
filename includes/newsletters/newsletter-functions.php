@@ -14,21 +14,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Get array of available newsletter types
- *
- * @since 1.0
- * @return array
- */
-function nml_get_newsletter_types() {
-	$types = array(
-		'newsletter'        => esc_html__( 'Newsletter', 'naked-mailing-list' ),
-		'post_notification' => esc_html__( 'Post Notification', 'naked-mailing-list' )
-	);
-
-	return apply_filters( 'nml_newsletter_types', $types );
-}
-
-/**
  * Get array of available newsletter statuses
  *
  * @since 1.0
@@ -46,9 +31,20 @@ function nml_get_newsletter_statuses() {
 }
 
 /**
+ * Get newsletters
+ *
+ * @param array $args
+ *
+ * @since 1.0
+ * @return array|false
+ */
+function nml_get_newsletters( $args = array() ) {
+	return naked_mailing_list()->newsletters->get_newsletters( $args );
+}
+
+/**
  * @param array $newsletter_data Array of newsletter data. Arguments include:
  *                               `ID` - To update an existing newsletter (optional).
- *                               `type` - Newsletter type. @see nml_get_newsletter_types()
  *                               `status` - Newsletter status. @see nml_get_newsletter_statuses()
  *                               `subject` - Newsletter subject.
  *                               `body` - Content of the newsletter.
@@ -60,6 +56,8 @@ function nml_get_newsletter_statuses() {
  *                               `updated_date` - Date the newsletter was last updated (optional). Omit to use current
  *                               time.
  *                               `sent_date` - Date the newsletter was sent (optional).
+ *                               `lists` - Array of list IDs.
+ *                               `tags` - Array of tag IDs.
  *
  * @since 1.0
  * @return int|WP_Error ID of the newsletter inserted or updated, or WP_Error on failure.
@@ -68,7 +66,6 @@ function nml_insert_newsletter( $newsletter_data ) {
 
 	$newsletter_db_data = array();
 
-	$newsletter_db_data['type']             = ( array_key_exists( 'type', $newsletter_data ) && array_key_exists( $newsletter_data['type'], nml_get_newsletter_types() ) ) ? sanitize_text_field( $newsletter_data['type'] ) : 'newsletter';
 	$newsletter_db_data['status']           = ( array_key_exists( 'status', $newsletter_data ) && array_key_exists( $newsletter_data['status'], nml_get_newsletter_statuses() ) ) ? sanitize_text_field( $newsletter_data['status'] ) : 'draft';
 	$newsletter_db_data['subject']          = array_key_exists( 'subject', $newsletter_data ) ? sanitize_text_field( $newsletter_data['subject'] ) : '';
 	$newsletter_db_data['body']             = array_key_exists( 'body', $newsletter_data ) ? sanitize_text_field( $newsletter_data['body'] ) : '';
@@ -100,7 +97,9 @@ function nml_insert_newsletter( $newsletter_data ) {
 	} else {
 
 		// Insert new newsletter.
-		$newsletter_id = naked_mailing_list()->newsletters->add( $newsletter_db_data );
+		$newsletter = new NML_Newsletter();
+		$newsletter->create( $newsletter_db_data );
+		$newsletter_id = $newsletter->ID;
 
 	}
 

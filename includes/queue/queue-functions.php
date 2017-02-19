@@ -66,20 +66,24 @@ function nml_process_queue_entry( $entry ) {
 	) );
 
 	// @todo send
-	$email = nml_get_email_provider();
-	$email->set_newsletter( $newsletter );
-	$email->set_recipients( $subscribers );
-	$result = $email->send();
+	if ( ! empty( $subscribers ) ) {
+		$email = nml_get_email_provider();
+		$email->set_newsletter( $newsletter );
+		$email->set_recipients( $subscribers );
+		$result = $email->send();
 
-	if ( ! $result ) {
-		// @todo log error
+		if ( ! $result ) {
+			// @todo log error
 
-		// Delay this log entry by 5 minutes.
-		naked_mailing_list()->queue->update( $entry->ID, array(
-			'date_to_process' => gmdate( 'Y-m-d H:i:s', strtotime( '5 minutes from now' ) )
-		) );
+			// Delay this log entry by 5 minutes.
+			naked_mailing_list()->queue->update( $entry->ID, array(
+				'date_to_process' => gmdate( 'Y-m-d H:i:s', strtotime( '5 minutes from now' ) )
+			) );
 
-		return false;
+			return false;
+		}
+	} else {
+		// @todo log no subscribers
 	}
 
 	// Delete this queue entry.

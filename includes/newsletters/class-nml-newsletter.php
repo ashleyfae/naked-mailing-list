@@ -342,6 +342,28 @@ class NML_Newsletter {
 	}
 
 	/**
+	 * Get subject
+	 *
+	 * @access public
+	 * @since  1.0
+	 * @return string
+	 */
+	public function get_subject() {
+		return apply_filters( 'nml_newsletter_get_subject', $this->subject, $this->ID, $this );
+	}
+
+	/**
+	 * Get message body
+	 *
+	 * @access public
+	 * @since  1.0
+	 * @return string
+	 */
+	public function get_body() {
+		return apply_filters( 'nml_newsletter_get_body', $this->body, $this->ID, $this );
+	}
+
+	/**
 	 * Get an array of lists associated with this newsletter.
 	 *
 	 * @param string $type Which to retrive: all, tags, lists.

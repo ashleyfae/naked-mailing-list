@@ -276,7 +276,7 @@ class NML_Email {
 		}
 
 		if ( empty( $this->message ) ) {
-			$this->message = $this->newsletter->get_message();
+			$this->message = $this->newsletter->get_body();
 		}
 
 		// If we still don't have a subject or message, bail.

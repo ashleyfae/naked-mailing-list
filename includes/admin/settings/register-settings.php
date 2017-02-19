@@ -224,12 +224,28 @@ function nml_get_registered_settings() {
 		/* Sending (providers added via filter) */
 		'sending' => apply_filters( 'nml_settings_sending', array(
 			'main' => array(
+				'test_mode'      => array(
+					'id'   => 'test_mode',
+					'name' => esc_html__( 'Test Mode', 'naked-mailing-list' ),
+					'type' => 'checkbox',
+					'std'  => false
+				),
 				'provider'       => array(
 					'id'      => 'provider',
 					'name'    => esc_html__( 'Email Provider', 'naked-mailing-list' ),
 					'type'    => 'select',
 					'std'     => 'mailgun',
 					'options' => nml_get_available_email_providers()
+				),
+				'per_batch'      => array(
+					'id'      => 'per_batch',
+					'name'    => esc_html__( 'Emails Per Batch', 'naked-mailing-list' ),
+					'desc'    => __( 'Number of emails to send per batch.', 'naked-mailing-list' ),
+					'type'    => 'text',
+					'std'     => 500,
+					'options' => array(
+						'type' => 'number'
+					)
 				),
 				'from_name'      => array(
 					'id'   => 'from_name',

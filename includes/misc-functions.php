@@ -243,5 +243,5 @@ function nml_full_date_time_format() {
  * @return bool
  */
 function nml_test_mode() {
-	return true;
+	return nml_get_option( 'test_mode' );
 }

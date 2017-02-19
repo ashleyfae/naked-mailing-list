@@ -210,7 +210,7 @@ function nml_get_default_subscriber_status() {
  * @return int
  */
 function nml_number_subscribers_per_batch() {
-	$number = 1000;
+	$number = nml_get_option( 'per_batch', 500 );
 
 	return apply_filters( 'nml_number_subscribers_per_batch', $number );
 }

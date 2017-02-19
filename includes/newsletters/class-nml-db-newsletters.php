@@ -50,7 +50,6 @@ class NML_DB_Newsletters extends NML_DB {
 	public function get_columns() {
 		return array(
 			'ID'               => '%d',
-			'type'             => '%s',
 			'status'           => '%s',
 			'subject'          => '%s',
 			'body'             => '%s',
@@ -74,7 +73,6 @@ class NML_DB_Newsletters extends NML_DB {
 	public function get_column_defaults() {
 		return array(
 			'status'           => 'draft', // draft, scheduled, sending, sent
-			'type'             => 'newsletter', // newsletter, post_notification
 			'subject'          => '',
 			'body'             => '',
 			'from_address'     => '',
@@ -199,7 +197,7 @@ class NML_DB_Newsletters extends NML_DB {
 	/**
 	 * Retrieve a single newsletter from the database
 	 *
-	 * @param string $field The field to get the subscriber by (ID or subject).
+	 * @param string $field The field to get the newsletter by (ID or subject).
 	 * @param int    $value The value of the field to search.
 	 *
 	 * @access public
@@ -272,7 +270,6 @@ class NML_DB_Newsletters extends NML_DB {
 			'orderby'      => 'ID',
 			'order'        => 'DESC',
 			'ID'           => null,
-			'type'         => null,
 			'status'       => null,
 			'subject'      => null,
 			'created_date' => null,
@@ -299,11 +296,6 @@ class NML_DB_Newsletters extends NML_DB {
 
 			$where .= " AND `ID` IN( {$ids} ) ";
 
-		}
-
-		// By type
-		if ( ! empty( $args['type'] ) ) {
-			$where .= $wpdb->prepare( " AND `type` = %s ", $args['type'] );
 		}
 
 		// By status
@@ -367,7 +359,6 @@ class NML_DB_Newsletters extends NML_DB {
 
 		$defaults = array(
 			'ID'           => null,
-			'type'         => null,
 			'status'       => null,
 			'subject'      => null,
 			'created_date' => null,
@@ -390,11 +381,6 @@ class NML_DB_Newsletters extends NML_DB {
 
 			$where .= " AND `ID` IN( {$ids} ) ";
 
-		}
-
-		// By type
-		if ( ! empty( $args['type'] ) ) {
-			$where .= $wpdb->prepare( " AND `type` = %s ", $args['type'] );
 		}
 
 		// By status
@@ -451,7 +437,6 @@ class NML_DB_Newsletters extends NML_DB {
 
 		$sql = "CREATE TABLE " . $this->table_name . " (
 		ID bigint(20) NOT NULL AUTO_INCREMENT,
-		type varchar(50) NOT NULL,
 		status varchar(50) NOT NULL,
 		subject varchar(250) NOT NULL,
 		body longtext NOT NULL,
