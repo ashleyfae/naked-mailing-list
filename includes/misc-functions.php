@@ -91,72 +91,72 @@ function nml_get_admin_page_delete_newsletter( $newsletter_id ) {
  */
 
 /**
- * Get admin page: notifications list
+ * Get admin page: lists table
  *
  * @since 1.0
  * @return string
  */
-function nml_get_admin_page_notifications() {
-	$url = admin_url( 'admin.php?page=nml-notifications' );
+function nml_get_admin_page_lists() {
+	$url = admin_url( 'admin.php?page=nml-lists' );
 
-	return apply_filters( 'nml_admin_page_notifications', $url );
+	return apply_filters( 'nml_admin_page_lists', $url );
 }
 
 /**
- * Get admin page: add notification
+ * Get admin page: add list
  *
  * @since 1.0
  * @return string
  */
-function nml_get_admin_page_add_notification() {
-	$notification_page = nml_get_admin_page_notifications();
+function nml_get_admin_page_add_list() {
+	$list_page = nml_get_admin_page_lists();
 
-	$add_notification_page = add_query_arg( array(
+	$add_list_page = add_query_arg( array(
 		'view' => 'add'
-	), $notification_page );
+	), $list_page );
 
-	return apply_filters( 'nml_admin_page_add_notification', $add_notification_page );
+	return apply_filters( 'nml_admin_page_add_list', $add_list_page );
 }
 
 /**
- * Get admin page: edit notification
+ * Get admin page: edit list
  *
- * @param int $notification_id ID of the notification to edit.
+ * @param int $list_id ID of the list to edit.
  *
  * @since 1.0
  * @return string
  */
-function nml_get_admin_page_edit_notification( $notification_id ) {
-	$notification_page = nml_get_admin_page_notifications();
+function nml_get_admin_page_edit_list( $list_id ) {
+	$list_page = nml_get_admin_page_lists();
 
-	$edit_notification_page = add_query_arg( array(
+	$edit_list_page = add_query_arg( array(
 		'view' => 'edit',
-		'ID'   => absint( $notification_id )
-	), $notification_page );
+		'ID'   => absint( $list_id )
+	), $list_page );
 
-	return apply_filters( 'nml_admin_page_edit_notification', $edit_notification_page );
+	return apply_filters( 'nml_admin_page_edit_list', $edit_list_page );
 }
 
 /**
- * Get admin page: delete notification
+ * Get admin page: delete list
  *
  * @todo  actually make this work
  *
- * @param int $notification_id ID of the notification to delete.
+ * @param int $list_id ID of the list to delete.
  *
  * @since 1.0
  * @return string
  */
-function nml_get_admin_page_delete_notification( $notification_id ) {
-	$notification_page = nml_get_admin_page_notifications();
+function nml_get_admin_page_delete_list( $list_id ) {
+	$list_page = nml_get_admin_page_lists();
 
-	$delete_notification_page = add_query_arg( array(
-		'nml_action' => urlencode( 'delete_notification' ),
-		'ID'         => absint( $notification_id ),
-		'nonce'      => wp_create_nonce( 'nml_deletenotification' )
-	), $notification_page );
+	$delete_list_page = add_query_arg( array(
+		'nml_action' => urlencode( 'delete_list' ),
+		'ID'         => absint( $list_id ),
+		'nonce'      => wp_create_nonce( 'nml_delete_list' )
+	), $list_page );
 
-	return apply_filters( 'nml_admin_page_delete_newsletter', $delete_notification_page );
+	return apply_filters( 'nml_admin_page_delete_list', $delete_list_page );
 }
 
 /*
