@@ -314,7 +314,7 @@ class NML_DB_Subscribers extends NML_DB {
 				$ids = intval( $args['ID'] );
 			}
 
-			$where .= " AND `ID` IN( {$ids} ) ";
+			$where .= " AND s.ID IN( {$ids} ) ";
 
 		}
 
@@ -405,11 +405,15 @@ class NML_DB_Subscribers extends NML_DB {
 
 		$subscribers = wp_cache_get( $cache_key, 'subscribers' );
 
+		if ( 'ID' == $args['orderby'] ) {
+			$args['orderby'] = 's.ID';
+		}
+
 		$args['orderby'] = esc_sql( $args['orderby'] );
 		$args['order']   = esc_sql( $args['order'] );
 
 		if ( false === $subscribers ) {
-			$query = $wpdb->prepare( "SELECT $select_this FROM  $this->table_name s $join $where GROUP BY $this->primary_key ORDER BY {$args['orderby']} {$args['order']} LIMIT %d,%d;", absint( $args['offset'] ), absint( $args['number'] ) );
+			$query = $wpdb->prepare( "SELECT $select_this FROM  $this->table_name s $join $where GROUP BY s.ID ORDER BY {$args['orderby']} {$args['order']} LIMIT %d,%d;", absint( $args['offset'] ), absint( $args['number'] ) );
 			if ( 'all' == $args['fields'] ) {
 				$subscribers = $wpdb->get_results( $query );
 			} else {

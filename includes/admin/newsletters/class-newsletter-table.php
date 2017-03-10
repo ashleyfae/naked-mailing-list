@@ -152,7 +152,8 @@ class NML_Newsletter_Table extends WP_List_Table {
 	 */
 	public function column_default( $item, $column_name ) {
 
-		$value = '';
+		$newsletter = new NML_Newsletter( $item->ID );
+		$value      = '';
 
 		switch ( $column_name ) {
 
@@ -161,7 +162,19 @@ class NML_Newsletter_Table extends WP_List_Table {
 				break;
 
 			case 'lists' :
-				$value = ''; // @todo
+				$lists = $newsletter->get_lists( 'list' );
+
+				if ( is_array( $lists ) && ! empty( $lists ) ) {
+					$list_names = array();
+
+					foreach ( $lists as $list ) {
+						$list_names[] = '<a href="' . esc_url( add_query_arg( array( 'list' => absint( $list->ID ) ) ) ) . '">' . esc_html( $list->name ) . '</a>'; // @todo make link work
+					}
+
+					$value = implode( ', ', $list_names );
+				} else {
+					$value = '&ndash';
+				}
 				break;
 
 			case 'updated_date' :

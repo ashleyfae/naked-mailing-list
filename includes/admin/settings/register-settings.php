@@ -214,7 +214,7 @@ function nml_get_registered_settings() {
 					'desc'    => __( 'Email subscribers on this list when a new post is published.', 'naked-mailing-list' ),
 					'type'    => 'select',
 					'std'     => '',
-					'options' => array( '' => esc_html__( 'Disabled', 'naked-mailing-list' ) ) + nml_get_lists()
+					'options' => array( '' => esc_html__( 'Disabled', 'naked-mailing-list' ) ) + nml_get_lists_array()
 				)
 			)
 		) ),

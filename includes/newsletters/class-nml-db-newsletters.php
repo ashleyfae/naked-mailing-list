@@ -273,7 +273,8 @@ class NML_DB_Newsletters extends NML_DB {
 			'status'       => null,
 			'subject'      => null,
 			'created_date' => null,
-			'updated_date' => null
+			'updated_date' => null,
+			'list'         => null
 		);
 
 		$args = wp_parse_args( $args, $defaults );

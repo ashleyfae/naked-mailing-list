@@ -34,6 +34,31 @@ function nml_get_lists( $args = array() ) {
 }
 
 /**
+ * Get lists array
+ *
+ * Returns ID => name key/value pairs.
+ *
+ * @uses  nml_get_lists()
+ *
+ * @param array $args
+ *
+ * @since 1.0
+ * @return array
+ */
+function nml_get_lists_array( $args = array() ) {
+	$lists = nml_get_lists( $args );
+	$final = array();
+
+	if ( $lists && is_array( $lists ) ) {
+		foreach ( $lists as $list ) {
+			$final[ $list->ID ] = $list->name;
+		}
+	}
+
+	return $final;
+}
+
+/**
  * Get tags
  *
  * @param array $args Arguments to override the defaults.
@@ -134,16 +159,16 @@ function nml_get_object_lists( $object_type, $object_id, $type = false, $args = 
  * Relates a subscriber or newsletter to a list and list type. Creates the
  * list if it doesn't already exisl.
  *
- * @param string           $type      Either 'subscriber' or 'newsletter'.
- * @param int              $object_id ID of the subscriber or newsletter to related list(s) to.
- * @param array|int|string $lists     Single list ID or array of IDs.
- * @param string           $type      List type (`list` or `tag`).
- * @param bool             $append    If false, will delete the difference of lists.
+ * @param string           $object_type Either 'subscriber' or 'newsletter'.
+ * @param int              $object_id   ID of the subscriber or newsletter to related list(s) to.
+ * @param array|int|string $lists       Single list ID or array of IDs.
+ * @param string           $type        List type (`list` or `tag`).
+ * @param bool             $append      If false, will delete the difference of lists.
  *
  * @since 1.0
  * @return array|WP_Error List IDs of the affected terms.
  */
-function nml_set_object_lists( $type, $object_id, $lists, $type, $append = false ) {
+function nml_set_object_lists( $object_type, $object_id, $lists, $type, $append = false ) {
 
 	if ( ! is_numeric( $object_id ) || ! $object_id > 0 ) {
 		return new WP_Error( 'invalid-object', __( 'Invalid subscriber or newsletter ID.', 'naked-mailing-list' ) );
@@ -155,7 +180,7 @@ function nml_set_object_lists( $type, $object_id, $lists, $type, $append = false
 
 	// Get existing lists.
 	if ( ! $append ) {
-		$old_list_ids = nml_get_object_lists( $type, $object_id, $type, array( 'fields' => 'ids' ) );
+		$old_list_ids = nml_get_object_lists( $object_type, $object_id, $type, array( 'fields' => 'ids' ) );
 	} else {
 		$old_list_ids = array();
 	}
@@ -182,7 +207,7 @@ function nml_set_object_lists( $type, $object_id, $lists, $type, $append = false
 			}
 
 			// Update the count.
-			if ( 'subscriber' == $type ) {
+			if ( 'subscriber' == $object_type ) {
 				nml_update_list_count( $list_id );
 			}
 
@@ -198,7 +223,7 @@ function nml_set_object_lists( $type, $object_id, $lists, $type, $append = false
 			if ( $existing_list ) {
 				$list_id = $existing_list->ID;
 
-				if ( 'subscriber' == $type ) {
+				if ( 'subscriber' == $object_type ) {
 					nml_update_list_count( $list_id );
 				}
 			} else {
@@ -206,7 +231,7 @@ function nml_set_object_lists( $type, $object_id, $lists, $type, $append = false
 				$list_id = naked_mailing_list()->lists->add( array(
 					'name'  => sanitize_text_field( $list ),
 					'type'  => sanitize_text_field( $type ),
-					'count' => ( 'subscriber' == $type ) ? 1 : 0
+					'count' => ( 'subscriber' == $object_type ) ? 1 : 0
 				) );
 			}
 
@@ -220,12 +245,12 @@ function nml_set_object_lists( $type, $object_id, $lists, $type, $append = false
 		}
 
 		// If the list relationship already exists - let's move on.
-		if ( nml_relationship_exists( $type, $object_id, $list_id ) ) {
+		if ( nml_relationship_exists( $object_type, $object_id, $list_id ) ) {
 			continue;
 		}
 
 		// Otherwise, create the relationship.
-		if ( 'subscriber' == $type ) {
+		if ( 'subscriber' == $object_type ) {
 			naked_mailing_list()->list_relationships->add( array(
 				'list_id'       => absint( $list_id ),
 				'subscriber_id' => absint( $object_id )
@@ -247,7 +272,7 @@ function nml_set_object_lists( $type, $object_id, $lists, $type, $append = false
 		if ( $delete_list_relationships ) {
 			foreach ( $delete_list_relationships as $list_id ) {
 				// Delete the relationship.
-				if ( 'subscriber' == $type ) {
+				if ( 'subscriber' == $object_type ) {
 					$relationship = nml_get_relationship( array(
 						'subscriber_id' => $object_id,
 						'list_id'       => $list_id
@@ -260,7 +285,7 @@ function nml_set_object_lists( $type, $object_id, $lists, $type, $append = false
 				}
 
 				if ( $relationship ) {
-					if ( 'subscriber' == $type ) {
+					if ( 'subscriber' == $object_type ) {
 						naked_mailing_list()->list_relationships->delete( absint( $relationship->ID ) ); // @todo do this without a foreach
 
 						// Reduce the count.
@@ -283,19 +308,19 @@ function nml_set_object_lists( $type, $object_id, $lists, $type, $append = false
  *
  * Checks whether a relationship exists between a subscriber or newsletter ID and a list ID.
  *
- * @param string $type      Either 'subscriber' or 'newsletter'.
- * @param int    $object_id ID of the newsletter or subscriber.
- * @param int    $list_id   ID of the list to check.
+ * @param string $object_type Either 'subscriber' or 'newsletter'.
+ * @param int    $object_id   ID of the newsletter or subscriber.
+ * @param int    $list_id     ID of the list to check.
  *
  * @since 1.0
  * @return bool
  */
-function nml_relationship_exists( $type, $object_id, $list_id ) {
+function nml_relationship_exists( $object_type, $object_id, $list_id ) {
 	if ( ! is_numeric( $object_id ) || ! is_numeric( $object_id ) ) {
 		return false;
 	}
 
-	if ( 'subscriber' == $type ) {
+	if ( 'subscriber' == $object_type ) {
 		$result = naked_mailing_list()->list_relationships->get_relationships( array(
 			'list_id'       => absint( $list_id ),
 			'subscriber_id' => absint( $object_id )
@@ -315,20 +340,20 @@ function nml_relationship_exists( $type, $object_id, $list_id ) {
  *
  * Always returns one result.
  *
- * @param array  $args Arguments
- * @param string $type Either 'subscriber' or 'newsletter'.
+ * @param array  $args        Arguments
+ * @param string $object_type Either 'subscriber' or 'newsletter'.
  *
  * @since 1.0
  * @return object|bool Relationship object or false if none is found.
  */
-function nml_get_relationship( $args = array(), $type = 'subscriber' ) {
+function nml_get_relationship( $args = array(), $object_type = 'subscriber' ) {
 	$defaults = array(
 		'number' => 1
 	);
 
 	$args = wp_parse_args( $args, $defaults );
 
-	if ( 'subscriber' == $type ) {
+	if ( 'subscriber' == $object_type ) {
 		$result = naked_mailing_list()->list_relationships->get_relationships( $args );
 	} else {
 		$result = naked_mailing_list()->newsletter_list_relationships->get_relationships( $args );

@@ -185,7 +185,7 @@ function nml_newsletters_edit_view( $newsletter ) {
 											<?php endif; ?>
 										</div>
 										<div id="publishing-action">
-											<input type="submit" id="nml-save-newsletter" name="save_newsletter" class="button button-primary button-large" value="<?php esc_attr_e( 'Send Now', 'naked-mailing-list' ); ?>">
+											<input type="submit" id="nml-save-newsletter" name="send_newsletter" class="button button-primary button-large" value="<?php esc_attr_e( 'Send Now', 'naked-mailing-list' ); ?>">
 										</div>
 									</div>
 								</div>
