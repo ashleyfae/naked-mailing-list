@@ -207,7 +207,16 @@ function nml_get_registered_settings() {
 	$nml_settings = array(
 		/* General Settings */
 		'general' => apply_filters( 'nml_settings_general', array(
-			'main' => array()
+			'main' => array(
+				'post_notifications' => array(
+					'id'      => 'post_notifications',
+					'name'    => esc_html__( 'Post Notifications', 'naked-mailing-list' ),
+					'desc'    => __( 'Email subscribers on this list when a new post is published.', 'naked-mailing-list' ),
+					'type'    => 'select',
+					'std'     => '',
+					'options' => array( '' => esc_html__( 'Disabled', 'naked-mailing-list' ) ) + nml_get_lists()
+				)
+			)
 		) ),
 		/* Emails */
 		'emails'  => apply_filters( 'nml_settings_emails', array(
@@ -224,12 +233,6 @@ function nml_get_registered_settings() {
 		/* Sending (providers added via filter) */
 		'sending' => apply_filters( 'nml_settings_sending', array(
 			'main' => array(
-				'test_mode'      => array(
-					'id'   => 'test_mode',
-					'name' => esc_html__( 'Test Mode', 'naked-mailing-list' ),
-					'type' => 'checkbox',
-					'std'  => false
-				),
 				'provider'       => array(
 					'id'      => 'provider',
 					'name'    => esc_html__( 'Email Provider', 'naked-mailing-list' ),

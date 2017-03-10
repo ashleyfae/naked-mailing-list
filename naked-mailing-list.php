@@ -90,12 +90,6 @@ if ( ! class_exists( 'Naked_Mailing_List' ) ) :
 		public $newsletter_list_relationships;
 
 		/**
-		 * @var NML_DB_Notifications
-		 * @since 1.0
-		 */
-		public $notifications;
-
-		/**
 		 * @var NML_DB_Queue
 		 * @since 1.0
 		 */
@@ -128,7 +122,6 @@ if ( ! class_exists( 'Naked_Mailing_List' ) ) :
 				self::$instance->list_relationships            = new NML_DB_List_Relationships();
 				self::$instance->newsletters                   = new NML_DB_Newsletters();
 				self::$instance->newsletter_list_relationships = new NML_DB_Newsletter_List_Relationships();
-				self::$instance->notifications                 = new NML_DB_Notifications();
 				self::$instance->queue                         = new NML_DB_Queue();
 			}
 
@@ -223,6 +216,8 @@ if ( ! class_exists( 'Naked_Mailing_List' ) ) :
 			require_once NML_PLUGIN_DIR . 'includes/newsletters/class-nml-db-newsletter-list-relationships.php';
 			require_once NML_PLUGIN_DIR . 'includes/newsletters/class-nml-newsletter.php';
 			require_once NML_PLUGIN_DIR . 'includes/newsletters/newsletter-functions.php';
+			require_once NML_PLUGIN_DIR . 'includes/notifications/class-nml-post-notification.php';
+			require_once NML_PLUGIN_DIR . 'includes/notifications/notification-functions.php';
 			require_once NML_PLUGIN_DIR . 'includes/queue/class-nml-db-queue.php';
 			require_once NML_PLUGIN_DIR . 'includes/queue/queue-functions.php';
 			require_once NML_PLUGIN_DIR . 'includes/subscribers/class-nml-db-subscribers.php';

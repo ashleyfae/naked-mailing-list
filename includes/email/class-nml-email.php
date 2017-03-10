@@ -24,15 +24,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class NML_Email {
 
 	/**
-	 * Whether or not test mode is enabled
-	 *
-	 * @var bool
-	 * @protected
-	 * @since 1.0
-	 */
-	protected $test_mode;
-
-	/**
 	 * Email subject
 	 *
 	 * @var string
@@ -107,7 +98,6 @@ class NML_Email {
 	public function __construct( $newsletter_id = 0 ) {
 		$this->newsletter = new NML_Newsletter( $newsletter_id );
 
-		$this->test_mode = nml_test_mode();
 		$this->init();
 	}
 
@@ -171,7 +161,7 @@ class NML_Email {
 	 */
 	public function get_template() {
 		if ( ! $this->template ) {
-			$this->template = nml_get_option('email_template', 'default');
+			$this->template = nml_get_option( 'email_template', 'default' );
 		}
 
 		return apply_filters( 'nml_email_template', $this->template );
