@@ -120,7 +120,10 @@ class NML_DB_Newsletters extends NML_DB {
 	/**
 	 * Delete a newsletter
 	 *
-	 * @todo   Maybe create a function or at least delete list relationships.
+	 * Do not call this directly. Use nml_delete_newsletter() instead, as that properly
+	 * deletes relationships as well.
+	 *
+	 * @see nml_delete_newsletter()
 	 *
 	 * @param int $id ID of the newsletter to delete.
 	 *
