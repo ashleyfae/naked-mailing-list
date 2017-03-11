@@ -225,6 +225,16 @@ class NML_Subscriber_Table extends WP_List_Table {
 			'delete' => '<a href="' . esc_url( nml_get_admin_page_delete_subscriber( $item->ID ) ) . '">' . __( 'Delete', 'naked-mailing-list' ) . '</a>'
 		);
 
+		if ( 'pending' == $item->status ) {
+			$actions['resend_confirmation'] = '<a href="' . esc_url( add_query_arg(
+					array(
+						'nml_action' => 'resend_confirmation',
+						'ID'         => $item->ID,
+						'nonce'      => wp_create_nonce( 'resend_subscriber_confirmation' )
+					),
+					nml_get_admin_page_subscribers() ) ) . '">' . __( 'Re-send Confirmation', 'naked-mailing-list' ) . '</a>';
+		}
+
 		return $name . $this->row_actions( $actions );
 	}
 

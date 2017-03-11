@@ -148,6 +148,15 @@ class NML_Subscriber {
 	protected $tags;
 
 	/**
+	 * Row from the database
+	 *
+	 * @var object
+	 * @access protected
+	 * @since  1.0
+	 */
+	protected $db_row;
+
+	/**
 	 * The database abstraction
 	 *
 	 * @var NML_DB_Subscribers
@@ -179,13 +188,13 @@ class NML_Subscriber {
 			$field = 'email';
 		}
 
-		$subscriber = $this->db->get_subscriber_by( $field, $id_or_email );
+		$this->db_row = $this->db->get_subscriber_by( $field, $id_or_email );
 
-		if ( empty( $subscriber ) || ! is_object( $subscriber ) ) {
+		if ( empty( $this->db_row ) || ! is_object( $this->db_row ) ) {
 			return;
 		}
 
-		$this->setup_subscriber( $subscriber );
+		$this->setup_subscriber( $this->db_row );
 
 	}
 
@@ -420,6 +429,39 @@ class NML_Subscriber {
 		}
 
 		return apply_filters( 'nml_subscriber_referer', $referer, $this->ID, $this );
+
+	}
+
+	/**
+	 * Send confirmation email to the subscriber
+	 *
+	 * @access public
+	 * @since  1.0
+	 * @return bool
+	 */
+	public function send_confirmation_email() {
+
+		$email          = nml_get_email_provider();
+		$email->subject = apply_filters( 'nml_confirmation_email_subject', sprintf( __( 'Confirm your subscription to %s', 'naked-mailing-list' ), get_bloginfo( 'name' ) ) );
+		$email->message = apply_filters( 'nml_confirmation_email_message', sprintf(
+			__( 'Click here to confirm your subscription to %s: %s', 'naked-mailing-list' ),
+			esc_html( get_bloginfo( 'name' ) ),
+			esc_url( add_query_arg( array(
+				'nml_action' => 'confirm',
+				'subscriber' => urlencode( $this->ID ),
+				'key'        => md5( $this->ID . $this->email )
+			), home_url() ) )
+		) );
+		$email->set_recipients( $this->db_row );
+		$result = $email->send();
+
+		if ( ! $result ) {
+			error_log( 'Error sending confirmation email.' );
+		}
+
+		do_action( 'nml_subscriber_send_confirmation_email', $this->ID, $this );
+
+		return $result;
 
 	}
 

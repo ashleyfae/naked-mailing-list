@@ -314,3 +314,68 @@ function nml_delete_subscriber( $subscriber_id ) {
 
 	return true;
 }
+
+/**
+ * Send subscriber a confirmation email
+ *
+ * @param string         $old_status    Previous status before the update.
+ * @param int            $subscriber_id Subscriber ID.
+ * @param NML_Subscriber $subscriber    Subscriber object.
+ *
+ * @since 1.0
+ * @return void
+ */
+function nml_send_subscriber_confirmation( $old_status, $subscriber_id, $subscriber ) {
+	$subscriber->send_confirmation_email();
+}
+
+add_action( 'nml_subscriber_set_pending', 'nml_send_subscriber_confirmation', 10, 3 );
+
+/**
+ * Confirm subscriber and redirect to success page
+ *
+ * @since 1.0
+ * @return void
+ */
+function nml_confirm_subscriber() {
+	if ( ! isset( $_GET['nml_action'] ) || 'confirm' != $_GET['nml_action'] ) {
+		return;
+	}
+
+	$subscriber_id = isset( $_GET['subscriber'] ) ? urldecode( $_GET['subscriber'] ) : 0;
+
+	if ( empty( $subscriber_id ) ) {
+		return;
+	}
+
+	$subscriber = new NML_Subscriber( $subscriber_id );
+
+	// Subscriber doesn't exist.
+	if ( empty( $subscriber->ID ) ) {
+		$query_args = array(
+			'success'   => 'false',
+			'nml_error' => 'invalid-subscriber'
+		);
+	} else {
+
+		// Check verification
+		if ( isset( $_GET['key'] ) && md5( $subscriber->ID . $subscriber->email ) == urldecode( $_GET['key'] ) ) {
+			$subscriber->confirm();
+			$query_args = array(
+				'success' => 'true'
+			);
+		} else {
+			$query_args = array(
+				'success'   => 'false',
+				'nml_error' => 'invalid-key'
+			);
+		}
+
+	}
+
+	wp_safe_redirect( add_query_arg( $query_args, home_url() ) );
+
+	exit;
+}
+
+add_action( 'template_redirect', 'nml_confirm_subscriber' );

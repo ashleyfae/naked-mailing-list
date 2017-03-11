@@ -414,3 +414,34 @@ function nml_process_delete_subscriber() {
 }
 
 add_action( 'nml_delete_subscriber', 'nml_process_delete_subscriber' );
+
+/**
+ * Resend subscriber confirmation email
+ *
+ * @since 1.0
+ * @return void
+ */
+function nml_resend_confirmation_email() {
+
+	if ( ! wp_verify_nonce( $_GET['nonce'], 'resend_subscriber_confirmation' ) ) {
+		return;
+	}
+
+	if ( ! isset( $_GET['ID'] ) ) {
+		return;
+	}
+
+	$subscriber = new NML_Subscriber( absint( $_GET['ID'] ) );
+	$subscriber->send_confirmation_email();
+
+	$redirect_url = add_query_arg( array(
+		'nml-message' => 'subscriber-confirmation-resent'
+	), nml_get_admin_page_subscribers() );
+
+	wp_safe_redirect( $redirect_url );
+
+	exit;
+
+}
+
+add_action( 'nml_resend_confirmation', 'nml_resend_confirmation_email' );

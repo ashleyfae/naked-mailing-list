@@ -115,6 +115,7 @@ class NML_Email_Provider_MailGun extends NML_Email {
 
 		if ( 200 != wp_remote_retrieve_response_code( $response ) ) {
 			error_log( sprintf( 'MailGun invalid response code: %s', var_export( wp_remote_retrieve_response_code( $response ), true ) ) );
+
 			return false;
 		}
 
@@ -134,7 +135,11 @@ class NML_Email_Provider_MailGun extends NML_Email {
 
 		if ( is_array( $this->recipients ) ) {
 			foreach ( $this->recipients as $sub ) {
-				$recipient_vars[ $sub->email ] = (array) $sub;
+				if ( is_object( $sub ) ) {
+					$recipient_vars[ $sub->email ] = (array) $sub;
+				} else {
+					$recipient_vars[ $sub ] = $sub;
+				}
 			}
 		}
 

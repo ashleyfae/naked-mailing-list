@@ -19,6 +19,8 @@
 		var form = $(this);
 		var response_field = form.find('.nml-subscribe-response');
 
+		// @todo better loading stuff
+
 		response_field.empty();
 
 		var data = {

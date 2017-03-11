@@ -172,10 +172,12 @@ add_action( 'nml_subscribe_form_fields', 'nml_subscribe_form_submit', 100 );
 function nml_process_signup() {
 
 	$email = $_POST['email'];
-	$lists = array_map( 'absint', explode( ',', $_POST['list'] ) );
-	$tags  = array_map( 'trim', explode( ',', $_POST['tags'] ) );
+	$lists = ! empty( $_POST['list'] ) ? array_map( 'absint', explode( ',', $_POST['list'] ) ) : false;
+	$tags  = ! empty( $_POST['tags'] ) ? array_map( 'trim', explode( ',', $_POST['tags'] ) ) : false;
 
-	$data = array();
+	$data = array(
+		'ip' => nml_get_ip()
+	);
 
 	if ( ! empty( $email ) && is_email( $email ) ) {
 		$data['email'] = sanitize_email( $email );
@@ -207,12 +209,16 @@ function nml_process_signup() {
 		$subscriber = new NML_Subscriber( $object->ID );
 		$subscriber->update( $data );
 
-		foreach ( $lists as $list_id ) {
-			$subscriber->add_to_list( $list_id );
+		if ( $lists ) {
+			foreach ( $lists as $list_id ) {
+				$subscriber->add_to_list( $list_id );
+			}
 		}
 
-		foreach ( $tags as $tag ) {
-			$subscriber->tag( $tag );
+		if ( $tags ) {
+			foreach ( $tags as $tag ) {
+				$subscriber->tag( $tag );
+			}
 		}
 
 		$message = __( 'You\'ve successfully been added to the list!', 'naked-mailing-list' );
@@ -223,8 +229,12 @@ function nml_process_signup() {
 		 * Add a brand new subscriber.
 		 */
 		$data['status'] = 'pending';
-		$data['lists']  = $lists;
-		$data['tags']   = $tags;
+		if ( $lists ) {
+			$data['lists'] = $lists;
+		}
+		if ( $tags ) {
+			$data['tags'] = $tags;
+		}
 
 		$subscriber = new NML_Subscriber();
 		$subscriber->create( $data );
