@@ -23,7 +23,7 @@
 			email: form.find('input[name="nml_email_address"]').val(),
 			first_name: form.find('input[name="nml_first_name"]').val(),
 			last_name: form.find('input[name="nml_last_name"]').val(),
-			referrer: form.find('input[name="_wp_http_referer"]').val(),
+			referer: form.find('input[name="_wp_http_referer"]').val(),
 			form_name: form.find('input[name="nml_form_name"]').val()
 		};
 

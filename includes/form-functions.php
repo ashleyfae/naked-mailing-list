@@ -183,7 +183,7 @@ function nml_process_signup() {
 		nml_set_error( 'email-required', __( 'You must enter an email address.', 'naked-mailing-list' ) );
 	}
 
-	$fields = array( 'first_name', 'last_name', 'referrer', 'form_name' );
+	$fields = array( 'first_name', 'last_name', 'referer', 'form_name' );
 
 	foreach ( $fields as $field ) {
 		if ( isset( $_POST[ $field ] ) && ! empty( $_POST[ $field ] ) ) {

@@ -100,7 +100,7 @@ class NML_Subscriber {
 	 * @access public
 	 * @since  1.0
 	 */
-	public $referrer;
+	public $referer;
 
 	/**
 	 * Form the subscriber signed up with
@@ -384,7 +384,7 @@ class NML_Subscriber {
 	}
 
 	/**
-	 * Get referrer label
+	 * Get referer label
 	 *
 	 * Returns the location where the subscriber opted in. This might be a name like
 	 * "manual insertion" or "import", or the HTML link to an actual page on the site.
@@ -393,33 +393,33 @@ class NML_Subscriber {
 	 * @since  1.0
 	 * @return string Textual description or formatted link to referring path.
 	 */
-	public function get_referrer() {
+	public function get_referer() {
 
-		switch ( $this->referrer ) {
+		switch ( $this->referer ) {
 
 			case 'manual' :
-				$referrer = __( 'manual insertion', 'naked-mailing-list' );
+				$referer = __( 'manual insertion', 'naked-mailing-list' );
 				break;
 
 			case 'import' :
-				$referrer = __( 'import', 'naked-mailing-list' );
+				$referer = __( 'import', 'naked-mailing-list' );
 				break;
 
 			case null :
-				$referrer = __( 'unknown', 'naked-mailing-list' );
+				$referer = __( 'unknown', 'naked-mailing-list' );
 				break;
 
 			case '/' :
-				$referrer = __( 'homepage', 'naked-mailing-list' );
+				$referer = __( 'homepage', 'naked-mailing-list' );
 				break;
 
 			default :
-				$referrer = '<a href="' . esc_url( home_url( $this->referrer ) ) . '" target="_blank">' . esc_html( $this->referrer ) . '</a>';
+				$referer = '<a href="' . esc_url( home_url( $this->referer ) ) . '" target="_blank">' . esc_html( $this->referer ) . '</a>';
 				break;
 
 		}
 
-		return apply_filters( 'nml_subscriber_referrer', $referrer, $this->ID, $this );
+		return apply_filters( 'nml_subscriber_referer', $referer, $this->ID, $this );
 
 	}
 

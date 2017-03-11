@@ -57,7 +57,7 @@ class NML_DB_Subscribers extends NML_DB {
 			'signup_date'  => '%s',
 			'confirm_date' => '%s',
 			'ip'           => '%s',
-			'referrer'     => '%s',
+			'referer'     => '%s',
 			'form_name'    => '%s',
 			'email_count'  => '%d',
 			'notes'        => '%s'
@@ -80,7 +80,7 @@ class NML_DB_Subscribers extends NML_DB {
 			'signup_date'  => gmdate( 'Y-m-d H:i:s' ),
 			'confirm_date' => null,
 			'ip'           => nml_get_ip(),
-			'referrer'     => 'manual',
+			'referer'     => 'manual',
 			'form_name'    => '',
 			'email_count'  => 0,
 			'notes'        => ''
@@ -293,7 +293,7 @@ class NML_DB_Subscribers extends NML_DB {
 			'first_name' => null,
 			'last_name'  => null,
 			'status'     => null,
-			'referrer'   => null,
+			'referer'   => null,
 			'form_name'  => null,
 			'ip'         => null,
 			'list'       => null
@@ -369,9 +369,9 @@ class NML_DB_Subscribers extends NML_DB {
 
 		}
 
-		// By referrer
-		if ( ! empty( $args['referrer'] ) ) {
-			$where .= $wpdb->prepare( " AND `referrer` = %s ", $args['referrer'] );
+		// By referer
+		if ( ! empty( $args['referer'] ) ) {
+			$where .= $wpdb->prepare( " AND `referer` = %s ", $args['referer'] );
 		}
 
 		// By form name
@@ -455,7 +455,7 @@ class NML_DB_Subscribers extends NML_DB {
 			'first_name' => null,
 			'last_name'  => null,
 			'status'     => null,
-			'referrer'   => null,
+			'referer'   => null,
 			'form_name'  => null,
 			'ip'         => null,
 			'list'       => null
@@ -531,9 +531,9 @@ class NML_DB_Subscribers extends NML_DB {
 
 		}
 
-		// By referrer
-		if ( ! empty( $args['referrer'] ) ) {
-			$where .= $wpdb->prepare( " AND `referrer` = %s ", $args['referrer'] );
+		// By referer
+		if ( ! empty( $args['referer'] ) ) {
+			$where .= $wpdb->prepare( " AND `referer` = %s ", $args['referer'] );
 		}
 
 		// By form name
@@ -596,7 +596,7 @@ class NML_DB_Subscribers extends NML_DB {
 			'first_name' => null,
 			'last_name'  => null,
 			'status'     => 'subscribed',
-			'referrer'   => null,
+			'referer'   => null,
 			'form_name'  => null,
 			'ip'         => null,
 			'list'       => null
@@ -672,9 +672,9 @@ class NML_DB_Subscribers extends NML_DB {
 
 		}
 
-		// By referrer
-		if ( ! empty( $args['referrer'] ) ) {
-			$where .= $wpdb->prepare( " AND `referrer` = %s ", $args['referrer'] );
+		// By referer
+		if ( ! empty( $args['referer'] ) ) {
+			$where .= $wpdb->prepare( " AND `referer` = %s ", $args['referer'] );
 		}
 
 		// By form name
@@ -729,7 +729,7 @@ class NML_DB_Subscribers extends NML_DB {
 		signup_date datetime NOT NULL,
 		confirm_date datetime,
 		ip mediumtext NOT NULL,
-		referrer varchar(255),
+		referer varchar(255),
 		form_name varchar(255),
 		email_count bigint(20) NOT NULL,
 		notes longtext NOT NULL,

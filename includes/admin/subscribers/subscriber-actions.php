@@ -99,9 +99,9 @@ function nml_edit_subscriber_details_box( $subscriber ) {
 		<span><?php echo ! empty( $subscriber->confirm_date ) ? nml_format_mysql_date( $subscriber->confirm_date, nml_full_date_time_format() ) : __( 'n/a', 'naked-mailing-list' ); ?></span>
 	</div>
 
-	<div id="nml-subscriber-referrer" class="nml-field misc-pub-section">
-		<label for="nml_subscriber_referrer"><?php _e( 'Referrer:', 'naked-mailing-list' ); ?></label>
-		<span><?php echo $subscriber->get_referrer(); ?></span>
+	<div id="nml-subscriber-referer" class="nml-field misc-pub-section">
+		<label for="nml_subscriber_referer"><?php _e( 'Referer:', 'naked-mailing-list' ); ?></label>
+		<span><?php echo $subscriber->get_referer(); ?></span>
 	</div>
 
 	<div id="nml-subscriber-signup-form" class="nml-field misc-pub-section">
@@ -228,7 +228,7 @@ function nml_subscriber_activity_box( $subscriber ) {
 									printf(
 										_x( '%1$s subscribed via %2$s.', '%1$s is the name of the subscriber, %2$s is the method', 'naked-mailing-list' ),
 										esc_html( $name ),
-										$subscriber->get_referrer()
+										$subscriber->get_referer()
 									);
 									break;
 
