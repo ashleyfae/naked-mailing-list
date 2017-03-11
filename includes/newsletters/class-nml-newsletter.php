@@ -276,6 +276,7 @@ class NML_Newsletter {
 			 * @since 1.0
 			 */
 			do_action( 'nml_newsletter_transition_status', $this->status, '', $this->ID, $this );
+			do_action( 'nml_newsletter_set_status_' . $this->status, '', $this->ID, $this );
 
 			$created = $this->ID;
 
@@ -334,6 +335,7 @@ class NML_Newsletter {
 			 */
 			if ( array_key_exists( 'status', $data ) && $data['status'] != $old_status ) {
 				do_action( 'nml_newsletter_transition_status', $this->status, $old_status, $this->ID, $this );
+				do_action( 'nml_newsletter_set_status_' . $this->status, $old_status, $this->ID, $this );
 			}
 
 		}
@@ -411,6 +413,7 @@ class NML_Newsletter {
 
 		$defaults = array(
 			'list'   => $list_ids,
+			'status' => 'subscribed',
 			'number' => - 1 // Eeks
 		);
 

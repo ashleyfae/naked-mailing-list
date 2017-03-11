@@ -173,7 +173,7 @@ class NML_Newsletter_Table extends WP_List_Table {
 
 					$value = implode( ', ', $list_names );
 				} else {
-					$value = '&ndash';
+					$value = '&ndash;';
 				}
 				break;
 
@@ -230,8 +230,9 @@ class NML_Newsletter_Table extends WP_List_Table {
 		$edit_url = nml_get_admin_page_edit_newsletter( $item->ID );
 		$name     = '<a href="' . esc_url( $edit_url ) . '" class="row-title" aria-label="' . esc_attr( sprintf( '%s (Edit)', $item->subject ) ) . '">' . $item->subject . '</a>';
 		$actions  = array(
-			'edit'   => '<a href="' . esc_url( $edit_url ) . '">' . __( 'Edit', 'naked-mailing-list' ) . '</a>',
-			'delete' => '<a href="' . esc_url( nml_get_admin_page_delete_newsletter( $item->ID ) ) . '">' . __( 'Delete', 'naked-mailing-list' ) . '</a>'
+			'edit'    => '<a href="' . esc_url( $edit_url ) . '">' . __( 'Edit', 'naked-mailing-list' ) . '</a>',
+			'delete'  => '<a href="' . esc_url( nml_get_admin_page_delete_newsletter( $item->ID ) ) . '">' . __( 'Delete', 'naked-mailing-list' ) . '</a>',
+			'view' => '<a href="' . esc_url( nml_get_newsletter_preview_url( $item->ID ) ) . '" target="_blank">' . __( 'Preview', 'naked-mailing-list' ) . '</a>',
 		);
 
 		return $name . $this->row_actions( $actions );

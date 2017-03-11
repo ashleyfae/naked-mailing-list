@@ -105,11 +105,12 @@ class NML_Post_Notification {
 		}
 
 		$subject = apply_filters( 'nml_post_notification_subject', $this->post->post_title, $this->post, $this );
-		$message = apply_filters( 'the_content', $this->post->post_content );
+
+		$message = '<h1><a href="' . esc_url( get_permalink( $this->post ) ) . '">' . $this->post->post_title . '</a></h1>' . $this->post->post_content;
 		$message = apply_filters( 'nml_post_notification_message', $message, $this->post, $this );
 
 		$newsletter_id = nml_insert_newsletter( array(
-			'status'           => 'sending',
+			'status'           => 'draft',
 			'subject'          => $subject,
 			'body'             => $message,
 			'from_address'     => nml_get_option( 'from_email' ),
@@ -123,6 +124,12 @@ class NML_Post_Notification {
 		if ( empty( $newsletter_id ) || is_wp_error( $newsletter_id ) ) {
 			return false;
 		}
+
+		// Update status to sending.
+		$newsletter = new NML_Newsletter( $newsletter_id );
+		$newsletter->update( array(
+			'status' => 'sending'
+		) );
 
 		return true;
 

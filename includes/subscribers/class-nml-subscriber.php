@@ -244,7 +244,10 @@ class NML_Subscriber {
 		$defaults = array();
 
 		$args = wp_parse_args( $data, $defaults );
-		$args = $this->sanitize_columns( $args );
+
+		$lists = array_key_exists( 'lists', $data ) ? $data['lists'] : false;
+		$tags  = array_key_exists( 'tags', $data ) ? $data['tags'] : false;
+		$args  = $this->sanitize_columns( $args );
 
 		if ( empty( $args['email'] ) || ! is_email( $args['email'] ) ) {
 			return false;
@@ -279,6 +282,17 @@ class NML_Subscriber {
 			 * @since 1.0
 			 */
 			do_action( 'nml_subscriber_transition_status', $this->status, '', $this->ID, $this );
+			do_action( 'nml_subscriber_set_' . $this->status, '', $this->ID, $this );
+
+			/**
+			 * Set lists.
+			 */
+			if ( is_array( $lists ) && ! empty( $lists ) ) {
+				$this->set_lists( $lists );
+			}
+			if ( is_array( $tags ) && ! empty( $tags ) ) {
+				$this->set_tags( $tags );
+			}
 
 			$created = $this->ID;
 
@@ -311,11 +325,14 @@ class NML_Subscriber {
 			return false;
 		}
 
-		$data = $this->sanitize_columns( $data );
+		$lists = array_key_exists( 'lists', $data ) ? $data['lists'] : false;
+		$tags  = array_key_exists( 'tags', $data ) ? $data['tags'] : false;
+		$data  = $this->sanitize_columns( $data );
 
 		do_action( 'nml_subscriber_pre_update', $this->ID, $data );
 
-		$updated = false;
+		$updated    = false;
+		$old_status = $this->status;
 
 		if ( $this->db->update( $this->ID, $data ) ) {
 
@@ -334,8 +351,19 @@ class NML_Subscriber {
 			 *
 			 * @since 1.0
 			 */
-			if ( array_key_exists( 'status', $data ) && $data['status'] != $this->status ) {
-				do_action( 'nml_subscriber_transition_status', $this->status, $data['status'], $this->ID, $this );
+			if ( array_key_exists( 'status', $data ) && $data['status'] != $old_status ) {
+				do_action( 'nml_subscriber_transition_status', $this->status, $old_status, $this->ID, $this );
+				do_action( 'nml_subscriber_set_' . $this->status, $old_status, $this->ID, $this );
+			}
+
+			/**
+			 * Set lists.
+			 */
+			if ( is_array( $lists ) && ! empty( $lists ) ) {
+				$this->set_lists( $lists );
+			}
+			if ( is_array( $tags ) && ! empty( $tags ) ) {
+				$this->set_tags( $tags );
 			}
 
 		}
@@ -499,6 +527,20 @@ class NML_Subscriber {
 	}
 
 	/**
+	 * Set lists
+	 *
+	 * @param int|array $lists  List(s) to add the subscriber to.
+	 * @param bool      $append Whether or not to append the lists to existing ones.
+	 *
+	 * @access public
+	 * @since  1.0
+	 * @return void
+	 */
+	public function set_lists( $lists, $append = false ) {
+		nml_set_object_lists( 'subscriber', $this->ID, $lists, 'list', $append );
+	}
+
+	/**
 	 * Get an array of tags the subscriber has.
 	 *
 	 * @access public
@@ -561,6 +603,20 @@ class NML_Subscriber {
 			nml_set_object_lists( 'subscriber', $this->ID, $tag_id_or_name, 'tag', true );
 		}
 
+	}
+
+	/**
+	 * Set tags
+	 *
+	 * @param int|array $tags   Tag(s) to add the subscriber to.
+	 * @param bool      $append Whether or not to append the tags to existing ones.
+	 *
+	 * @access public
+	 * @since  1.0
+	 * @return void
+	 */
+	public function set_tags( $tags, $append = false ) {
+		nml_set_object_lists( 'subscriber', $this->ID, $tags, 'tag', $append );
 	}
 
 	/**

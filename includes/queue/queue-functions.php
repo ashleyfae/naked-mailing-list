@@ -30,8 +30,6 @@ function nml_check_and_process_queue() {
 		'date_to_process' => array( 'end' => current_time( 'mysql', true ) )
 	) );
 
-	error_log( 'No queue entries' );
-
 	if ( empty( $entries ) || ! is_array( $entries ) ) {
 		return;
 	}
@@ -88,25 +86,16 @@ function nml_process_queue_entry( $entry ) {
 			return false;
 		}
 	} else {
-		error_log( 'No subscribers' );
 		// @todo log no subscribers
 	}
 
 	// Delete this queue entry.
-	//naked_mailing_list()->queue->delete( $entry->ID );
-
-	// Increment emails sent for subscribers.
-	if ( ! empty( $subscribers ) ) {
-		$ids   = wp_list_pluck( $subscribers, 'ID' );
-		$ids   = implode( ',', array_map( 'absint', $ids ) );
-		$query = "UPDATE " . naked_mailing_list()->subscribers->table_name . " SET email_count = email_count + 1 WHERE `ID` IN({$ids})";
-		$wpdb->query( $query );
-	}
+	naked_mailing_list()->queue->delete( $entry->ID );
 
 	// Mark queue entry as processed.
-	naked_mailing_list()->queue->update( $entry->ID, array(
+	/*naked_mailing_list()->queue->update( $entry->ID, array(
 		'status' => 'completed'
-	) );
+	) );*/
 
 	if ( count( $subscribers ) < nml_number_subscribers_per_batch() ) {
 
@@ -114,6 +103,17 @@ function nml_process_queue_entry( $entry ) {
 		$newsletter->update( array(
 			'status' => 'sent'
 		) );
+
+		// Increment the email count for all subscribers.
+		$newsletter_lists = $newsletter->get_lists();
+
+		if ( ! empty( $newsletter_lists ) && is_array( $newsletter_lists ) ) {
+			$list_ids = wp_list_pluck( $newsletter_lists, 'ID' );
+
+			naked_mailing_list()->subscribers->increment_email_count( array(
+				'list' => $list_ids
+			) );
+		}
 
 	} else {
 

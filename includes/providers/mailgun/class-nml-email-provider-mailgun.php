@@ -76,8 +76,6 @@ class NML_Email_Provider_MailGun extends NML_Email {
 	public function send_to_provider( $subject, $message ) {
 
 		if ( empty( $this->domain_name ) || empty( $this->api_key ) ) {
-			error_log( 'MailGun: Missing API' );
-
 			return false;
 		}
 
@@ -107,8 +105,6 @@ class NML_Email_Provider_MailGun extends NML_Email {
 
 		$url = "https://api.mailgun.net/v2/{$this->domain_name}/messages";
 
-		error_log( sprintf( 'MailGun request: %s', var_export( $data, true ) ) );
-
 		$response = wp_remote_post( $url, $data );
 
 		if ( is_wp_error( $response ) ) {
@@ -116,8 +112,6 @@ class NML_Email_Provider_MailGun extends NML_Email {
 
 			return false;
 		}
-
-		error_log(var_export($response, true));
 
 		if ( 200 != wp_remote_retrieve_response_code( $response ) ) {
 			error_log( sprintf( 'MailGun invalid response code: %s', var_export( wp_remote_retrieve_response_code( $response ), true ) ) );

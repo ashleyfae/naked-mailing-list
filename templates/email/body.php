@@ -7,3 +7,13 @@
  * @license   GPL2+
  * @since     1.0
  */
+
+// Exit if accessed directly
+if ( ! defined( 'ABSPATH' ) ) {
+	exit;
+}
+
+
+// {email} is replaced with the campaign content.
+?>
+{email}

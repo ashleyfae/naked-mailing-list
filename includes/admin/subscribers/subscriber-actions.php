@@ -178,7 +178,7 @@ function nml_subscriber_activity_box( $subscriber ) {
 				<?php foreach ( $activity as $entry ) : ?>
 					<li class="nml-activity-entry nml-activity-entry-<?php echo sanitize_html_class( $entry->type ); ?>">
 						<span class="nml-activity-date">
-							<?php echo nml_format_mysql_date( $entry->date, nml_full_date_time_format() ); ?>
+							<?php echo nml_format_mysql_date( $entry->date, nml_full_date_time_format() ); ?>:
 						</span>
 
 						<span class="nml-activity-description">
@@ -198,6 +198,14 @@ function nml_subscriber_activity_box( $subscriber ) {
 										__( '%s confirmed their subscription.', 'naked-mailing-list' ),
 										esc_html( $name )
 									);
+									break;
+
+								case 'unsubscribe' :
+									printf(
+										__( '%s unsubscribed.', 'naked-mailing-list' ),
+										esc_html( $name )
+									);
+									break;
 
 							}
 							?>
@@ -243,9 +251,11 @@ function nml_save_subscriber() {
 
 	$subscriber_id = $_POST['subscriber_id'];
 
-	$sub_data = array(
-		'ID' => absint( $subscriber_id )
-	);
+	$sub_data = array();
+
+	if ( ! empty( $subscriber_id ) ) {
+		$sub_data['ID'] = absint( $subscriber_id );
+	}
 
 	// Email
 	if ( isset( $_POST['nml_subscriber_email'] ) ) {
@@ -297,15 +307,26 @@ function nml_save_subscriber() {
 		$sub_data['tags'] = array_map( 'trim', $tag_array );
 	}
 
-	$new_sub_id = nml_insert_subscriber( $sub_data );
+	$subscriber = new NML_Subscriber( $subscriber_id );
+	$new_id     = false;
 
-	if ( ! $new_sub_id || is_wp_error( $new_sub_id ) ) {
+	if ( ! empty( $subscriber_id ) ) {
+		$result = $subscriber->update( $sub_data );
+
+		if ( $result ) {
+			$new_id = $subscriber->ID;
+		}
+	} else {
+		$new_id = $subscriber->create( $sub_data );
+	}
+
+	if ( ! $new_id || is_wp_error( $new_id ) ) {
 		wp_die( __( 'An error occurred while inserting the subscriber.', 'naked-mailing-list' ) );
 	}
 
 	$edit_url = add_query_arg( array(
 		'nml-message' => 'subscriber-updated'
-	), nml_get_admin_page_edit_subscriber( absint( $new_sub_id ) ) );
+	), nml_get_admin_page_edit_subscriber( absint( $new_id ) ) );
 
 	wp_safe_redirect( $edit_url );
 

@@ -297,3 +297,43 @@ function nml_save_newsletter() {
 }
 
 add_action( 'nml_save_newsletter', 'nml_save_newsletter' );
+
+/**
+ * Process delete newsletter
+ *
+ * @since 1.0
+ * @return void
+ */
+function nml_process_delete_newsletter() {
+
+	$nonce = isset( $_GET['nonce'] ) ? $_GET['nonce'] : false;
+
+	if ( empty( $nonce ) ) {
+		return;
+	}
+
+	if ( ! wp_verify_nonce( $nonce, 'nml_delete_newsletter' ) ) {
+		wp_die( __( 'Failed nonce security.', 'naked-mailing-list' ) );
+	}
+
+	if ( ! isset( $_GET['ID'] ) ) {
+		wp_die( __( 'Invalid newsletter ID.', 'naked-mailing-list' ) );
+	}
+
+	$deleted = nml_delete_newsletter( absint( $_GET['ID'] ) );
+
+	if ( is_wp_error( $deleted ) ) {
+		wp_die( $deleted->get_error_message() );
+	}
+
+	$redirect_url = add_query_arg( array(
+		'nml-message' => 'newsletter-deleted'
+	), nml_get_admin_page_newsletters() );
+
+	wp_safe_redirect( $redirect_url );
+
+	exit;
+
+}
+
+add_action( 'nml_delete_newsletter', 'nml_process_delete_newsletter' );

@@ -202,7 +202,7 @@ function nml_set_object_lists( $object_type, $object_id, $lists, $type, $append 
 			$list_id = absint( $list );
 
 			// If this term ID doesn't exist - skip it.
-			if ( ! naked_mailing_list()->lists->exists( $list_id ) ) {
+			if ( ! naked_mailing_list()->lists->exists( $list_id, 'ID' ) ) {
 				continue;
 			}
 
