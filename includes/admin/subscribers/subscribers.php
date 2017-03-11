@@ -171,21 +171,6 @@ function nml_subscribers_edit_view( $subscriber ) {
 													<?php endforeach; ?>
 												</select>
 											</div>
-
-											<div id="nml-subscriber-signup-date" class="nml-field misc-pub-section">
-												<label for="nml_subscriber_signup_date"><?php _e( 'Signup Date:', 'naked-mailing-list' ); ?></label>
-												<span><?php echo ! empty( $subscriber->signup_date ) ? nml_format_mysql_date( $subscriber->signup_date, nml_full_date_time_format() ) : __( 'n/a', 'naked-mailing-list' ); ?></span>
-											</div>
-
-											<div id="nml-subscriber-confirm-date" class="nml-field misc-pub-section">
-												<label for="nml_subscriber_confirm_date"><?php _e( 'Confirm Date:', 'naked-mailing-list' ); ?></label>
-												<span><?php echo ! empty( $subscriber->confirm_date ) ? nml_format_mysql_date( $subscriber->confirm_date, nml_full_date_time_format() ) : __( 'n/a', 'naked-mailing-list' ); ?></span>
-											</div>
-
-											<div id="nml-subscriber-ip" class="nml-field misc-pub-section">
-												<label for="nml_subscriber_ip"><?php _e( 'IP Address:', 'naked-mailing-list' ); ?></label>
-												<span><?php echo $subscriber->ip; ?></span>
-											</div>
 										</div>
 									</div>
 
@@ -204,6 +189,15 @@ function nml_subscribers_edit_view( $subscriber ) {
 						</div>
 
 						<?php do_action( 'nml_edit_subscriber_after_save_box', $subscriber ); ?>
+
+						<div id="nml-subscriber-details" class="postbox">
+							<h2 class="hndle ui-sortable handle"><?php _e( 'Details', 'naked-mailing-list' ); ?></h2>
+							<div class="inside">
+								<?php do_action( 'nml_edit_subscriber_details_box', $subscriber ); ?>
+							</div>
+						</div>
+
+						<?php do_action( 'nml_edit_subscriber_after_details_box', $subscriber ); ?>
 
 						<div id="nml-subscriber-lists" class="postbox">
 							<h2 class="hndle ui-sortable handle"><?php _e( 'Lists', 'naked-mailing-list' ); ?></h2>

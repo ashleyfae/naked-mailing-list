@@ -80,6 +80,45 @@ function nml_subscriber_field_notes( $subscriber ) {
 add_action( 'nml_edit_subscriber_info_fields', 'nml_subscriber_field_notes' );
 
 /**
+ * Subscriber Details Box
+ *
+ * @param NML_Subscriber $subscriber
+ *
+ * @since 1.0
+ * @return void
+ */
+function nml_edit_subscriber_details_box( $subscriber ) {
+	?>
+	<div id="nml-subscriber-signup-date" class="nml-field misc-pub-section">
+		<label for="nml_subscriber_signup_date"><?php _e( 'Signup Date:', 'naked-mailing-list' ); ?></label>
+		<span><?php echo ! empty( $subscriber->signup_date ) ? nml_format_mysql_date( $subscriber->signup_date, nml_full_date_time_format() ) : __( 'n/a', 'naked-mailing-list' ); ?></span>
+	</div>
+
+	<div id="nml-subscriber-confirm-date" class="nml-field misc-pub-section">
+		<label for="nml_subscriber_confirm_date"><?php _e( 'Confirm Date:', 'naked-mailing-list' ); ?></label>
+		<span><?php echo ! empty( $subscriber->confirm_date ) ? nml_format_mysql_date( $subscriber->confirm_date, nml_full_date_time_format() ) : __( 'n/a', 'naked-mailing-list' ); ?></span>
+	</div>
+
+	<div id="nml-subscriber-referrer" class="nml-field misc-pub-section">
+		<label for="nml_subscriber_referrer"><?php _e( 'Referrer:', 'naked-mailing-list' ); ?></label>
+		<span><?php echo $subscriber->get_referrer(); ?></span>
+	</div>
+
+	<div id="nml-subscriber-signup-form" class="nml-field misc-pub-section">
+		<label for="nml_subscriber_form"><?php _e( 'Signup Form:', 'naked-mailing-list' ); ?></label>
+		<span><?php echo $subscriber->form_name ? $subscriber->form_name : __( 'n/a', 'naked-mailing-list' ); ?></span>
+	</div>
+
+	<div id="nml-subscriber-ip" class="nml-field misc-pub-section">
+		<label for="nml_subscriber_ip"><?php _e( 'IP Address:', 'naked-mailing-list' ); ?></label>
+		<span><?php echo $subscriber->ip; ?></span>
+	</div>
+	<?php
+}
+
+add_action( 'nml_edit_subscriber_details_box', 'nml_edit_subscriber_details_box' );
+
+/**
  * Field: Lists
  *
  * @param NML_Subscriber $subscriber
