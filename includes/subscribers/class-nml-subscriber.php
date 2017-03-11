@@ -103,6 +103,15 @@ class NML_Subscriber {
 	public $referrer;
 
 	/**
+	 * Form the subscriber signed up with
+	 *
+	 * @var string
+	 * @access public
+	 * @since  1.0
+	 */
+	public $form_name;
+
+	/**
 	 * Number of emails the subscriber has received
 	 *
 	 * @var int

@@ -58,6 +58,7 @@ class NML_DB_Subscribers extends NML_DB {
 			'confirm_date' => '%s',
 			'ip'           => '%s',
 			'referrer'     => '%s',
+			'form_name'    => '%s',
 			'email_count'  => '%d',
 			'notes'        => '%s'
 		);
@@ -80,6 +81,7 @@ class NML_DB_Subscribers extends NML_DB {
 			'confirm_date' => null,
 			'ip'           => nml_get_ip(),
 			'referrer'     => 'manual',
+			'form_name'    => '',
 			'email_count'  => 0,
 			'notes'        => ''
 		);
@@ -292,6 +294,7 @@ class NML_DB_Subscribers extends NML_DB {
 			'last_name'  => null,
 			'status'     => null,
 			'referrer'   => null,
+			'form_name'  => null,
 			'ip'         => null,
 			'list'       => null
 		);
@@ -369,6 +372,11 @@ class NML_DB_Subscribers extends NML_DB {
 		// By referrer
 		if ( ! empty( $args['referrer'] ) ) {
 			$where .= $wpdb->prepare( " AND `referrer` = %s ", $args['referrer'] );
+		}
+
+		// By form name
+		if ( ! empty( $args['form_name'] ) ) {
+			$where .= $wpdb->prepare( " AND `form_name` = %s ", $args['form_name'] );
 		}
 
 		// @todo by date
@@ -448,6 +456,7 @@ class NML_DB_Subscribers extends NML_DB {
 			'last_name'  => null,
 			'status'     => null,
 			'referrer'   => null,
+			'form_name'  => null,
 			'ip'         => null,
 			'list'       => null
 		);
@@ -527,6 +536,11 @@ class NML_DB_Subscribers extends NML_DB {
 			$where .= $wpdb->prepare( " AND `referrer` = %s ", $args['referrer'] );
 		}
 
+		// By form name
+		if ( ! empty( $args['form_name'] ) ) {
+			$where .= $wpdb->prepare( " AND `form_name` = %s ", $args['form_name'] );
+		}
+
 		// @todo by date
 
 		// By IP
@@ -583,6 +597,7 @@ class NML_DB_Subscribers extends NML_DB {
 			'last_name'  => null,
 			'status'     => 'subscribed',
 			'referrer'   => null,
+			'form_name'  => null,
 			'ip'         => null,
 			'list'       => null
 		);
@@ -662,6 +677,11 @@ class NML_DB_Subscribers extends NML_DB {
 			$where .= $wpdb->prepare( " AND `referrer` = %s ", $args['referrer'] );
 		}
 
+		// By form name
+		if ( ! empty( $args['form_name'] ) ) {
+			$where .= $wpdb->prepare( " AND `form_name` = %s ", $args['form_name'] );
+		}
+
 		// @todo by date
 
 		// By IP
@@ -685,7 +705,6 @@ class NML_DB_Subscribers extends NML_DB {
 		}
 
 		$query = "UPDATE {$this->table_name} s {$join} SET email_count = email_count + 1 {$where}";
-		error_log( $query );
 		$result = $wpdb->query( $query );
 
 	}
@@ -711,6 +730,7 @@ class NML_DB_Subscribers extends NML_DB {
 		confirm_date datetime,
 		ip mediumtext NOT NULL,
 		referrer varchar(255),
+		form_name varchar(255),
 		email_count bigint(20) NOT NULL,
 		notes longtext NOT NULL,
 		PRIMARY KEY (ID),
