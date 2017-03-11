@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Post Notification Table Class
+ * List Table Class
  *
  * @package   naked-mailing-list
  * @copyright Copyright (c) 2017, Ashley Gibson
@@ -20,13 +20,13 @@ if ( ! class_exists( 'WP_List_Table' ) ) {
 }
 
 /**
- * Class NML_Notification_Table
+ * Class NML_List_Table
  *
- * Renders the post notification table.
+ * Renders the list table.
  *
  * @since 1.0
  */
-class NML_Notification_Table extends WP_List_Table {
+class NML_List_Table extends WP_List_Table {
 
 	/**
 	 * Number of items per page
@@ -38,7 +38,7 @@ class NML_Notification_Table extends WP_List_Table {
 	public $per_page = 20;
 
 	/**
-	 * Number of notifications found
+	 * Number of lists found
 	 *
 	 * @var int
 	 * @access public
@@ -47,7 +47,7 @@ class NML_Notification_Table extends WP_List_Table {
 	public $count = 0;
 
 	/**
-	 * Total number of notifications
+	 * Total number of lists
 	 *
 	 * @var int
 	 * @access public
@@ -74,7 +74,7 @@ class NML_Notification_Table extends WP_List_Table {
 	private $display_delete_message = false;
 
 	/**
-	 * NML_Newsletter_Table constructor.
+	 * NML_List_Table constructor.
 	 *
 	 * @see    WP_List_Table::__construct()
 	 *
@@ -87,8 +87,8 @@ class NML_Notification_Table extends WP_List_Table {
 		global $status, $page;
 
 		parent::__construct( array(
-			'singular' => esc_html__( 'Notification', 'naked-mailing-list' ),
-			'plural'   => esc_html__( 'Notifications', 'naked-mailing-list' ),
+			'singular' => esc_html__( 'List', 'naked-mailing-list' ),
+			'plural'   => esc_html__( 'Lists', 'naked-mailing-list' ),
 			'ajax'     => false
 		) );
 
@@ -143,7 +143,7 @@ class NML_Notification_Table extends WP_List_Table {
 	/**
 	 * Renders most of the columns in the list table.
 	 *
-	 * @param object $item        Contains all the data of the newsletter.
+	 * @param object $item        Contains all the data of the list.
 	 * @param string $column_name The name of the column.
 	 *
 	 * @access public
@@ -152,36 +152,17 @@ class NML_Notification_Table extends WP_List_Table {
 	 */
 	public function column_default( $item, $column_name ) {
 
-		$value = '';
+		$value = isset( $item->$column_name ) ? $item->$column_name : null;
 
-		switch ( $column_name ) {
 
-			case 'active' :
-				$value = ( 1 == $item->active ) ? esc_html__( 'Active', 'naked-mailing-list' ) : esc_html__( 'Inactive', 'naked-mailing-list' );
-				break;
-
-			case 'lists' :
-				$value = ''; // @todo
-				break;
-
-			case 'post_type' :
-				$value = $item->post_type;
-				break;
-
-			default :
-				$value = isset( $item->$column_name ) ? $item->$column_name : null;
-				break;
-
-		}
-
-		return apply_filters( 'nml_notification_table_column_' . $column_name, $value, $item );
+		return apply_filters( 'nml_list_table_column_' . $column_name, $value, $item );
 
 	}
 
 	/**
 	 * Render Checkbox Column
 	 *
-	 * @param object $item Contains all the data of the notification.
+	 * @param object $item Contains all the data of the list.
 	 *
 	 * @access public
 	 * @since  1.0
@@ -195,9 +176,9 @@ class NML_Notification_Table extends WP_List_Table {
 
 		?>
 		<label class="screen-reader-text" for="cb-select-<?php echo esc_attr( $item->ID ); ?>">
-			<?php _e( 'Select this notification', 'naked-mailing-list' ) ?>
+			<?php _e( 'Select this list', 'naked-mailing-list' ) ?>
 		</label>
-		<input id="cb-select-<?php echo esc_attr( $item->ID ); ?>" type="checkbox" name="notifications[]" value="<?php echo esc_attr( $item->ID ); ?>">
+		<input id="cb-select-<?php echo esc_attr( $item->ID ); ?>" type="checkbox" name="lists[]" value="<?php echo esc_attr( $item->ID ); ?>">
 		<?php
 
 	}
@@ -205,18 +186,18 @@ class NML_Notification_Table extends WP_List_Table {
 	/**
 	 * Render Column Name
 	 *
-	 * @param object $item Contains all the data of the notification.
+	 * @param object $item Contains all the data of the list.
 	 *
 	 * @access public
 	 * @since  1.0
 	 * @return string
 	 */
-	public function column_name( $item ) {
-		$edit_url = nml_get_admin_page_edit_notification( $item->ID );
+	public function column_subject( $item ) {
+		$edit_url = nml_get_admin_page_edit_list( $item->ID );
 		$name     = '<a href="' . esc_url( $edit_url ) . '" class="row-title" aria-label="' . esc_attr( sprintf( '%s (Edit)', $item->name ) ) . '">' . $item->name . '</a>';
 		$actions  = array(
 			'edit'   => '<a href="' . esc_url( $edit_url ) . '">' . __( 'Edit', 'naked-mailing-list' ) . '</a>',
-			'delete' => '<a href="' . esc_url( nml_get_admin_page_delete_notification( $item->ID ) ) . '">' . __( 'Delete', 'naked-mailing-list' ) . '</a>'
+			'delete' => '<a href="' . esc_url( nml_get_admin_page_delete_list( $item->ID ) ) . '">' . __( 'Delete', 'naked-mailing-list' ) . '</a>'
 		);
 
 		return $name . $this->row_actions( $actions );
@@ -233,14 +214,13 @@ class NML_Notification_Table extends WP_List_Table {
 	 */
 	public function get_columns() {
 		$columns = array(
-			'cb'        => '<input type="checkbox">',
-			'name'      => __( 'Name', 'naked-mailing-list' ),
-			'active'    => __( 'Status', 'naked-mailing-list' ),
-			'lists'     => __( 'Lists', 'naked-mailing-list' ),
-			'post_type' => __( 'Post Type', 'naked-mailing-list' )
+			'cb'          => '<input type="checkbox">',
+			'name'        => __( 'Name', 'naked-mailing-list' ),
+			'description' => __( 'Description', 'naked-mailing-list' ),
+			'count'       => __( 'Subscriber Count', 'naked-mailing-list' )
 		);
 
-		return apply_filters( 'nml_notification_table_columns', $columns );
+		return apply_filters( 'nml_list_table_columns', $columns );
 	}
 
 	/**
@@ -252,9 +232,8 @@ class NML_Notification_Table extends WP_List_Table {
 	 */
 	public function get_sortable_columns() {
 		return array(
-			'name'      => array( 'name', true ),
-			'status'    => array( 'status', true ),
-			'post_type' => array( 'post_type', true )
+			'name'  => array( 'name', true ),
+			'count' => array( 'count', true )
 		);
 	}
 
@@ -279,7 +258,7 @@ class NML_Notification_Table extends WP_List_Table {
 		if ( 'top' == $which && true === $this->display_delete_message ) {
 			?>
 			<div id="message" class="updated notice notice-success">
-				<p><?php _e( 'Notifications successfully deleted.', 'naked-mailing-list' ); ?></p>
+				<p><?php _e( 'Lists successfully deleted.', 'naked-mailing-list' ); ?></p>
 			</div>
 			<?php
 		}
@@ -311,12 +290,10 @@ class NML_Notification_Table extends WP_List_Table {
 	 */
 	public function get_bulk_actions() {
 		$actions = array(
-			'activate'   => __( 'Activate', 'naked-mailing-list' ),
-			'deactivate' => __( 'Deactivate', 'naked-mailing-list' ),
-			'delete'     => __( 'Delete Permanently', 'naked-mailing-list' )
+			'delete' => __( 'Delete Permanently', 'naked-mailing-list' )
 		);
 
-		return apply_filters( 'nml_notifications_table_bulk_actions', $actions );
+		return apply_filters( 'nml_lists_table_bulk_actions', $actions );
 	}
 
 	/**
@@ -328,18 +305,7 @@ class NML_Notification_Table extends WP_List_Table {
 	 */
 	public function process_bulk_actions() {
 
-		if ( 'activate' == $this->current_action() || 'deactivate' == $this->current_action() ) {
-
-			// Check nonce.
-			if ( empty( $_GET['_wpnonce'] ) || ! wp_verify_nonce( $_GET['_wpnonce'], 'bulk-' . $this->_args['plural'] ) ) {
-				wp_die( __( 'Failed security check.', 'naked-mailing-list' ) );
-			}
-
-			$new_status = ( 'activate' == $this->current_action() ) ? 1 : 0;
-
-			// @todo
-
-		} elseif ( 'delete' == $this->current_action() ) {
+		if ( 'delete' == $this->current_action() ) {
 
 			// Check nonce.
 			if ( empty( $_GET['_wpnonce'] ) || ! wp_verify_nonce( $_GET['_wpnonce'], 'bulk-' . $this->_args['plural'] ) ) {
@@ -348,11 +314,11 @@ class NML_Notification_Table extends WP_List_Table {
 
 			// Checek capability.
 			if ( ! current_user_can( 'delete_posts' ) ) {
-				wp_die( __( 'You don\'t have permission to delete newsletters.', 'naked-mailing-list' ) );
+				wp_die( __( 'You don\'t have permission to delete lists.', 'naked-mailing-list' ) );
 			}
 
-			if ( isset( $_GET['newsletters'] ) && is_array( $_GET['newsletters'] ) && count( $_GET['newsletters'] ) ) {
-				naked_mailing_list()->newsletters->delete_by_ids( $_GET['newsletters'] ); // @todo move to dedicated deletion function
+			if ( isset( $_GET['lists'] ) && is_array( $_GET['lists'] ) && count( $_GET['lists'] ) ) {
+				naked_mailing_list()->lists->delete_by_ids( $_GET['lists'] ); // @todo move to dedicated deletion function
 
 				// Display the delete message.
 				$this->display_delete_message = true;
@@ -385,13 +351,13 @@ class NML_Notification_Table extends WP_List_Table {
 	}
 
 	/**
-	 * Build all the notification data.
+	 * Build all the list data.
 	 *
 	 * @access public
 	 * @since  1.0
-	 * @return array Array of notification.
+	 * @return array Array of lists.
 	 */
-	public function notification_data() {
+	public function list_data() {
 
 		$paged   = $this->get_paged();
 		$offset  = $this->per_page * ( $paged - 1 );
@@ -403,22 +369,23 @@ class NML_Notification_Table extends WP_List_Table {
 			'offset'  => $offset,
 			'order'   => $order,
 			'orderby' => $orderby,
+			'type'    => 'list'
 		);
 
-		// Filter by name
+		// Filter by subject
 		if ( isset( $_GET['s'] ) ) {
 			$args['name'] = sanitize_text_field( $_GET['s'] );
 		}
 
 		// Filter by status
-		if ( isset( $_GET['active'] ) ) {
-			$args['active'] = ( 1 == absint( $_GET['active'] ) ) ? 1 : 0;
+		if ( isset( $_GET['type'] ) ) {
+			$args['type'] = sanitize_text_field( $_GET['type'] );
 		}
 
-		$this->args    = $args;
-		$notifications = nml_get_notifications( $args );
+		$this->args = $args;
+		$lists      = nml_get_lists( $args );
 
-		return $notifications;
+		return $lists;
 
 	}
 
@@ -427,9 +394,9 @@ class NML_Notification_Table extends WP_List_Table {
 	 *
 	 * Setup the final data for the table.
 	 *
-	 * @uses   NML_Notification_Table::get_columns()
+	 * @uses   NML_List_Table::get_columns()
 	 * @uses   WP_List_Table::get_sortable_columns()
-	 * @uses   NML_Notification_Table::notification_data()
+	 * @uses   NML_List_Table::list_data()
 	 * @uses   WP_List_Table::set_pagination_args()
 	 *
 	 * @access public
@@ -447,9 +414,9 @@ class NML_Notification_Table extends WP_List_Table {
 
 		$this->_column_headers = array( $columns, $hidden, $sortable );
 
-		$this->items = $this->notification_data();
+		$this->items = $this->list_data();
 
-		$this->total = naked_mailing_list()->notifications->count( $this->args );
+		$this->total = naked_mailing_list()->lists->count( $this->args );
 
 		$this->set_pagination_args( array(
 			'total_items' => $this->total,
@@ -467,11 +434,7 @@ class NML_Notification_Table extends WP_List_Table {
 	 * @return void
 	 */
 	public function no_items() {
-		printf(
-			__( 'No post notifications found. Would you like to %sadd one?%', 'naked-mailing-list' ),
-			'<a href="' . esc_url( nml_get_admin_page_add_notification() ) . '">',
-			'</a>'
-		);
+		_e( 'No lists found. You can add one using the form on the left.', 'naked-mailing-list' );
 	}
 
 }

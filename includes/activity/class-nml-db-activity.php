@@ -53,6 +53,7 @@ class NML_DB_Activity extends NML_DB {
 
 		add_action( 'nml_post_insert_subscriber', array( $this, 'new_subscriber' ), 10, 2 );
 		add_action( 'nml_subscriber_confirm', array( $this, 'confirm_subscriber' ), 10, 2 );
+		add_action( 'nml_subscriber_set_unsubscribed', array( $this, 'unsubscribe' ), 10, 3 );
 
 	}
 
@@ -501,6 +502,26 @@ class NML_DB_Activity extends NML_DB {
 
 		$activity_data = array(
 			'type'          => 'subscriber_confirm',
+			'subscriber_id' => absint( $subscriber_id )
+		);
+
+		$this->add( $activity_data );
+
+	}
+
+	/**
+	 * @param string         $old_status    Previous status.
+	 * @param int            $subscriber_id Subscriber ID.
+	 * @param NML_Subscriber $subscriber    Subscriber object.
+	 *
+	 * @access public
+	 * @since  1.0
+	 * @return void
+	 */
+	public function unsubscribe( $old_status, $subscriber_id, $subscriber ) {
+
+		$activity_data = array(
+			'type'          => 'unsubscribe',
 			'subscriber_id' => absint( $subscriber_id )
 		);
 

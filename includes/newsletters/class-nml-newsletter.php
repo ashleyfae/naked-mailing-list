@@ -254,11 +254,13 @@ class NML_Newsletter {
 
 		$created = false;
 
+		$new_id = $this->db->add( $data );
+
 		// The DB class 'add' implies an update if the newsletter being asked to be created already exists.
-		if ( $this->db->add( $data ) ) {
+		if ( $new_id ) {
 
 			// We've successfully added/updated the newsletter, reset the class vars with the new data
-			$newsletter = $this->db->get_newsletter_by( 'ID', $args['ID'] );
+			$newsletter = $this->db->get_newsletter_by( 'ID', $new_id );
 
 			// Setup the newsletter data with the values from the DB.
 			$this->setup_newsletter( $newsletter );
@@ -274,6 +276,7 @@ class NML_Newsletter {
 			 * @since 1.0
 			 */
 			do_action( 'nml_newsletter_transition_status', $this->status, '', $this->ID, $this );
+			do_action( 'nml_newsletter_set_status_' . $this->status, '', $this->ID, $this );
 
 			$created = $this->ID;
 
@@ -310,7 +313,8 @@ class NML_Newsletter {
 
 		do_action( 'nml_newsletter_pre_update', $this->ID, $data );
 
-		$updated = false;
+		$updated    = false;
+		$old_status = $this->status;
 
 		if ( $this->db->update( $this->ID, $data ) ) {
 
@@ -329,8 +333,9 @@ class NML_Newsletter {
 			 *
 			 * @since 1.0
 			 */
-			if ( array_key_exists( 'status', $data ) && $data['status'] != $this->status ) {
-				do_action( 'nml_newsletter_transition_status', $this->status, $data['status'], $this->ID, $this );
+			if ( array_key_exists( 'status', $data ) && $data['status'] != $old_status ) {
+				do_action( 'nml_newsletter_transition_status', $this->status, $old_status, $this->ID, $this );
+				do_action( 'nml_newsletter_set_status_' . $this->status, $old_status, $this->ID, $this );
 			}
 
 		}
@@ -408,6 +413,7 @@ class NML_Newsletter {
 
 		$defaults = array(
 			'list'   => $list_ids,
+			'status' => 'subscribed',
 			'number' => - 1 // Eeks
 		);
 
@@ -445,6 +451,8 @@ class NML_Newsletter {
 				case '%s' :
 					if ( 'from_address' == $key || 'reply_to_address' == $key ) {
 						$data[ $key ] = sanitize_email( $data[ $key ] );
+					} elseif ( 'body' == $key ) {
+						$data[ $key ] = wp_kses_post( $data[ $key ] );
 					} else {
 						$data[ $key ] = sanitize_text_field( $data[ $key ] );
 					}

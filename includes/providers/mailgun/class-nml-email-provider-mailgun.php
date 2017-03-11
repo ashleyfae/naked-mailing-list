@@ -40,6 +40,15 @@ class NML_Email_Provider_MailGun extends NML_Email {
 	private $api_key;
 
 	/**
+	 * Whether or not test mode is enabled
+	 *
+	 * @var bool
+	 * @protected
+	 * @since 1.0
+	 */
+	protected $test_mode;
+
+	/**
 	 * Initialize
 	 *
 	 * @access public
@@ -50,6 +59,7 @@ class NML_Email_Provider_MailGun extends NML_Email {
 
 		$this->domain_name = nml_get_option( 'mailgun_domain' );
 		$this->api_key     = nml_get_option( 'mailgun_api_key' );
+		$this->test_mode   = nml_get_option( 'mailgun_test_mode' );
 
 	}
 
@@ -98,10 +108,13 @@ class NML_Email_Provider_MailGun extends NML_Email {
 		$response = wp_remote_post( $url, $data );
 
 		if ( is_wp_error( $response ) ) {
+			error_log( sprintf( 'MailGun invalid response: %s', var_export( $response, true ) ) );
+
 			return false;
 		}
 
 		if ( 200 != wp_remote_retrieve_response_code( $response ) ) {
+			error_log( sprintf( 'MailGun invalid response code: %s', var_export( wp_remote_retrieve_response_code( $response ), true ) ) );
 			return false;
 		}
 

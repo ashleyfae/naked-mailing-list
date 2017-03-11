@@ -103,11 +103,15 @@ function nml_get_email_provider() {
 }
 
 /**
- * @return mixed|void
+ * Get available email templates
+ *
+ * @since 1.0
+ * @return array
  */
 function nml_get_email_templates() {
 	$templates = array(
-		'default' => esc_html__( 'Default', 'naked-mailing-list' )
+		'default' => esc_html__( 'Default', 'naked-mailing-list' ),
+		'none'    => esc_html__( 'No template, plain text only', 'naked-mailing-list' )
 	);
 
 	return apply_filters( 'nml_email_templates', $templates );

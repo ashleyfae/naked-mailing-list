@@ -51,6 +51,8 @@ add_action( 'nml_every_minute_scheduled_events', 'nml_check_and_process_queue' )
  */
 function nml_process_queue_entry( $entry ) {
 
+	global $wpdb;
+
 	if ( is_numeric( $entry ) ) {
 		$entry = naked_mailing_list()->queue->get_entry_by( 'ID', absint( $entry ) );
 	}
@@ -73,11 +75,12 @@ function nml_process_queue_entry( $entry ) {
 		$result = $email->send();
 
 		if ( ! $result ) {
-			// @todo log error
+			error_log( sprintf( 'Sending error: %s', var_export( $result ) ) );
+			// @todo log error for real
 
 			// Delay this log entry by 5 minutes.
 			naked_mailing_list()->queue->update( $entry->ID, array(
-				'date_to_process' => gmdate( 'Y-m-d H:i:s', strtotime( '5 minutes from now' ) )
+				'date_to_process' => gmdate( 'Y-m-d H:i:s', strtotime( '+5 minutes' ) )
 			) );
 
 			return false;
@@ -87,12 +90,12 @@ function nml_process_queue_entry( $entry ) {
 	}
 
 	// Delete this queue entry.
-	//naked_mailing_list()->queue->delete( $entry->ID );
+	naked_mailing_list()->queue->delete( $entry->ID );
 
 	// Mark queue entry as processed.
-	naked_mailing_list()->queue->update( $entry->ID, array(
+	/*naked_mailing_list()->queue->update( $entry->ID, array(
 		'status' => 'completed'
-	) );
+	) );*/
 
 	if ( count( $subscribers ) < nml_number_subscribers_per_batch() ) {
 
@@ -100,6 +103,17 @@ function nml_process_queue_entry( $entry ) {
 		$newsletter->update( array(
 			'status' => 'sent'
 		) );
+
+		// Increment the email count for all subscribers.
+		$newsletter_lists = $newsletter->get_lists();
+
+		if ( ! empty( $newsletter_lists ) && is_array( $newsletter_lists ) ) {
+			$list_ids = wp_list_pluck( $newsletter_lists, 'ID' );
+
+			naked_mailing_list()->subscribers->increment_email_count( array(
+				'list' => $list_ids
+			) );
+		}
 
 	} else {
 

@@ -1,11 +1,11 @@
 <?php
 /**
- * Post Notification Functions
+ * List Functions
  *
  * @package   naked-mailing-list
  * @copyright Copyright (c) 2017, Ashley Gibson
  * @license   GPL2+
- * @since 1.0
+ * @since     1.0
  */
 
 // Exit if accessed directly
@@ -14,22 +14,22 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /**
- * Register default notification views.
+ * Register default list views.
  *
  * @param array $views
  *
  * @since 1.0
  * @return array
  */
-function nml_register_default_notification_views( $views ) {
+function nml_register_default_list_views( $views ) {
 
 	$default_views = array(
-		'add'  => 'nml_notifications_edit_view',
-		'edit' => 'nml_notifications_edit_view'
+		'add'  => 'nml_lists_edit_view',
+		'edit' => 'nml_lists_edit_view'
 	);
 
 	return array_merge( $views, $default_views );
 
 }
 
-add_filter( 'nml_notification_views', 'nml_register_default_notification_views', 1 );
+add_filter( 'nml_list_views', 'nml_register_default_list_views', 1 );

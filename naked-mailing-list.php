@@ -90,12 +90,6 @@ if ( ! class_exists( 'Naked_Mailing_List' ) ) :
 		public $newsletter_list_relationships;
 
 		/**
-		 * @var NML_DB_Notifications
-		 * @since 1.0
-		 */
-		public $notifications;
-
-		/**
 		 * @var NML_DB_Queue
 		 * @since 1.0
 		 */
@@ -128,7 +122,6 @@ if ( ! class_exists( 'Naked_Mailing_List' ) ) :
 				self::$instance->list_relationships            = new NML_DB_List_Relationships();
 				self::$instance->newsletters                   = new NML_DB_Newsletters();
 				self::$instance->newsletter_list_relationships = new NML_DB_Newsletter_List_Relationships();
-				self::$instance->notifications                 = new NML_DB_Notifications();
 				self::$instance->queue                         = new NML_DB_Queue();
 			}
 
@@ -223,7 +216,6 @@ if ( ! class_exists( 'Naked_Mailing_List' ) ) :
 			require_once NML_PLUGIN_DIR . 'includes/newsletters/class-nml-db-newsletter-list-relationships.php';
 			require_once NML_PLUGIN_DIR . 'includes/newsletters/class-nml-newsletter.php';
 			require_once NML_PLUGIN_DIR . 'includes/newsletters/newsletter-functions.php';
-			require_once NML_PLUGIN_DIR . 'includes/notifications/class-nml-db-notifications.php';
 			require_once NML_PLUGIN_DIR . 'includes/notifications/class-nml-post-notification.php';
 			require_once NML_PLUGIN_DIR . 'includes/notifications/notification-functions.php';
 			require_once NML_PLUGIN_DIR . 'includes/queue/class-nml-db-queue.php';
@@ -242,12 +234,12 @@ if ( ! class_exists( 'Naked_Mailing_List' ) ) :
 				require_once NML_PLUGIN_DIR . 'includes/admin/admin-actions.php';
 				require_once NML_PLUGIN_DIR . 'includes/admin/admin-assets.php';
 				require_once NML_PLUGIN_DIR . 'includes/admin/admin-pages.php';
+				require_once NML_PLUGIN_DIR . 'includes/admin/lists/list-actions.php';
+				require_once NML_PLUGIN_DIR . 'includes/admin/lists/list-functions.php';
+				require_once NML_PLUGIN_DIR . 'includes/admin/lists/lists.php';
 				require_once NML_PLUGIN_DIR . 'includes/admin/newsletters/newsletter-actions.php';
 				require_once NML_PLUGIN_DIR . 'includes/admin/newsletters/newsletter-functions.php';
 				require_once NML_PLUGIN_DIR . 'includes/admin/newsletters/newsletters.php';
-				require_once NML_PLUGIN_DIR . 'includes/admin/notifications/notification-actions.php';
-				require_once NML_PLUGIN_DIR . 'includes/admin/notifications/notification-functions.php';
-				require_once NML_PLUGIN_DIR . 'includes/admin/notifications/notifications.php';
 				require_once NML_PLUGIN_DIR . 'includes/admin/settings/display-settings.php';
 				require_once NML_PLUGIN_DIR . 'includes/admin/subscribers/subscriber-actions.php';
 				require_once NML_PLUGIN_DIR . 'includes/admin/subscribers/subscriber-functions.php';

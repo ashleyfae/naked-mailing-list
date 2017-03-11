@@ -91,10 +91,10 @@ function nml_locate_template( $template_names, $load = false, $require_once = tr
 	$template_stack = array();
 
 	// check child theme first
-	$template_stack[] = trailingslashit( get_stylesheet_directory() ) . 'rcp/';
+	$template_stack[] = trailingslashit( get_stylesheet_directory() ) . 'naked-mailing-list/';
 
 	// check parent theme next
-	$template_stack[] = trailingslashit( get_template_directory() ) . 'rcp/';
+	$template_stack[] = trailingslashit( get_template_directory() ) . 'naked-mailing-list/';
 
 	// check custom directories
 	$template_stack = apply_filters( 'nml_template_stack', $template_stack, $template_names );
@@ -136,3 +136,21 @@ function nml_locate_template( $template_names, $load = false, $require_once = tr
 
 	return $located;
 }
+
+/**
+ * Newsletter preview template
+ *
+ * @param string $template
+ *
+ * @since 1.0
+ * @return string
+ */
+function nml_newsletter_preview_template( $template ) {
+	if ( ! is_preview() || ! isset( $_GET['newsletter'] ) ) {
+		return $template;
+	}
+
+	return nml_get_template_part( 'email/preview', null, false );
+}
+
+add_filter( 'template_include', 'nml_newsletter_preview_template' );

@@ -70,7 +70,7 @@ function nml_insert_newsletter( $newsletter_data ) {
 
 	$newsletter_db_data['status']           = ( array_key_exists( 'status', $newsletter_data ) && array_key_exists( $newsletter_data['status'], nml_get_newsletter_statuses() ) ) ? sanitize_text_field( $newsletter_data['status'] ) : 'draft';
 	$newsletter_db_data['subject']          = array_key_exists( 'subject', $newsletter_data ) ? sanitize_text_field( $newsletter_data['subject'] ) : '';
-	$newsletter_db_data['body']             = array_key_exists( 'body', $newsletter_data ) ? sanitize_text_field( $newsletter_data['body'] ) : '';
+	$newsletter_db_data['body']             = array_key_exists( 'body', $newsletter_data ) ? wp_kses_post( $newsletter_data['body'] ) : '';
 	$newsletter_db_data['from_address']     = array_key_exists( 'from_address', $newsletter_data ) ? sanitize_text_field( $newsletter_data['from_address'] ) : '';
 	$newsletter_db_data['from_name']        = array_key_exists( 'from_name', $newsletter_data ) ? sanitize_text_field( $newsletter_data['from_name'] ) : '';
 	$newsletter_db_data['reply_to_address'] = array_key_exists( 'reply_to_address', $newsletter_data ) ? sanitize_text_field( $newsletter_data['reply_to_address'] ) : '';
@@ -114,7 +114,9 @@ function nml_insert_newsletter( $newsletter_data ) {
 	 */
 
 	if ( array_key_exists( 'lists', $newsletter_data ) ) {
-		nml_set_object_lists( 'newsletter', $newsletter_id, $newsletter_data['lists'], 'list', false );
+		$result = nml_set_object_lists( 'newsletter', $newsletter_id, $newsletter_data['lists'], 'list', false );
+
+		error_log( var_export( $result, true ) );
 	}
 	if ( array_key_exists( 'tags', $newsletter_data ) ) {
 		nml_set_object_lists( 'newsletter', $newsletter_id, $newsletter_data['tags'], 'tag', false );
@@ -125,6 +127,29 @@ function nml_insert_newsletter( $newsletter_data ) {
 	 */
 
 	return $newsletter_id;
+
+}
+
+/**
+ * Delete newsletter
+ *
+ * @param int $newsletter_id ID of the newsletter to delete.
+ *
+ * @since 1.0
+ * @return true|WP_Error
+ */
+function nml_delete_newsletter( $newsletter_id ) {
+
+	$deleted = naked_mailing_list()->newsletters->delete( absint( $newsletter_id ) );
+
+	if ( ! $deleted ) {
+		return new WP_Error( 'error-deleting-newsletter', __( 'Error deleting newsletter.', 'naked-mailing-list' ) );
+	}
+
+	// Delete relationships.
+	naked_mailing_list()->newsletter_list_relationships->delete_newsletter_relationships( absint( $newsletter_id ) );
+
+	return true;
 
 }
 
@@ -173,3 +198,87 @@ function nml_send_newsletter_on_status_change( $new_status, $old_status, $newsle
 }
 
 add_action( 'nml_newsletter_transition_status', 'nml_send_newsletter_on_status_change', 10, 4 );
+
+/**
+ * Get admin page: newsletters list
+ *
+ * @since 1.0
+ * @return string
+ */
+function nml_get_admin_page_newsletters() {
+	$url = admin_url( 'admin.php?page=nml-newsletters' );
+
+	return apply_filters( 'nml_admin_page_newsletters', $url );
+}
+
+/**
+ * Get admin page: add newsletter
+ *
+ * @since 1.0
+ * @return string
+ */
+function nml_get_admin_page_add_newsletter() {
+	$newsletter_page = nml_get_admin_page_newsletters();
+
+	$add_newsletter_page = add_query_arg( array(
+		'view' => 'add'
+	), $newsletter_page );
+
+	return apply_filters( 'nml_admin_page_add_newsletter', $add_newsletter_page );
+}
+
+/**
+ * Get admin page: edit newsletter
+ *
+ * @param int $newsletter_id ID of the newsletter to edit.
+ *
+ * @since 1.0
+ * @return string
+ */
+function nml_get_admin_page_edit_newsletter( $newsletter_id ) {
+	$newsletter_page = nml_get_admin_page_newsletters();
+
+	$edit_newsletter_page = add_query_arg( array(
+		'view' => 'edit',
+		'ID'   => absint( $newsletter_id )
+	), $newsletter_page );
+
+	return apply_filters( 'nml_admin_page_edit_newsletter', $edit_newsletter_page );
+}
+
+/**
+ * Get admin page: delete newsletter
+ *
+ * @param int $newsletter_id ID of the newsletter to delete.
+ *
+ * @since 1.0
+ * @return string
+ */
+function nml_get_admin_page_delete_newsletter( $newsletter_id ) {
+	$newsletter_page = nml_get_admin_page_newsletters();
+
+	$delete_newsletter_page = add_query_arg( array(
+		'nml_action' => urlencode( 'delete_newsletter' ),
+		'ID'         => absint( $newsletter_id ),
+		'nonce'      => wp_create_nonce( 'nml_delete_newsletter' )
+	), $newsletter_page );
+
+	return apply_filters( 'nml_admin_page_delete_newsletter', $delete_newsletter_page );
+}
+
+/**
+ * Get newsletter preview URL
+ *
+ * @param int $newsletter_id ID of the newsletter.
+ *
+ * @since 1.0
+ * @return string
+ */
+function nml_get_newsletter_preview_url( $newsletter_id ) {
+	$url = add_query_arg( array(
+		'newsletter' => absint( $newsletter_id ),
+		'preview'    => 'true'
+	), home_url() );
+
+	return apply_filters( 'nml_newsletter_preview_url', $url, $newsletter_id );
+}

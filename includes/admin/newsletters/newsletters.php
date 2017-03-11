@@ -168,7 +168,7 @@ function nml_newsletters_edit_view( $newsletter ) {
 												<input type="submit" name="save" id="save-post" value="<?php esc_attr_e( 'Save Draft', 'naked-mailing-list' ); ?>" class="button">
 											</div>
 											<div id="preview-action">
-												<a class="preview button" href="" target="_blank" id="post-preview"><?php esc_html_e( 'Preview', 'naked-mailing-list' ); ?></a>
+												<a class="preview button" href="<?php echo esc_url( nml_get_newsletter_preview_url( $newsletter->ID ) ); ?>" target="_blank" id="post-preview"><?php esc_html_e( 'Preview', 'naked-mailing-list' ); ?></a>
 											</div>
 											<div class="clear"></div>
 										</div>
@@ -185,7 +185,7 @@ function nml_newsletters_edit_view( $newsletter ) {
 											<?php endif; ?>
 										</div>
 										<div id="publishing-action">
-											<input type="submit" id="nml-save-newsletter" name="save_newsletter" class="button button-primary button-large" value="<?php esc_attr_e( 'Send Now', 'naked-mailing-list' ); ?>">
+											<input type="submit" id="nml-save-newsletter" name="send_newsletter" class="button button-primary button-large" value="<?php esc_attr_e( 'Send Now', 'naked-mailing-list' ); ?>">
 										</div>
 									</div>
 								</div>

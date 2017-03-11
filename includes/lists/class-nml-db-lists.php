@@ -73,7 +73,7 @@ class NML_DB_Lists extends NML_DB {
 	}
 
 	/**
-	 * Add a list
+	 * Add or update a list
 	 *
 	 * @param array $data List data.
 	 *

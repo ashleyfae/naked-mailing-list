@@ -218,26 +218,34 @@ function nml_get_registered_settings() {
 					'type'    => 'select',
 					'std'     => 'default',
 					'options' => nml_get_email_templates()
+				),
+				'email_footer'   => array(
+					'id'   => 'email_footer',
+					'name' => esc_html__( 'Footer Text', 'naked-mailing-list' ),
+					'type' => 'textarea',
+					'std'  => '<a href="' . esc_url( home_url() ) . '">' . get_bloginfo( 'name' ) . '</a>'
 				)
 			)
 		) ),
 		/* Sending (providers added via filter) */
 		'sending' => apply_filters( 'nml_settings_sending', array(
 			'main' => array(
-				'test_mode'      => array(
-					'id'   => 'test_mode',
-					'name' => esc_html__( 'Test Mode', 'naked-mailing-list' ),
-					'type' => 'checkbox',
-					'std'  => false
-				),
-				'provider'       => array(
+				'provider'           => array(
 					'id'      => 'provider',
 					'name'    => esc_html__( 'Email Provider', 'naked-mailing-list' ),
 					'type'    => 'select',
 					'std'     => 'mailgun',
 					'options' => nml_get_available_email_providers()
 				),
-				'per_batch'      => array(
+				'post_notifications' => array(
+					'id'      => 'post_notifications',
+					'name'    => esc_html__( 'Post Notifications', 'naked-mailing-list' ),
+					'desc'    => __( 'Email subscribers on this list when a new post is published.', 'naked-mailing-list' ),
+					'type'    => 'select',
+					'std'     => '',
+					'options' => array( '' => esc_html__( 'Disabled', 'naked-mailing-list' ) ) + nml_get_lists_array()
+				),
+				'per_batch'          => array(
 					'id'      => 'per_batch',
 					'name'    => esc_html__( 'Emails Per Batch', 'naked-mailing-list' ),
 					'desc'    => __( 'Number of emails to send per batch.', 'naked-mailing-list' ),
@@ -247,25 +255,25 @@ function nml_get_registered_settings() {
 						'type' => 'number'
 					)
 				),
-				'from_name'      => array(
+				'from_name'          => array(
 					'id'   => 'from_name',
 					'name' => esc_html__( 'Default From Name', 'naked-mailing-list' ),
 					'type' => 'text',
 					'std'  => get_bloginfo( 'name' )
 				),
-				'from_email'     => array(
+				'from_email'         => array(
 					'id'   => 'from_email',
 					'name' => esc_html__( 'Default From Email', 'naked-mailing-list' ),
 					'type' => 'text',
 					'std'  => get_option( 'admin_email' )
 				),
-				'reply_to_name'  => array(
+				'reply_to_name'      => array(
 					'id'   => 'reply_to_name',
 					'name' => esc_html__( 'Default Reply-To Name', 'naked-mailing-list' ),
 					'type' => 'text',
 					'std'  => get_bloginfo( 'name' )
 				),
-				'reply_to_email' => array(
+				'reply_to_email'     => array(
 					'id'   => 'reply_to_email',
 					'name' => esc_html__( 'Default Reply-To Email', 'naked-mailing-list' ),
 					'type' => 'text',
@@ -355,7 +363,7 @@ function nml_settings_sanitize( $input = array() ) {
  * @return string
  */
 function nml_settings_sanitize_text_field( $input ) {
-	return wp_kses_post( $input );
+	return sanitize_text_field( $input );
 }
 
 add_filter( 'nml_sanitize_settings_text', 'nml_settings_sanitize_text_field' );
@@ -373,6 +381,20 @@ function nml_settings_sanitize_number_field( $input ) {
 }
 
 add_filter( 'nml_sanitize_settings_number', 'nml_settings_sanitize_number_field' );
+
+/**
+ * Sanitize Textarea Field
+ *
+ * @param string $input
+ *
+ * @since 1.0
+ * @return string
+ */
+function nml_settings_sanitize_textarea_field( $input ) {
+	return wp_kses_post( $input );
+}
+
+add_filter( 'nml_sanitize_settings_textarea', 'nml_settings_sanitize_textarea_field' );
 
 /**
  * Sanitize Checkbox Field
@@ -535,6 +557,29 @@ function nml_text_callback( $args ) {
 	$type = ( isset( $args['type'] ) ) ? $args['type'] : 'text';
 	?>
 	<input type="<?php echo esc_attr( $type ); ?>" class="<?php echo esc_attr( sanitize_html_class( $size ) . '-text' ); ?>" id="nml_settings_<?php echo nml_sanitize_key( $args['id'] ); ?>" <?php echo $name; ?> value="<?php echo esc_attr( wp_unslash( $value ) ); ?>">
+	<?php if ( $args['desc'] ) : ?>
+		<label for="nml_settings_<?php echo nml_sanitize_key( $args['id'] ); ?>" class="nml-description"><?php echo wp_kses_post( $args['desc'] ); ?></label>
+	<?php endif;
+}
+
+/**
+ * Callback: Textarea
+ *
+ * @param array $args Arguments passed by the setting.
+ *
+ * @since 1.0
+ * @return void
+ */
+function nml_textarea_callback( $args ) {
+	$saved = nml_get_option( $args['id'] );
+
+	if ( $saved ) {
+		$value = $saved;
+	} else {
+		$value = isset( $args['std'] ) ? $args['std'] : '';
+	}
+	?>
+	<textarea class="large-text" id="nml_settings_<?php echo nml_sanitize_key( $args['id'] ); ?>" name="nml_settings[<?php echo nml_sanitize_key( $args['id'] ); ?>]" rows="5"><?php echo esc_textarea( $value ); ?></textarea>
 	<?php if ( $args['desc'] ) : ?>
 		<label for="nml_settings_<?php echo nml_sanitize_key( $args['id'] ); ?>" class="nml-description"><?php echo wp_kses_post( $args['desc'] ); ?></label>
 	<?php endif;

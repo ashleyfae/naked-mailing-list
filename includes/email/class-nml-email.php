@@ -24,15 +24,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 class NML_Email {
 
 	/**
-	 * Whether or not test mode is enabled
-	 *
-	 * @var bool
-	 * @protected
-	 * @since 1.0
-	 */
-	protected $test_mode;
-
-	/**
 	 * Email subject
 	 *
 	 * @var string
@@ -78,13 +69,31 @@ class NML_Email {
 	protected $template;
 
 	/**
+	 * Holds the email content type
+	 *
+	 * @var string
+	 * @access protected
+	 * @since  1.0
+	 */
+	protected $content_type;
+
+	/**
+	 * Whether to send email in HTML
+	 *
+	 * @var bool
+	 * @access protected
+	 * @since  1.0
+	 */
+	protected $html = true;
+
+	/**
 	 * Newsletter object
 	 *
 	 * @var NML_Newsletter
 	 * @access protected
 	 * @since  1.0
 	 */
-	protected $newsletter;
+	public $newsletter;
 
 	/**
 	 * Array of subscriber DB objects the message is being sent to
@@ -107,7 +116,14 @@ class NML_Email {
 	public function __construct( $newsletter_id = 0 ) {
 		$this->newsletter = new NML_Newsletter( $newsletter_id );
 
-		$this->test_mode = nml_test_mode();
+		$this->from_name    = ! empty( $this->newsletter->from_name ) ? $this->newsletter->from_name : nml_get_option( 'from_name' );
+		$this->from_address = ! empty( $this->newsletter->from_address ) ? $this->newsletter->from_address : nml_get_option( 'from_email' );
+		// @todo reply-to stuff
+
+		if ( 'none' === $this->get_template() ) {
+			$this->html = false;
+		}
+
 		$this->init();
 	}
 
@@ -171,10 +187,51 @@ class NML_Email {
 	 */
 	public function get_template() {
 		if ( ! $this->template ) {
-			$this->template = nml_get_option('email_template', 'default');
+			$this->template = nml_get_option( 'email_template', 'default' );
 		}
 
 		return apply_filters( 'nml_email_template', $this->template );
+	}
+
+	/**
+	 * Get the email content type
+	 *
+	 * @access public
+	 * @since  1.0
+	 * @return string The email content type
+	 */
+	public function get_content_type() {
+
+		if ( ! $this->content_type && $this->html ) {
+			$this->content_type = apply_filters( 'nml_email_default_content_type', 'text/html', $this );
+		} elseif ( ! $this->html ) {
+			$this->content_type = 'text/plain';
+		}
+
+		return apply_filters( 'nml_email_content_type', $this->content_type, $this );
+
+	}
+
+	/**
+	 * Converts text formatted HTML. This is primarily for turning line breaks into <p> and <br/> tags.
+	 *
+	 * @since 1.0
+	 * @return string
+	 */
+	public function text_to_html( $message ) {
+
+		if ( 'text/html' === $this->content_type || true === $this->html ) {
+			if ( apply_filters( 'nml_email_template_wpautop', true ) ) {
+				$message = wpautop( $message );
+			}
+
+			if ( apply_filters( 'nml_email_template_content_filter', true ) ) {
+				$message = apply_filters( 'the_content', $message );
+			}
+		}
+
+		return $message;
+
 	}
 
 	/**
@@ -190,9 +247,15 @@ class NML_Email {
 	 */
 	public function build_email( $message ) {
 
+		if ( false === $this->html ) {
+			return apply_filters( 'nml_email_message', wp_strip_all_tags( $message ), $this );
+		}
+
+		$message = $this->text_to_html( $message );
+
 		ob_start();
 
-		nml_get_template_part( 'emails/header', $this->get_template(), true );
+		nml_get_template_part( 'email/header', $this->get_template(), true );
 
 		/**
 		 * Hooks into the email header
@@ -203,7 +266,7 @@ class NML_Email {
 		 */
 		do_action( 'nml_email_header', $this );
 
-		nml_get_template_part( 'emails/body', $this->get_template(), true );
+		nml_get_template_part( 'email/body', $this->get_template(), true );
 
 		/**
 		 * Hooks into the email body
@@ -214,7 +277,7 @@ class NML_Email {
 		 */
 		do_action( 'nml_email_body', $this );
 
-		nml_get_template_part( 'emails/footer', $this->get_template(), true );
+		nml_get_template_part( 'email/footer', $this->get_template(), true );
 
 		/**
 		 * Hooks into the email footer

@@ -39,20 +39,26 @@ add_filter( 'nml_settings_sections_sending', 'nml_mailgun_section' );
  */
 function nml_mailgun_settings( $sections ) {
 	$sections['mailgun'] = array(
-		'mailgun_domain'  => array(
+		'mailgun_domain'    => array(
 			'id'   => 'mailgun_domain',
 			'name' => esc_html__( 'Domain Name', 'naked-mailing-list' ),
 			'desc' => 'TK',
 			'type' => 'text',
 			'std'  => ''
 		),
-		'mailgun_api_key' => array(
+		'mailgun_api_key'   => array(
 			'id'   => 'mailgun_api_key',
 			'name' => esc_html__( 'API Key', 'naked-mailing-list' ),
 			'desc' => 'TK',
 			'type' => 'text',
 			'std'  => ''
-		)
+		),
+		'mailgun_test_mode' => array(
+			'id'   => 'mailgun_test_mode',
+			'name' => esc_html__( 'Test Mode', 'naked-mailing-list' ),
+			'type' => 'checkbox',
+			'std'  => false
+		),
 	);
 
 	return $sections;

@@ -314,7 +314,7 @@ class NML_DB_Subscribers extends NML_DB {
 				$ids = intval( $args['ID'] );
 			}
 
-			$where .= " AND `ID` IN( {$ids} ) ";
+			$where .= " AND s.ID IN( {$ids} ) ";
 
 		}
 
@@ -405,11 +405,15 @@ class NML_DB_Subscribers extends NML_DB {
 
 		$subscribers = wp_cache_get( $cache_key, 'subscribers' );
 
+		if ( 'ID' == $args['orderby'] ) {
+			$args['orderby'] = 's.ID';
+		}
+
 		$args['orderby'] = esc_sql( $args['orderby'] );
 		$args['order']   = esc_sql( $args['order'] );
 
 		if ( false === $subscribers ) {
-			$query = $wpdb->prepare( "SELECT $select_this FROM  $this->table_name s $join $where GROUP BY $this->primary_key ORDER BY {$args['orderby']} {$args['order']} LIMIT %d,%d;", absint( $args['offset'] ), absint( $args['number'] ) );
+			$query = $wpdb->prepare( "SELECT $select_this FROM  $this->table_name s $join $where GROUP BY s.ID ORDER BY {$args['orderby']} {$args['order']} LIMIT %d,%d;", absint( $args['offset'] ), absint( $args['number'] ) );
 			if ( 'all' == $args['fields'] ) {
 				$subscribers = $wpdb->get_results( $query );
 			} else {
@@ -556,6 +560,133 @@ class NML_DB_Subscribers extends NML_DB {
 		}
 
 		return absint( $count );
+
+	}
+
+	/**
+	 * Increment subscriber email count
+	 *
+	 * @param array $args Query arguments.
+	 *
+	 * @access public
+	 * @since  1.0
+	 * @return void
+	 */
+	public function increment_email_count( $args = array() ) {
+
+		global $wpdb;
+
+		$defaults = array(
+			'ID'         => null,
+			'email'      => null,
+			'first_name' => null,
+			'last_name'  => null,
+			'status'     => 'subscribed',
+			'referrer'   => null,
+			'ip'         => null,
+			'list'       => null
+		);
+
+		$args = wp_parse_args( $args, $defaults );
+
+		if ( $args['number'] < 1 ) {
+			$args['number'] = 999999999999;
+		}
+
+		$join  = '';
+		$where = ' WHERE 1=1 ';
+
+		// Specific subscriber(s).
+		if ( ! empty( $args['ID'] ) ) {
+
+			if ( is_array( $args['ID'] ) ) {
+				$ids = implode( ',', array_map( 'intval', $args['ID'] ) );
+			} else {
+				$ids = intval( $args['ID'] );
+			}
+
+			$where .= " AND s.ID IN( {$ids} ) ";
+
+		}
+
+		// Specific subscriber by email.
+		if ( ! empty( $args['email'] ) ) {
+
+			if ( is_array( $args['email'] ) ) {
+
+				$emails_count       = count( $args['email'] );
+				$emails_placeholder = array_fill( 0, $emails_count, '%s' );
+				$emails             = implode( ', ', $emails_placeholder );
+
+				$where .= $wpdb->prepare( " AND `email` IN( $emails ) ", $args['email'] );
+
+			} else {
+
+				$where .= $wpdb->prepare( " AND `email` = %s ", $args['email'] );
+
+			}
+
+		}
+
+		// Specific subscriber by first name.
+		if ( ! empty( $args['first_name'] ) ) {
+			$where .= $wpdb->prepare( " AND `first_name` LIKE '%%%%" . '%s' . "%%%%' ", $args['first_name'] );
+		}
+
+		// Specific subscriber by last name.
+		if ( ! empty( $args['last_name'] ) ) {
+			$where .= $wpdb->prepare( " AND `last_name` LIKE '%%%%" . '%s' . "%%%%' ", $args['last_name'] );
+		}
+
+		// By status
+		if ( ! empty( $args['status'] ) ) {
+
+			if ( is_array( $args['status'] ) ) {
+
+				$status_count       = count( $args['status'] );
+				$status_placeholder = array_fill( 0, $status_count, '%s' );
+				$statuses           = implode( ', ', $status_placeholder );
+
+				$where .= $wpdb->prepare( " AND `status` IN( $statuses ) ", $args['status'] );
+
+			} else {
+
+				$where .= $wpdb->prepare( " AND `status` = %s ", $args['status'] );
+
+			}
+
+		}
+
+		// By referrer
+		if ( ! empty( $args['referrer'] ) ) {
+			$where .= $wpdb->prepare( " AND `referrer` = %s ", $args['referrer'] );
+		}
+
+		// @todo by date
+
+		// By IP
+		if ( ! empty( $args['ip'] ) ) {
+			$where .= $wpdb->prepare( " AND `ip` = %s ", $args['ip'] );
+		}
+
+		// By list(s)
+		if ( ! empty( $args['list'] ) ) {
+
+			if ( is_array( $args['list'] ) ) {
+				$list_ids = implode( ',', array_map( 'intval', $args['list'] ) );
+			} else {
+				$list_ids = intval( $args['list'] );
+			}
+
+			$relationship_table = naked_mailing_list()->list_relationships->table_name;
+
+			$join .= " RIGHT JOIN $relationship_table as r on s.ID = r.subscriber_id AND r.list_id IN( {$list_ids} )";
+
+		}
+
+		$query = "UPDATE {$this->table_name} s {$join} SET email_count = email_count + 1 {$where}";
+		error_log( $query );
+		$result = $wpdb->query( $query );
 
 	}
 

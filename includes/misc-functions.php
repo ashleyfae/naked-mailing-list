@@ -14,149 +14,76 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 /*
- * Below: Newsletter Pages
+ * Below: Lists Pages
  */
 
 /**
- * Get admin page: newsletters list
+ * Get admin page: lists table
  *
  * @since 1.0
  * @return string
  */
-function nml_get_admin_page_newsletters() {
-	$url = admin_url( 'admin.php?page=nml-newsletters' );
+function nml_get_admin_page_lists() {
+	$url = admin_url( 'admin.php?page=nml-lists' );
 
-	return apply_filters( 'nml_admin_page_newsletters', $url );
+	return apply_filters( 'nml_admin_page_lists', $url );
 }
 
 /**
- * Get admin page: add newsletter
+ * Get admin page: add list
  *
  * @since 1.0
  * @return string
  */
-function nml_get_admin_page_add_newsletter() {
-	$newsletter_page = nml_get_admin_page_newsletters();
+function nml_get_admin_page_add_list() {
+	$list_page = nml_get_admin_page_lists();
 
-	$add_newsletter_page = add_query_arg( array(
+	$add_list_page = add_query_arg( array(
 		'view' => 'add'
-	), $newsletter_page );
+	), $list_page );
 
-	return apply_filters( 'nml_admin_page_add_newsletter', $add_newsletter_page );
+	return apply_filters( 'nml_admin_page_add_list', $add_list_page );
 }
 
 /**
- * Get admin page: edit newsletter
+ * Get admin page: edit list
  *
- * @param int $newsletter_id ID of the newsletter to edit.
+ * @param int $list_id ID of the list to edit.
  *
  * @since 1.0
  * @return string
  */
-function nml_get_admin_page_edit_newsletter( $newsletter_id ) {
-	$newsletter_page = nml_get_admin_page_newsletters();
+function nml_get_admin_page_edit_list( $list_id ) {
+	$list_page = nml_get_admin_page_lists();
 
-	$edit_newsletter_page = add_query_arg( array(
+	$edit_list_page = add_query_arg( array(
 		'view' => 'edit',
-		'ID'   => absint( $newsletter_id )
-	), $newsletter_page );
+		'ID'   => absint( $list_id )
+	), $list_page );
 
-	return apply_filters( 'nml_admin_page_edit_newsletter', $edit_newsletter_page );
+	return apply_filters( 'nml_admin_page_edit_list', $edit_list_page );
 }
 
 /**
- * Get admin page: delete newsletter
+ * Get admin page: delete list
  *
  * @todo  actually make this work
  *
- * @param int $newsletter_id ID of the newsletter to delete.
+ * @param int $list_id ID of the list to delete.
  *
  * @since 1.0
  * @return string
  */
-function nml_get_admin_page_delete_newsletter( $newsletter_id ) {
-	$newsletter_page = nml_get_admin_page_newsletters();
+function nml_get_admin_page_delete_list( $list_id ) {
+	$list_page = nml_get_admin_page_lists();
 
-	$delete_newsletter_page = add_query_arg( array(
-		'nml_action' => urlencode( 'delete_newsletter' ),
-		'ID'         => absint( $newsletter_id ),
-		'nonce'      => wp_create_nonce( 'nml_delete_newsletter' )
-	), $newsletter_page );
+	$delete_list_page = add_query_arg( array(
+		'nml_action' => urlencode( 'delete_list' ),
+		'ID'         => absint( $list_id ),
+		'nonce'      => wp_create_nonce( 'nml_delete_list' )
+	), $list_page );
 
-	return apply_filters( 'nml_admin_page_delete_newsletter', $delete_newsletter_page );
-}
-
-/*
- * Below: Notification Pages
- */
-
-/**
- * Get admin page: notifications list
- *
- * @since 1.0
- * @return string
- */
-function nml_get_admin_page_notifications() {
-	$url = admin_url( 'admin.php?page=nml-notifications' );
-
-	return apply_filters( 'nml_admin_page_notifications', $url );
-}
-
-/**
- * Get admin page: add notification
- *
- * @since 1.0
- * @return string
- */
-function nml_get_admin_page_add_notification() {
-	$notification_page = nml_get_admin_page_notifications();
-
-	$add_notification_page = add_query_arg( array(
-		'view' => 'add'
-	), $notification_page );
-
-	return apply_filters( 'nml_admin_page_add_notification', $add_notification_page );
-}
-
-/**
- * Get admin page: edit notification
- *
- * @param int $notification_id ID of the notification to edit.
- *
- * @since 1.0
- * @return string
- */
-function nml_get_admin_page_edit_notification( $notification_id ) {
-	$notification_page = nml_get_admin_page_notifications();
-
-	$edit_notification_page = add_query_arg( array(
-		'view' => 'edit',
-		'ID'   => absint( $notification_id )
-	), $notification_page );
-
-	return apply_filters( 'nml_admin_page_edit_notification', $edit_notification_page );
-}
-
-/**
- * Get admin page: delete notification
- *
- * @todo  actually make this work
- *
- * @param int $notification_id ID of the notification to delete.
- *
- * @since 1.0
- * @return string
- */
-function nml_get_admin_page_delete_notification( $notification_id ) {
-	$notification_page = nml_get_admin_page_notifications();
-
-	$delete_notification_page = add_query_arg( array(
-		'nml_action' => urlencode( 'delete_notification' ),
-		'ID'         => absint( $notification_id ),
-		'nonce'      => wp_create_nonce( 'nml_deletenotification' )
-	), $notification_page );
-
-	return apply_filters( 'nml_admin_page_delete_newsletter', $delete_notification_page );
+	return apply_filters( 'nml_admin_page_delete_list', $delete_list_page );
 }
 
 /*
@@ -300,18 +227,4 @@ function nml_full_date_time_format() {
 	$time = get_option( 'time_format' );
 
 	return $date . ' ' . $time;
-}
-
-/**
- * Whether or not the site is in test mode
- *
- * While in test mode, emails may not be sent (depending on provider).
- *
- * @todo  integrate with settings
- *
- * @since 1.0
- * @return bool
- */
-function nml_test_mode() {
-	return nml_get_option( 'test_mode' );
 }
