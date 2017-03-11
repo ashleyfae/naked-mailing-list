@@ -90,9 +90,32 @@ function nml_full_date_time_format() {
  * @return string
  */
 function nml_get_current_page_slug() {
-
 	global $wp;
 
 	return $wp->request;
+}
 
+/**
+ * Get unsubscribe link
+ *
+ * @param string $subscriber_email Email of specific subscriber (optional).
+ *
+ * @since 1.0
+ * @return string
+ */
+function nml_get_unsubscribe_link( $subscriber_email_or_id = '' ) {
+	$subscriber = new NML_Subscriber( $subscriber_email_or_id );
+
+	$query_args = array(
+		'nml_action' => 'unsubscribe'
+	);
+
+	if ( ! empty( $subscriber_email_or_id ) ) {
+		$query_args['subscriber'] = urlencode( $subscriber->email );
+		$query_args['ID']         = urlencode( $subscriber->ID );
+	}
+
+	$url = add_query_arg( $query_args, home_url() );
+
+	return apply_filters( 'nml_unsubscribe_link', $url, $subscriber_email_or_id );
 }

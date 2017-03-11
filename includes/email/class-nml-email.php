@@ -235,6 +235,43 @@ class NML_Email {
 	}
 
 	/**
+	 * Get unsubscribe link
+	 *
+	 * @access public
+	 * @since  1.0
+	 * @return string
+	 */
+	public function get_unsubscribe_link() {
+		return nml_get_unsubscribe_link();
+	}
+
+	/**
+	 * Appends the unsubscribe link if a newsletter is specified.
+	 *
+	 * @param string $message Text to append the link to.
+	 *
+	 * @access public
+	 * @since  1.0
+	 * @return string
+	 */
+	public function maybe_add_unsubscribe_link( $message ) {
+
+		if ( empty( $this->newsletter ) ) {
+			return $message;
+		}
+
+		if ( false === $this->html ) {
+			$message = $message . "\n\n" . sprintf( __( 'Unsubscribe: %s' ), esc_url( $this->get_unsubscribe_link() ) );
+
+		} else {
+			$message = $message . '<p style="text-align: center; margin-top: 3em;">' . sprintf( __( '<a href="%s" target="_blank">Unsubscribe from all emails</a>', 'naked-mailing-list' ), esc_url( $this->get_unsubscribe_link() ) ) . '</p>';
+		}
+
+		return $message;
+
+	}
+
+	/**
 	 * Build the email
 	 *
 	 * Put the email content inside the template
@@ -246,6 +283,8 @@ class NML_Email {
 	 * @return string Fully formatted message.
 	 */
 	public function build_email( $message ) {
+
+		$message = $this->maybe_add_unsubscribe_link( $message );
 
 		if ( false === $this->html ) {
 			return apply_filters( 'nml_email_message', wp_strip_all_tags( $message ), $this );

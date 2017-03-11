@@ -404,9 +404,9 @@ class NML_DB_Subscribers extends NML_DB {
 		$args['orderby'] = ! array_key_exists( $args['orderby'], $this->get_columns() ) ? 'ID' : $args['orderby'];
 
 		// Sort out the selection fields.
-		$select_this = '*';
+		$select_this = 's.*';
 		if ( 'all' != $args['fields'] && array_key_exists( $args['fields'], $this->get_columns() ) ) {
-			$select_this = esc_sql( $args['fields'] );
+			$select_this = esc_sql( 's.' . $args['fields'] );
 		}
 
 		$cache_key = md5( 'nml_subscribers_' . serialize( $args ) );
@@ -603,10 +603,6 @@ class NML_DB_Subscribers extends NML_DB {
 		);
 
 		$args = wp_parse_args( $args, $defaults );
-
-		if ( $args['number'] < 1 ) {
-			$args['number'] = 999999999999;
-		}
 
 		$join  = '';
 		$where = ' WHERE 1=1 ';

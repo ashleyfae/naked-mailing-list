@@ -515,6 +515,31 @@ class NML_Subscriber {
 	}
 
 	/**
+	 * Unsubscribe
+	 *
+	 * @access public
+	 * @since  1.0
+	 * @return bool
+	 */
+	public function unsubscribe() {
+
+		$data = array(
+			'status' => 'unsubscribed'
+		);
+
+		$updated = $this->update( $data );
+
+		if ( $updated ) {
+			do_action( 'nml_subscriber_unsubscribe', $this->ID, $this );
+
+			return true;
+		}
+
+		return false;
+
+	}
+
+	/**
 	 * Get an array of lists the subscriber is added to.
 	 *
 	 * @access public

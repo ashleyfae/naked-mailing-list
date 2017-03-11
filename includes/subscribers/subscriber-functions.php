@@ -338,6 +338,7 @@ add_action( 'nml_subscriber_set_pending', 'nml_send_subscriber_confirmation', 10
  * @return void
  */
 function nml_confirm_subscriber() {
+
 	if ( ! isset( $_GET['nml_action'] ) || 'confirm' != $_GET['nml_action'] ) {
 		return;
 	}
@@ -376,6 +377,50 @@ function nml_confirm_subscriber() {
 	wp_safe_redirect( add_query_arg( $query_args, home_url() ) );
 
 	exit;
+
 }
 
 add_action( 'template_redirect', 'nml_confirm_subscriber' );
+
+function nml_process_unsubscribe() {
+
+	if ( ! isset( $_GET['nml_action'] ) || 'unsubscribe' != $_GET['nml_action'] ) {
+		return;
+	}
+
+	if ( empty( $_GET['subscriber'] ) || empty( $_GET['ID'] ) ) {
+		// @todo error message
+		return;
+	}
+
+	$email      = urldecode( $_GET['subscriber'] );
+	$id         = urldecode( $_GET['ID'] );
+	$subscriber = new NML_Subscriber( absint( $id ) );
+
+	if ( $subscriber->email != $email ) {
+		$query_args = array(
+			'unsubscribe_success'   => 'false',
+			'nml_error' => 'invalid-subscriber'
+		);
+	} else {
+		$result = $subscriber->unsubscribe();
+
+		if ( $result ) {
+			$query_args = array(
+				'unsubscribe_success' => 'true'
+			);
+		} else {
+			$query_args = array(
+				'unsubscribe_success'   => 'false',
+				'nml_error' => 'unexpected-error'
+			);
+		}
+	}
+
+	wp_safe_redirect( add_query_arg( $query_args, home_url() ) );
+
+	exit;
+
+}
+
+add_action( 'template_redirect', 'nml_process_unsubscribe' );

@@ -64,6 +64,25 @@ class NML_Email_Provider_MailGun extends NML_Email {
 	}
 
 	/**
+	 * Get unsubscribe link
+	 *
+	 * @access public
+	 * @since  1.0
+	 * @return string
+	 */
+	public function get_unsubscribe_link() {
+		$original_url = nml_get_unsubscribe_link();
+		$original_url = remove_query_arg( array( 'subscriber', 'ID' ), $original_url );
+
+		$url = add_query_arg( array(
+			'subscriber' => '%recipient.email%',
+			'ID'         => '%recipient.ID%'
+		), $original_url );
+
+		return $url;
+	}
+
+	/**
 	 * Send the fully formatted email to the provider API
 	 *
 	 * @param string $subject Email subject.
@@ -104,6 +123,8 @@ class NML_Email_Provider_MailGun extends NML_Email {
 		);
 
 		$url = "https://api.mailgun.net/v2/{$this->domain_name}/messages";
+
+		error_log(var_export($body, true));
 
 		$response = wp_remote_post( $url, $data );
 
