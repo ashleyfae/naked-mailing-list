@@ -192,7 +192,7 @@ class NML_List_Table extends WP_List_Table {
 	 * @since  1.0
 	 * @return string
 	 */
-	public function column_subject( $item ) {
+	public function column_name( $item ) {
 		$edit_url = nml_get_admin_page_edit_list( $item->ID );
 		$name     = '<a href="' . esc_url( $edit_url ) . '" class="row-title" aria-label="' . esc_attr( sprintf( '%s (Edit)', $item->name ) ) . '">' . $item->name . '</a>';
 		$actions  = array(

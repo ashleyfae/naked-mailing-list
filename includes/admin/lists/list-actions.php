@@ -75,6 +75,12 @@ function nml_list_field_type( $list ) {
 
 add_action( 'nml_edit_list_fields', 'nml_list_field_type' );
 
+/**
+ * Save list
+ *
+ * @since 1.0
+ * @return void
+ */
 function nml_save_list() {
 
 	$nonce = isset( $_POST['nml_save_list_nonce'] ) ? $_POST['nml_save_list_nonce'] : false;
@@ -97,7 +103,7 @@ function nml_save_list() {
 		'type' => 'list'
 	);
 
-	if ( isset( $_POST['list_id'] ) && ! empty( $_POST['list_id'] ) ) {
+	if ( ! empty( $list_id ) ) {
 		$data['ID'] = intval( $_POST['list_id'] );
 	}
 
@@ -121,7 +127,7 @@ function nml_save_list() {
 
 	$edit_url = add_query_arg( array(
 		'nml-message' => 'list-updated'
-	), nml_get_admin_page_edit_list( absint( $new_list_id ) ) );
+	), nml_get_admin_page_lists() );
 
 	wp_safe_redirect( $edit_url );
 
@@ -130,3 +136,43 @@ function nml_save_list() {
 }
 
 add_action( 'nml_save_list', 'nml_save_list' );
+
+/**
+ * Process delete list
+ *
+ * @since 1.0
+ * @return void
+ */
+function nml_process_delete_list() {
+
+	$nonce = isset( $_GET['nonce'] ) ? $_GET['nonce'] : false;
+
+	if ( empty( $nonce ) ) {
+		return;
+	}
+
+	if ( ! wp_verify_nonce( $nonce, 'nml_delete_list' ) ) {
+		wp_die( __( 'Failed nonce security.', 'naked-mailing-list' ) );
+	}
+
+	if ( ! isset( $_GET['ID'] ) ) {
+		wp_die( __( 'Invalid list ID.', 'naked-mailing-list' ) );
+	}
+
+	$deleted = nml_delete_list( absint( $_GET['ID'] ) );
+
+	if ( is_wp_error( $deleted ) ) {
+		wp_die( $deleted->get_error_message() );
+	}
+
+	$redirect_url = add_query_arg( array(
+		'nml-message' => 'list-deleted'
+	), nml_get_admin_page_lists() );
+
+	wp_safe_redirect( $redirect_url );
+
+	exit;
+
+}
+
+add_action( 'nml_delete_list', 'nml_process_delete_list' );

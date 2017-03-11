@@ -390,3 +390,92 @@ function nml_update_list_count( $list_id ) {
 
 	return naked_mailing_list()->lists->add( $args );
 }
+
+/**
+ * Delete list
+ *
+ * @param int $list_id ID of the list to delete.
+ *
+ * @since 1.0
+ * @return true|WP_Error
+ */
+function nml_delete_list( $list_id ) {
+	$result = naked_mailing_list()->lists->delete( $list_id );
+
+	if ( ! $result ) {
+		return new WP_Error( 'failed-deleting-list', __( 'An error occurred while deleting the list.', 'naked-mailing-list' ) );
+	}
+
+	// Delete all relationships.
+	naked_mailing_list()->list_relationships->delete_list_relationships( $list_id );
+	naked_mailing_list()->newsletter_list_relationships->delete_list_relationships( $list_id );
+
+	return true;
+}
+
+/**
+ * Get admin page: lists table
+ *
+ * @since 1.0
+ * @return string
+ */
+function nml_get_admin_page_lists() {
+	$url = admin_url( 'admin.php?page=nml-lists' );
+
+	return apply_filters( 'nml_admin_page_lists', $url );
+}
+
+/**
+ * Get admin page: add list
+ *
+ * @since 1.0
+ * @return string
+ */
+function nml_get_admin_page_add_list() {
+	$list_page = nml_get_admin_page_lists();
+
+	$add_list_page = add_query_arg( array(
+		'view' => 'add'
+	), $list_page );
+
+	return apply_filters( 'nml_admin_page_add_list', $add_list_page );
+}
+
+/**
+ * Get admin page: edit list
+ *
+ * @param int $list_id ID of the list to edit.
+ *
+ * @since 1.0
+ * @return string
+ */
+function nml_get_admin_page_edit_list( $list_id ) {
+	$list_page = nml_get_admin_page_lists();
+
+	$edit_list_page = add_query_arg( array(
+		'view' => 'edit',
+		'ID'   => absint( $list_id )
+	), $list_page );
+
+	return apply_filters( 'nml_admin_page_edit_list', $edit_list_page );
+}
+
+/**
+ * Get admin page: delete list
+ *
+ * @param int $list_id ID of the list to delete.
+ *
+ * @since 1.0
+ * @return string
+ */
+function nml_get_admin_page_delete_list( $list_id ) {
+	$list_page = nml_get_admin_page_lists();
+
+	$delete_list_page = add_query_arg( array(
+		'nml_action' => urlencode( 'delete_list' ),
+		'ID'         => absint( $list_id ),
+		'nonce'      => wp_create_nonce( 'nml_delete_list' )
+	), $list_page );
+
+	return apply_filters( 'nml_admin_page_delete_list', $delete_list_page );
+}

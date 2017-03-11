@@ -226,3 +226,91 @@ function nml_number_subscribers_per_batch() {
 function nml_get_subscribers( $args = array() ) {
 	return naked_mailing_list()->subscribers->get_subscribers( $args );
 }
+
+/**
+ * Get admin page: subscribers list
+ *
+ * @since 1.0
+ * @return string
+ */
+function nml_get_admin_page_subscribers() {
+	$url = admin_url( 'admin.php?page=nml-subscribers' );
+
+	return apply_filters( 'nml_admin_page_subscribers', $url );
+}
+
+/**
+ * Get admin page: add subscriber
+ *
+ * @since 1.0
+ * @return string
+ */
+function nml_get_admin_page_add_subscriber() {
+	$subscriber_page = nml_get_admin_page_subscribers();
+
+	$add_sub_page = add_query_arg( array(
+		'view' => 'add'
+	), $subscriber_page );
+
+	return apply_filters( 'nml_admin_page_add_subscriber', $add_sub_page );
+}
+
+/**
+ * Get admin page: edit subscriber
+ *
+ * @param int $sub_id ID of the subscriber to edit.
+ *
+ * @since 1.0
+ * @return string
+ */
+function nml_get_admin_page_edit_subscriber( $sub_id ) {
+	$subscriber_page = nml_get_admin_page_subscribers();
+
+	$edit_sub_page = add_query_arg( array(
+		'view' => 'edit',
+		'ID'   => absint( $sub_id )
+	), $subscriber_page );
+
+	return apply_filters( 'nml_admin_page_edit_subscriber', $edit_sub_page );
+}
+
+/**
+ * Get admin page: delete subscriber
+ *
+ * @param int $sub_id ID of the subscriber to delete.
+ *
+ * @since 1.0
+ * @return string
+ */
+function nml_get_admin_page_delete_subscriber( $sub_id ) {
+	$subscriber_page = nml_get_admin_page_subscribers();
+
+	$delete_sub_page = add_query_arg( array(
+		'nml_action' => urlencode( 'delete_subscriber' ),
+		'ID'         => absint( $sub_id ),
+		'nonce'      => wp_create_nonce( 'nml_delete_subscriber' )
+	), $subscriber_page );
+
+	return apply_filters( 'nml_admin_page_delete_subscriber', $delete_sub_page );
+}
+
+/**
+ * Delete a subscriber
+ *
+ * @param int $subscriber_id ID of the subscriber to delete.
+ *
+ * @since 1.0
+ * @return true|WP_Error
+ */
+function nml_delete_subscriber( $subscriber_id ) {
+	$result = naked_mailing_list()->subscribers->delete( $subscriber_id );
+
+	if ( ! $result ) {
+		return new WP_Error( 'failed-deleting-subscriber', __( 'An error occurred while deleting the subscriber.', 'naked-mailing-list' ) );
+	}
+
+	// Delete all list relationships.
+	naked_mailing_list()->list_relationships->delete_subscriber_relationships( $subscriber_id ); // @todo recount
+
+	return true;
+}

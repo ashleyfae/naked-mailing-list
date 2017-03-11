@@ -133,6 +133,25 @@ class NML_DB_Newsletter_List_Relationships extends NML_DB {
 	}
 
 	/**
+	 * Delete all relationships for a given list
+	 *
+	 * @param int $list_id ID of the list to delete.
+	 *
+	 * @access public
+	 * @since  1.0
+	 * @return int|false The number of rows deleted, or false on failure.
+	 */
+	public function delete_list_relationships( $list_id ) {
+
+		global $wpdb;
+
+		$query = $wpdb->prepare( "DELETE FROM $this->table_name WHERE `list_id` = %d", absint( $list_id ) );
+
+		return $wpdb->query( $query );
+
+	}
+
+	/**
 	 * Delete all relationships for a given newsletter
 	 *
 	 * @param int $newsletter_id ID of the newsletter.
