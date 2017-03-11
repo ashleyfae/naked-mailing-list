@@ -82,3 +82,17 @@ function nml_full_date_time_format() {
 
 	return $date . ' ' . $time;
 }
+
+/**
+ * Get current page slug
+ *
+ * @since 1.0
+ * @return string
+ */
+function nml_get_current_page_slug() {
+
+	global $wp;
+
+	return $wp->request;
+
+}
