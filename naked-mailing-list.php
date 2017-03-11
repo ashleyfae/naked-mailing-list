@@ -225,6 +225,7 @@ if ( ! class_exists( 'Naked_Mailing_List' ) ) :
 			require_once NML_PLUGIN_DIR . 'includes/subscribers/class-nml-subscriber.php';
 			require_once NML_PLUGIN_DIR . 'includes/subscribers/subscriber-functions.php';
 			require_once NML_PLUGIN_DIR . 'includes/error-tracking.php';
+			require_once NML_PLUGIN_DIR . 'includes/form-functions.php';
 			require_once NML_PLUGIN_DIR . 'includes/misc-functions.php';
 			require_once NML_PLUGIN_DIR . 'includes/template-functions.php';
 
