@@ -135,7 +135,7 @@ function nml_subscribe_form_email( $atts ) {
 	?>
 	<div class="nml-form-field">
 		<label for="nml_email_address"><?php _e( 'Email address', 'naked-mailing-list' ); ?></label>
-		<input type="email" id="nml_email_address" name="nml_email_address" placeholder="<?php echo esc_attr( apply_filters( 'nml_subscribe_form_email_placeholder', __( 'Enter your email address', 'naked-mailing-list' ) ) ); ?>">
+		<input type="text" id="nml_email_address" name="nml_email_address" placeholder="<?php echo esc_attr( apply_filters( 'nml_subscribe_form_email_placeholder', __( 'Enter your email address', 'naked-mailing-list' ) ) ); ?>">
 	</div>
 	<?php
 
@@ -177,10 +177,10 @@ function nml_process_signup() {
 
 	$data = array();
 
-	if ( ! empty( $email ) ) {
+	if ( ! empty( $email ) && is_email( $email ) ) {
 		$data['email'] = sanitize_email( $email );
 	} else {
-		nml_set_error( 'email-required', __( 'You must enter an email address.', 'naked-mailing-list' ) );
+		nml_set_error( 'email-required', __( 'You must enter a valid email address.', 'naked-mailing-list' ) );
 	}
 
 	$fields = array( 'first_name', 'last_name', 'referer', 'form_name' );
@@ -195,11 +195,7 @@ function nml_process_signup() {
 	 * Send back error messages if we have them.
 	 */
 	if ( nml_get_errors() ) {
-		ob_start();
-		nml_print_errors();
-		$errors = ob_get_clean();
-
-		wp_send_json_error( $errors );
+		wp_send_json_error( nml_print_errors( true ) );
 	}
 
 	if ( naked_mailing_list()->subscribers->exists( $email ) ) {
@@ -237,6 +233,8 @@ function nml_process_signup() {
 	}
 
 	wp_send_json_success( $message );
+
+	exit;
 
 }
 

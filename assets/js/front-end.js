@@ -17,6 +17,9 @@
 		e.preventDefault();
 
 		var form = $(this);
+		var response_field = form.find('.nml-subscribe-response');
+
+		response_field.empty();
 
 		var data = {
 			action: 'nml_process_signup',
@@ -24,10 +27,35 @@
 			first_name: form.find('input[name="nml_first_name"]').val(),
 			last_name: form.find('input[name="nml_last_name"]').val(),
 			referer: form.find('input[name="_wp_http_referer"]').val(),
-			form_name: form.find('input[name="nml_form_name"]').val()
+			form_name: form.find('input[name="nml_form_name"]').val(),
+			list: form.find('input[name="nml_list"]').val(),
+			tags: form.find('input[name="nml_tags"]').val()
 		};
 
 		console.log(data);
+
+		$.ajax({
+			type: "POST",
+			url: NML.ajaxurl,
+			dataType: "json",
+			data: data,
+			xhrFields: {
+				withCredentials: true
+			},
+			success: function (response) {
+
+				console.log(response);
+
+				if (true == response.success) {
+					response_field.append('<div class="nml-success">' + response.data + '</div>');
+				} else if (false == response.success) {
+					response_field.append(response.data);
+				} else {
+					console.log(response);
+				}
+
+			}
+		});
 
 	});
 

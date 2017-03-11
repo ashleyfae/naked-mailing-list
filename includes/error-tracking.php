@@ -34,24 +34,40 @@ function nml_errors() {
  * @uses  nml_get_errors()
  * @uses  nml_clear_errors()
  *
+ * @param bool $return Whether or not to return the errors instead of printing.
+ *
  * @since 1.0
- * @return void
+ * @return string|void
  */
-function nml_print_errors() {
+function nml_print_errors( $return = false ) {
 
+	$output = '';
 	$errors = nml_get_errors();
+
 	if ( $errors ) {
+
 		$classes = apply_filters( 'nml_error_class', array(
-			'nml_errors'
+			'nml-errors'
 		) );
-		echo '<div class="' . implode( ' ', $classes ) . '">';
+
+		$output .= '<div class="' . implode( ' ', $classes ) . '">';
+
 		// Loop error codes and display errors
 		foreach ( $errors as $error_id => $error ) {
-			echo '<p class="nml-error" id="nml-error-' . $error_id . '"><strong>' . __( 'Error', 'naked-mailing-list' ) . '</strong>: ' . $error . '</p>';
+			$output .= '<p class="nml-error" id="nml-error-' . $error_id . '"><strong>' . __( 'Error', 'naked-mailing-list' ) . '</strong>: ' . nml_errors()->get_error_message($error_id) . '</p>';
 		}
-		echo '</div>';
+
+		$output .= '</div>';
+
 		nml_clear_errors();
+
 	}
+
+	if ( $return ) {
+		return $output;
+	}
+
+	echo $output;
 
 }
 
