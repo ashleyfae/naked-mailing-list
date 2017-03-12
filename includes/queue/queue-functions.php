@@ -61,6 +61,11 @@ function nml_process_queue_entry( $entry ) {
 		return false;
 	}
 
+	// Update status.
+	naked_mailing_list()->queue->update( $entry->ID, array(
+		'status' => 'processing'
+	) );
+
 	$newsletter  = new NML_Newsletter( $entry->newsletter_id );
 	$subscribers = $newsletter->get_subscribers( array(
 		'number' => nml_number_subscribers_per_batch(),
@@ -80,6 +85,7 @@ function nml_process_queue_entry( $entry ) {
 
 			// Delay this log entry by 5 minutes.
 			naked_mailing_list()->queue->update( $entry->ID, array(
+				'status'          => 'pending',
 				'date_to_process' => gmdate( 'Y-m-d H:i:s', strtotime( '+5 minutes' ) )
 			) );
 

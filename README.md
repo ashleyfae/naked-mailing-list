@@ -10,3 +10,4 @@
 - Be able to add new list from "Add New Newsletter" page.
 - Bulk actions.
 - Proper error logging.
+- Calculate percentage sent and show progress bar in Newsletter table.
