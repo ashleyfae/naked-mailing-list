@@ -382,6 +382,12 @@ function nml_confirm_subscriber() {
 
 add_action( 'template_redirect', 'nml_confirm_subscriber' );
 
+/**
+ * Process unsubscribe
+ *
+ * @since 1.0
+ * @return void
+ */
 function nml_process_unsubscribe() {
 
 	if ( ! isset( $_GET['nml_action'] ) || 'unsubscribe' != $_GET['nml_action'] ) {

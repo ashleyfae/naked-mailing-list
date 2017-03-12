@@ -221,7 +221,12 @@ function nml_process_signup() {
 			}
 		}
 
-		$message = __( 'You\'ve successfully been added to the list!', 'naked-mailing-list' );
+		if ( 'subscribed' == $subscriber->status ) {
+			$message = __( 'You\'ve successfully been added to the list!', 'naked-mailing-list' );
+		} else {
+			$subscriber->update( array( 'status' => 'pending' ) );
+			$message = __( 'Almost there! Check your email to confirm your subscription.', 'naked-mailing-list' );
+		}
 
 	} else {
 

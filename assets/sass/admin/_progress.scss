@@ -1,0 +1,54 @@
+.nml-import-export-form {
+    position: relative;
+
+    .nml-progress {
+        background: #ddd;
+        position: absolute;
+        bottom: 15px;
+        width: 95%;
+        height: 15px;
+
+        div {
+            background: #ccc;
+            height: 100%;
+            width: 0;
+
+            .admin-color-fresh & {
+                background: #0073aa;
+            }
+            .admin-color-light & {
+                background: #888;
+            }
+            .admin-color-blue & {
+                background: #096484;
+            }
+            .admin-color-coffee & {
+                background: #c7a589;
+            }
+            .admin-color-ectoplasm & {
+                background: #a3b745;
+            }
+            .admin-color-midnight {
+                background: #e14d43;
+            }
+            .admin-color-sunrise & {
+                background: #dd823b;
+            }
+        }
+    }
+
+    .notice-wrap {
+        background-color: #f4f4f4;
+        border-color: #eae9e9;
+        border-style: solid;
+        border-width: 1px 0;
+        margin: 20px -12px -23px;
+        padding: 12px 12px 4px;
+        overflow: auto;
+
+        .spinner {
+            float: right;
+            margin: 4px 10px 8px;
+        }
+    }
+}
