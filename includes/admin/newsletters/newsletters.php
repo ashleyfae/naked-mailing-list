@@ -68,6 +68,7 @@ function nml_newsletters_list() {
 		<form id="nml-newsletters-filter" method="GET" action="<?php echo esc_url( nml_get_admin_page_newsletters() ); ?>">
 			<?php
 			$newsletter_table->search_box( __( 'Search Newsletters', 'naked-mailing-list' ), 'nml-newsletters' );
+			$newsletter_table->views();
 			$newsletter_table->display();
 			?>
 			<input type="hidden" name="page" value="nml-newsletters"/>

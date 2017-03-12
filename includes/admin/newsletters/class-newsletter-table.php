@@ -130,6 +130,57 @@ class NML_Newsletter_Table extends WP_List_Table {
 	}
 
 	/**
+	 * Retrieve the view types
+	 *
+	 * @access public
+	 * @since  1.0
+	 * @return array
+	 */
+	public function get_views() {
+		$base = nml_get_admin_page_newsletters();
+
+		$current  = isset( $_GET['status'] ) ? $_GET['status'] : '';
+		$statuses = nml_get_newsletter_statuses();
+		$counts   = $this->get_counts();
+
+		$views = array(
+			'all' => sprintf( '<a href="%s"%s>%s</a>', remove_query_arg( 'status', $base ), $current === 'all' || $current == '' ? ' class="current"' : '', __( 'All', 'naked-mailing-list' ) . '&nbsp;<span class="count">(' . $counts['total'] . ')</span>' )
+		);
+
+		foreach ( $statuses as $id => $name ) {
+			$views[ $id ] = sprintf( '<a href="%s"%s>%s</a>', add_query_arg( 'status', urlencode( $id ), $base ), $current === $id ? ' class="current"' : '', $name . '&nbsp;<span class="count">(' . $counts[ $id ] . ')</span>' );
+		}
+
+		return $views;
+	}
+
+	/**
+	 * Get status counts
+	 *
+	 * Returns an array of all the statuses and their number of results.
+	 *
+	 * @access public
+	 * @since  1.0
+	 * @return array
+	 */
+	public function get_counts() {
+
+		$counts   = array(
+			'total' => naked_mailing_list()->newsletters->count()
+		);
+		$statuses = nml_get_newsletter_statuses();
+
+		foreach ( $statuses as $id => $name ) {
+			$counts[ $id ] = naked_mailing_list()->newsletters->count( array(
+				'status' => $id
+			) );
+		}
+
+		return $counts;
+
+	}
+
+	/**
 	 * Gets the name of the primary column.
 	 *
 	 * @access protected
