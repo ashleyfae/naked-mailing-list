@@ -134,6 +134,15 @@ class NML_Newsletter {
 	public $sent_date;
 
 	/**
+	 * Number of subscribers the newsletter was sent to
+	 *
+	 * @var int
+	 * @access public
+	 * @since  1.0
+	 */
+	public $subscriber_count;
+
+	/**
 	 * The database abstraction
 	 *
 	 * @var NML_DB_Newsletters
@@ -422,6 +431,115 @@ class NML_Newsletter {
 		$subscribers = nml_get_subscribers( $args );
 
 		return $subscribers;
+
+	}
+
+	/**
+	 * Get subscriber count
+	 *
+	 * Returns the number of subscribers who will receive this newsletter.
+	 *
+	 * @param array $args
+	 *
+	 * @access public
+	 * @since  1.0
+	 * @return int
+	 */
+	public function get_subscriber_count( $args = array() ) {
+
+		$newsletter_lists = $this->get_lists();
+		$list_ids         = wp_list_pluck( $newsletter_lists, 'ID' );
+
+		$defaults = array(
+			'list'   => $list_ids,
+			'status' => 'subscribed'
+		);
+
+		$args = wp_parse_args( $args, $defaults );
+
+		$count = naked_mailing_list()->subscribers->count( $args );
+
+		return absint( $count );
+
+	}
+
+	/**
+	 * Update subscriber count
+	 *
+	 * @param int $count Number to update to. If omitted, calculated using `NML_Newsletter::get_subscriber_count()`.
+	 *
+	 * @access public
+	 * @since  1.0
+	 * @return void
+	 */
+	public function update_subscriber_count( $count = false ) {
+
+		if ( false === $count ) {
+			$count = $this->get_subscriber_count();
+		}
+
+		$data = array(
+			'subscriber_count' => absint( $count )
+		);
+
+		$this->update( $data );
+
+	}
+
+	/**
+	 * Get number of emails sent so far
+	 *
+	 * Used when showing a progress bar for newsletters in the process of being sent.
+	 *
+	 * @access public
+	 * @since  1.0
+	 * @return int
+	 */
+	public function get_number_sent() {
+
+		if ( 'sent' == $this->status ) {
+			return $this->get_subscriber_count();
+		}
+
+		if ( 'sending' != $this->status ) {
+			return 0;
+		}
+
+		$queue_entry = naked_mailing_list()->queue->get_entry_by( 'newsletter_id', $this->ID );
+
+		if ( empty( $queue_entry ) ) {
+			return 0;
+		}
+
+		return absint( $queue_entry->offset );
+	}
+
+	/**
+	 * Get percentage of emails that have been sent
+	 *
+	 * @access public
+	 * @since  1.0
+	 * @return float|int
+	 */
+	public function get_percentage_sent() {
+
+		if ( 'sent' == $this->status ) {
+			return 100;
+		}
+
+		if ( 'sending' != $this->status ) {
+			return 0;
+		}
+
+		$total   = $this->get_subscriber_count();
+		$so_far  = $this->get_number_sent();
+		$percent = ( $total ) > 0 ? ( $so_far / $total ) * 100 : 100;
+
+		if ( $percent > 100 ) {
+			$percent = 100;
+		}
+
+		return round( $percent );
 
 	}
 

@@ -165,13 +165,18 @@ function nml_delete_newsletter( $newsletter_id ) {
  */
 function nml_send_newsletter( $newsletter_id ) {
 
+	$newsletter = new NML_Newsletter( $newsletter_id );
+
 	// Make sure this newsletter exists.
-	if ( ! naked_mailing_list()->newsletters->exists( $newsletter_id ) ) {
+	if ( empty( $newsletter->ID ) ) {
 		return false;
 	}
 
+	// Calculate and update subscriber count.
+	$newsletter->update_subscriber_count();
+
 	$result = naked_mailing_list()->queue->add( array(
-		'newsletter_id' => absint( $newsletter_id )
+		'newsletter_id' => absint( $newsletter->ID )
 	) );
 
 	return $result;

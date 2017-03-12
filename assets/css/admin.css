@@ -34,29 +34,8 @@
 .nml-import-export-form {
   position: relative; }
   .nml-import-export-form .nml-progress {
-    background: #ddd;
     position: absolute;
-    bottom: 15px;
-    width: 95%;
-    height: 15px; }
-    .nml-import-export-form .nml-progress div {
-      background: #ccc;
-      height: 100%;
-      width: 0; }
-      .admin-color-fresh .nml-import-export-form .nml-progress div {
-        background: #0073aa; }
-      .admin-color-light .nml-import-export-form .nml-progress div {
-        background: #888; }
-      .admin-color-blue .nml-import-export-form .nml-progress div {
-        background: #096484; }
-      .admin-color-coffee .nml-import-export-form .nml-progress div {
-        background: #c7a589; }
-      .admin-color-ectoplasm .nml-import-export-form .nml-progress div {
-        background: #a3b745; }
-      .nml-import-export-form .nml-progress div .admin-color-midnight {
-        background: #e14d43; }
-      .admin-color-sunrise .nml-import-export-form .nml-progress div {
-        background: #dd823b; }
+    bottom: 15px; }
   .nml-import-export-form .notice-wrap {
     background-color: #f4f4f4;
     border-color: #eae9e9;
@@ -68,5 +47,56 @@
     .nml-import-export-form .notice-wrap .spinner {
       float: right;
       margin: 4px 10px 8px; }
+
+.nml-progress {
+  background: #ddd;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.1);
+  width: 95%;
+  height: 15px; }
+  .nml-progress div {
+    background-color: #ccc;
+    height: 100%;
+    width: 0; }
+    .admin-color-fresh .nml-progress div {
+      background-color: #0073aa; }
+    .admin-color-light .nml-progress div {
+      background-color: #888; }
+    .admin-color-blue .nml-progress div {
+      background-color: #096484; }
+    .admin-color-coffee .nml-progress div {
+      background-color: #c7a589; }
+    .admin-color-ectoplasm .nml-progress div {
+      background-color: #a3b745; }
+    .admin-color-midnight .nml-progress div {
+      background-color: #e14d43; }
+    .admin-color-sunrise .nml-progress div {
+      background-color: #dd823b; }
+
+.nml-progress-striped div {
+  background-image: -webkit-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+  background-image: -o-linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+  background-image: linear-gradient(45deg, rgba(255, 255, 255, 0.15) 25%, transparent 25%, transparent 50%, rgba(255, 255, 255, 0.15) 50%, rgba(255, 255, 255, 0.15) 75%, transparent 75%, transparent);
+  background-size: 30px 30px; }
+
+.nml-progress-animated div {
+  -webkit-animation: progress-bar-stripes 2s linear infinite;
+  -o-animation: progress-bar-stripes 2s linear infinite;
+  animation: progress-bar-stripes 2s linear infinite; }
+
+@-webkit-keyframes progress-bar-stripes {
+  from {
+    background-position: 1rem 0; }
+  to {
+    background-position: 0 0; } }
+@-o-keyframes progress-bar-stripes {
+  from {
+    background-position: 1rem 0; }
+  to {
+    background-position: 0 0; } }
+@keyframes progress-bar-stripes {
+  from {
+    background-position: 1rem 0; }
+  to {
+    background-position: 0 0; } }
 
 /*# sourceMappingURL=admin.css.map */

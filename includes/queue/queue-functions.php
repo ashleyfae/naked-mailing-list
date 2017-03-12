@@ -107,7 +107,8 @@ function nml_process_queue_entry( $entry ) {
 
 		// We're all finished! Update the newsletter status.
 		$newsletter->update( array(
-			'status' => 'sent'
+			'status'    => 'sent',
+			'sent_date' => gmdate( 'Y-m-d H:i:s' )
 		) );
 
 		// Increment the email count for all subscribers.

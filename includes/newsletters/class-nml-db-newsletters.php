@@ -59,7 +59,8 @@ class NML_DB_Newsletters extends NML_DB {
 			'reply_to_name'    => '%s',
 			'created_date'     => '%s',
 			'updated_date'     => '%s',
-			'sent_date'        => '%s'
+			'sent_date'        => '%s',
+			'subscriber_count' => '%d'
 		);
 	}
 
@@ -81,7 +82,8 @@ class NML_DB_Newsletters extends NML_DB {
 			'reply_to_name'    => '',
 			'created_date'     => gmdate( 'Y-m-d H:i:s' ),
 			'updated_date'     => gmdate( 'Y-m-d H:i:s' ),
-			'sent_date'        => null
+			'sent_date'        => null,
+			'subscriber_count' => null
 		);
 	}
 
@@ -123,7 +125,7 @@ class NML_DB_Newsletters extends NML_DB {
 	 * Do not call this directly. Use nml_delete_newsletter() instead, as that properly
 	 * deletes relationships as well.
 	 *
-	 * @see nml_delete_newsletter()
+	 * @see    nml_delete_newsletter()
 	 *
 	 * @param int $id ID of the newsletter to delete.
 	 *
@@ -451,6 +453,7 @@ class NML_DB_Newsletters extends NML_DB {
 		created_date datetime NOT NULL,
 		updated_date datetime NOT NULL,
 		sent_date datetime,
+		subscriber_count bigint(20)
 		PRIMARY KEY (ID),
 		KEY status (status),
 		KEY type_status (type, status)
