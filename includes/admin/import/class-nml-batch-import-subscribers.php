@@ -174,8 +174,6 @@ class NML_Batch_Import_Subscribers extends NML_Batch_Import {
 
 		$obj = naked_mailing_list()->subscribers->get_subscriber_by( 'email', $args['email'] );
 
-		error_log( var_export( $args, true ) );
-
 		if ( ! empty( $obj ) && is_object( $obj ) ) {
 
 			// Email already exists - let's update it.
@@ -195,9 +193,30 @@ class NML_Batch_Import_Subscribers extends NML_Batch_Import {
 		} else {
 
 			// Create a new subscriber.
+
+			// Maybe populate referer.
+			if ( empty( $args['referer'] ) ) {
+				$args['referer'] = 'import';
+			}
+
 			$subscriber = new NML_Subscriber();
 			$subscriber->create( $args );
 
+		}
+
+		// Back-date the activity log.
+		$logs = naked_mailing_list()->activity->get_activity( array(
+			'number'        => 1,
+			'subscriber_id' => $subscriber->ID,
+			'type'          => 'new_subscriber'
+		) );
+
+		if ( $logs && is_array( $logs ) && array_key_exists( 0, $logs ) ) {
+			$log = $logs[0];
+
+			naked_mailing_list()->activity->update( $log->ID, array(
+				'date' => $subscriber->signup_date
+			) );
 		}
 
 	}

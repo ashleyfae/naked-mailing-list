@@ -305,10 +305,10 @@ class NML_Subscriber {
 			/**
 			 * Set lists.
 			 */
-			if ( is_array( $lists ) && ! empty( $lists ) ) {
+			if ( ! empty( $lists ) ) {
 				$this->set_lists( $lists );
 			}
-			if ( is_array( $tags ) && ! empty( $tags ) ) {
+			if ( ! empty( $tags ) ) {
 				$this->set_tags( $tags );
 			}
 
@@ -377,10 +377,10 @@ class NML_Subscriber {
 			/**
 			 * Set lists.
 			 */
-			if ( is_array( $lists ) && ! empty( $lists ) ) {
+			if ( ! empty( $lists ) ) {
 				$this->set_lists( $lists );
 			}
-			if ( is_array( $tags ) && ! empty( $tags ) ) {
+			if ( ! empty( $tags ) ) {
 				$this->set_tags( $tags );
 			}
 
