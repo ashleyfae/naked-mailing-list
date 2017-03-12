@@ -68,6 +68,7 @@ function nml_subscribers_list() {
 		<form id="nml-subscribers-filter" method="GET" action="<?php echo esc_url( nml_get_admin_page_subscribers() ); ?>">
 			<?php
 			$subscriber_table->search_box( __( 'Search Subscribers', 'naked-mailing-list' ), 'nml-subscribers' );
+			$subscriber_table->views();
 			$subscriber_table->display();
 			?>
 			<input type="hidden" name="page" value="nml-newsletters"/>

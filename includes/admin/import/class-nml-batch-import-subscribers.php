@@ -115,7 +115,7 @@ class NML_Batch_Import_Subscribers extends NML_Batch_Import {
 	 * @return void
 	 */
 	public function create_subscriber( $row = array() ) {
-		
+
 		$args = array();
 
 		error_log( sprintf( 'Row: %s', var_export( $row, true ) ) );
