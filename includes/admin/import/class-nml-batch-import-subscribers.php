@@ -115,13 +115,13 @@ class NML_Batch_Import_Subscribers extends NML_Batch_Import {
 	 * @return void
 	 */
 	public function create_subscriber( $row = array() ) {
-
-		$args = $this->field_mapping;
+		
+		$args = array();
 
 		error_log( sprintf( 'Row: %s', var_export( $row, true ) ) );
-		error_log( sprintf( 'Original args: %s', var_export( $args, true ) ) );
+		error_log( sprintf( 'Original args: %s', var_export( $this->field_mapping, true ) ) );
 
-		foreach ( $args as $db_key => $import_key ) {
+		foreach ( $this->field_mapping as $db_key => $import_key ) {
 			if ( ! empty( $row[ $import_key ] ) ) {
 				$args[ $db_key ] = $row[ $import_key ];
 			}
