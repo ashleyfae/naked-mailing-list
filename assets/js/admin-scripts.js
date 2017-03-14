@@ -310,4 +310,183 @@ jQuery(document).ready(function ($) {
 	};
 	NML_Import.init();
 
+	var NML_Chart;
+
+	/**
+	 * Graph Reports
+	 */
+	var NML_Reports = {
+
+		init: function () {
+			this.date_options();
+			this.load_graph();
+			this.update_graph();
+		},
+
+		date_options: function () {
+
+			$('#nml-graphs-date-options').change(function () {
+				var self = $(this),
+					date_range_options = $('#nml-date-range-options');
+
+				if ('other' == self.val()) {
+					date_range_options.show();
+				} else {
+					date_range_options.hide();
+				}
+			});
+
+		},
+
+		load_graph: function () {
+
+			if (!$.isFunction($.fn.Chart)) {
+				//return;
+			}
+
+			var data = {
+				action: 'nml_reports_get_signups_data',
+				nonce: $('#nnl_get_signups_data_nonce').val()
+			};
+
+			$.ajax({
+				type: 'POST',
+				url: ajaxurl,
+				data: data,
+				dataType: "json",
+				success: function (response) {
+
+					if (response.success == true) {
+
+						var data = response.data,
+							range = $('#nml-graphs-date-options').val();
+
+						NML_Reports.draw_graph(data, range);
+
+						// Set total
+						$('#nml-reports-total-signups').find('span').text(response.data.total);
+
+					} else {
+
+						if (window.console && window.console.log) {
+							console.log(response);
+						}
+
+					}
+
+				}
+			}).fail(function (response) {
+				if (window.console && window.console.log) {
+					console.log(response);
+				}
+			});
+
+		},
+
+		draw_graph: function (data, range) {
+
+			console.log(range);
+
+			NML_Chart = new Chart($('#nml-signups-graph'), {
+				type: 'line',
+				data: {
+					labels: data.labels,
+					datasets: [
+						{
+							label: 'New Signups', // @todo
+							data: data.data,
+							fill: false,
+							lineTension: 0.1,
+							backgroundColor: "rgba(75,192,192,0.4)",
+							borderColor: "rgba(75,192,192,1)",
+							borderCapStyle: 'butt',
+							borderDash: [],
+							borderDashOffset: 0.0,
+							borderJoinStyle: 'miter',
+							pointBorderColor: "rgba(75,192,192,1)",
+							pointBackgroundColor: "#fff",
+							pointBorderWidth: 1,
+							pointHoverRadius: 5,
+							pointHoverBackgroundColor: "rgba(75,192,192,1)",
+							pointHoverBorderColor: "rgba(220,220,220,1)",
+							pointHoverBorderWidth: 2,
+							pointHitRadius: 30
+						}
+					]
+				},
+				options: {
+					maintainAspectRatio: false,
+					scales: {
+						yAxes: [{
+							ticks: {
+								beginAtZero: true,
+								userCallback: function(label, index, labels) {
+									// when the floored value is the same as the value we have a whole number
+									if (Math.floor(label) === label) {
+										return label;
+									}
+
+								}
+							}
+						}]
+					}
+				}
+			});
+
+		},
+
+		update_graph: function () {
+
+			if (!$.isFunction($.fn.Chart)) {
+				//return;
+			}
+
+			$('#nml-reports-filter').on('submit', function (e) {
+
+				e.preventDefault();
+
+				var form_input = $(this).serialize(),
+					range = $('#nml-graphs-date-options').val();
+
+				var data = {
+					action: 'nml_reports_update_data_ajax',
+					date: form_input,
+					nonce: $('#nnl_get_signups_data_nonce').val()
+				};
+
+				$.ajax({
+					type: 'POST',
+					url: ajaxurl,
+					data: data,
+					dataType: "json",
+					success: function (response) {
+
+						if (response.success == true) {
+
+							var data = response.data;
+
+							NML_Chart.destroy();
+							NML_Reports.draw_graph(data, range);
+
+							// Set total
+							$('#nml-reports-total-signups').find('span').text(response.data.total);
+
+						} else {
+							console.log(response);
+						}
+
+					}
+				}).fail(function (response) {
+					if (window.console && window.console.log) {
+						console.log(response);
+					}
+				});
+
+			});
+
+		}
+
+	};
+	NML_Reports.init();
+
 });

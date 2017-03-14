@@ -1,0 +1,25 @@
+#nml-date-range-options {
+    float: left;
+}
+
+#nml-reports-filter {
+    .graph-option-section {
+        float: left;
+        line-height: 2.5em;
+        padding-right: 5px;
+    }
+}
+
+#nml-date-range-options {
+    span {
+        float: left;
+        line-height: 28px;
+        height: 28px;
+        margin-right: 6px;
+    }
+}
+
+#nml-graph-wrapper {
+    height: 50vh;
+    position: relative;
+}

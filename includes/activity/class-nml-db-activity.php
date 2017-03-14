@@ -347,12 +347,13 @@ class NML_DB_Activity extends NML_DB {
 	 * Count the total number of activity logs in the database
 	 *
 	 * @param array $args Arguments to override the defaults.
+	 * @param bool $full_day Whether or not to use full days.
 	 *
 	 * @access public
 	 * @since  1.0
 	 * @return int
 	 */
-	public function count( $args = array() ) {
+	public function count( $args = array(), $full_day = false ) {
 
 		global $wpdb;
 
@@ -365,10 +366,6 @@ class NML_DB_Activity extends NML_DB {
 		);
 
 		$args = wp_parse_args( $args, $defaults );
-
-		if ( $args['number'] < 1 ) {
-			$args['number'] = 999999999999;
-		}
 
 		$join  = '';
 		$where = ' WHERE 1=1 ';
@@ -443,14 +440,46 @@ class NML_DB_Activity extends NML_DB {
 
 		}
 
-		// @todo by date
+		// Entries created in a specific date or in a date range.
+		if ( ! empty( $args['date'] ) ) {
+
+			if ( is_array( $args['date'] ) ) {
+
+				if ( ! empty( $args['date']['start'] ) ) {
+
+					$start_temp = nml_is_valid_timestamp( (string) $args['date']['start'] ) ? intval( $args['date']['start'] ) : strtotime( $args['date']['start'] );
+					$start_format = $full_day ? 'Y-m-d 00:00:00' : 'Y-m-d H:i:s';
+					$start      = date( $start_format, $start_temp );
+					$where .= " AND `date` >= '{$start}'";
+
+				}
+
+				if ( ! empty( $args['date']['end'] ) ) {
+
+					$end_temp = nml_is_valid_timestamp( (string) $args['date']['end'] ) ? intval( $args['date']['end'] ) : strtotime( $args['date']['end'] );
+					$end_format = $full_day ? 'Y-m-d 23:59:59' : 'Y-m-d H:i:s';
+					$end      = date( $end_format, $end_temp );
+					$where .= " AND `date` <= '{$end}'";
+
+				}
+
+			} else {
+
+				$year  = date( 'Y', strtotime( $args['date'] ) );
+				$month = date( 'm', strtotime( $args['date'] ) );
+				$day   = date( 'd', strtotime( $args['date'] ) );
+
+				$where .= " AND $year = YEAR ( date ) AND $month = MONTH ( date ) AND $day = DAY ( date )";
+			}
+
+		}
 
 		$cache_key = md5( 'nml_activity_count_' . serialize( $args ) );
 
 		$count = wp_cache_get( $cache_key, 'activity' );
 
 		if ( false === $count ) {
-			$query = "SELECT COUNT($this->$this->primary_key) FROM  $this->table_name $join $where";
+			$query = "SELECT COUNT($this->primary_key) FROM  $this->table_name $join $where";
 			$count = $wpdb->get_var( $query );
 			wp_cache_set( $cache_key, $count, 'activity', 3600 );
 		}

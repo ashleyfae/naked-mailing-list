@@ -119,3 +119,33 @@ function nml_get_unsubscribe_link( $subscriber_email_or_id = '' ) {
 
 	return apply_filters( 'nml_unsubscribe_link', $url, $subscriber_email_or_id );
 }
+
+/**
+ * Month Num To Name
+ *
+ * Takes a month number and returns the name three letter name of it.
+ *
+ * Taken from Easy Digital Downloads.
+ *
+ * @param integer $n
+ *
+ * @since 1.0
+ * @return string Short month name
+ */
+function nml_month_num_to_name( $n ) {
+	$timestamp = mktime( 0, 0, 0, $n, 1, 2005 );
+
+	return date_i18n( "M", $timestamp );
+}
+
+/**
+ * Checks if a value is a valid tiemstamp.
+ *
+ * @param int|string $timestamp Timestamp to check.
+ *
+ * @since 1.0
+ * @return bool
+ */
+function nml_is_valid_timestamp( $timestamp ) {
+	return ( (string) (int) $timestamp === $timestamp ) && ( $timestamp <= PHP_INT_MAX ) && ( $timestamp >= ~PHP_INT_MAX );
+}

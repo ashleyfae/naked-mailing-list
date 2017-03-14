@@ -37,7 +37,13 @@ function nml_load_admin_assets( $hook ) {
 	$suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
 
 	// JS
+	wp_register_script( 'chart-js', $js_dir . 'chart' . $suffix . '.js', array( 'jquery' ), '2.5.0', true );
 	$deps = array( 'jquery', 'jquery-form' );
+
+	if ( 'newsletter_page_nml-reports' == $screen->id ) {
+		$deps[] = 'chart-js';
+	}
+
 	wp_enqueue_script( 'naked-mailing-list', $js_dir . 'admin-scripts' . $suffix . '.js', $deps, NML_VERSION, true );
 	wp_localize_script( 'naked-mailing-list', 'nml_vars', array(
 		'unsupported_browser' => __( 'Sorry but your browser is not compatible with this kind of file upload. Please upgrade your browser.', 'naked-mailing-list' )
