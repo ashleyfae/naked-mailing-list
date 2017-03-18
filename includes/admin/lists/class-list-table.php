@@ -370,7 +370,7 @@ class NML_List_Table extends WP_List_Table {
 			}
 
 			if ( isset( $_GET['lists'] ) && is_array( $_GET['lists'] ) && count( $_GET['lists'] ) ) {
-				naked_mailing_list()->lists->delete_by_ids( $_GET['lists'] ); // @todo move to dedicated deletion function
+				naked_mailing_list()->lists->delete_by_ids( $_GET['lists'] );
 
 				// Display the delete message.
 				$this->display_delete_message = true;

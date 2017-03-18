@@ -303,10 +303,25 @@ class NML_DB_Newsletters extends NML_DB {
 			$where .= $wpdb->prepare( " AND `subject` LIKE '%%%%" . '%s' . "%%%%' ", $args['subject'] );
 		}
 
+		// By list(s)
+		if ( ! empty( $args['list'] ) ) {
+
+			if ( is_array( $args['list'] ) ) {
+				$list_ids = implode( ',', array_map( 'intval', $args['list'] ) );
+			} else {
+				$list_ids = intval( $args['list'] );
+			}
+
+			$relationship_table = naked_mailing_list()->newsletter_list_relationships->table_name;
+
+			$join .= " RIGHT JOIN $relationship_table as r on n.ID = r.newsletter_id AND r.list_id IN( {$list_ids} )";
+
+		}
+
 		// @todo by date created
 		// @todo by date updated
 
-		$args['orderby'] = ! array_key_exists( $args['orderby'], $this->get_columns() ) ? 'ID' : $args['orderby'];
+		$args['orderby'] = ! array_key_exists( $args['orderby'], $this->get_columns() ) ? 'n.ID' : 'n.' . $args['orderby'];
 
 		$cache_key = md5( 'nml_newsletters_' . serialize( $args ) );
 
@@ -316,7 +331,7 @@ class NML_DB_Newsletters extends NML_DB {
 		$args['order']   = esc_sql( $args['order'] );
 
 		if ( false === $newsletters ) {
-			$query       = $wpdb->prepare( "SELECT * FROM  $this->table_name $join $where GROUP BY $this->primary_key ORDER BY {$args['orderby']} {$args['order']} LIMIT %d,%d;", absint( $args['offset'] ), absint( $args['number'] ) );
+			$query       = $wpdb->prepare( "SELECT n.* FROM  $this->table_name n $join $where GROUP BY n.$this->primary_key ORDER BY {$args['orderby']} {$args['order']} LIMIT %d,%d;", absint( $args['offset'] ), absint( $args['number'] ) );
 			$newsletters = $wpdb->get_results( $query );
 			wp_cache_set( $cache_key, $newsletters, 'newsletters', 3600 );
 		}

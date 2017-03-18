@@ -229,7 +229,7 @@ class NML_Newsletter_Table extends WP_List_Table {
 					$list_names = array();
 
 					foreach ( $lists as $list ) {
-						$list_names[] = '<a href="' . esc_url( add_query_arg( array( 'list' => absint( $list->ID ) ) ) ) . '">' . esc_html( $list->name ) . '</a>'; // @todo make link work
+						$list_names[] = '<a href="' . esc_url( add_query_arg( array( 'list' => absint( $list->ID ) ) ) ) . '">' . esc_html( $list->name ) . '</a>';
 					}
 
 					$value = implode( ', ', $list_names );
@@ -477,6 +477,11 @@ class NML_Newsletter_Table extends WP_List_Table {
 		// Filter by status
 		if ( isset( $_GET['status'] ) ) {
 			$args['status'] = sanitize_text_field( $_GET['status'] );
+		}
+
+		// Filter by list
+		if ( isset( $_GET['list'] ) ) {
+			$args['list'] = absint( $_GET['list'] );
 		}
 
 		$this->args  = $args;
