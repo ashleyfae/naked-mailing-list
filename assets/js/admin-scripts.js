@@ -340,8 +340,8 @@ jQuery(document).ready(function ($) {
 
 		load_graph: function () {
 
-			if (!$.isFunction($.fn.Chart)) {
-				//return;
+			if ('undefined' == typeof Chart) {
+				return;
 			}
 
 			var data = {
@@ -437,8 +437,8 @@ jQuery(document).ready(function ($) {
 
 		update_graph: function () {
 
-			if (!$.isFunction($.fn.Chart)) {
-				//return;
+			if ('undefined' == typeof Chart) {
+				return;
 			}
 
 			$('#nml-reports-filter').on('submit', function (e) {

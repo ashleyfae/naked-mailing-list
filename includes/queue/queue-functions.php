@@ -72,7 +72,6 @@ function nml_process_queue_entry( $entry ) {
 		'offset' => absint( $entry->offset )
 	) );
 
-	// @todo send
 	if ( ! empty( $subscribers ) ) {
 		$email = nml_get_email_provider();
 		$email->set_newsletter( $newsletter );

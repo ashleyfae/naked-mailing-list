@@ -379,6 +379,20 @@ function nml_confirm_subscriber() {
 add_action( 'template_redirect', 'nml_confirm_subscriber' );
 
 /**
+ * Unsubscribe a person
+ *
+ * @param int $subscriber_id ID of the subscriber to unsubscribe.
+ *
+ * @since 1.0
+ * @return bool
+ */
+function nml_unsubscribe( $subscriber_id ) {
+	$subscriber = new NML_Subscriber( $subscriber_id );
+
+	return $subscriber->unsubscribe();
+}
+
+/**
  * Process unsubscribe
  *
  * @since 1.0

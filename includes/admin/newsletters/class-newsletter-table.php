@@ -416,7 +416,7 @@ class NML_Newsletter_Table extends WP_List_Table {
 			}
 
 			if ( isset( $_GET['newsletters'] ) && is_array( $_GET['newsletters'] ) && count( $_GET['newsletters'] ) ) {
-				naked_mailing_list()->newsletters->delete_by_ids( $_GET['newsletters'] ); // @todo move to dedicated deletion function
+				naked_mailing_list()->newsletters->delete_by_ids( $_GET['newsletters'] );
 
 				// Display the delete message.
 				$this->display_delete_message = true;

@@ -74,6 +74,15 @@ class NML_Subscriber_Table extends WP_List_Table {
 	private $display_delete_message = false;
 
 	/**
+	 * Display unsubscribe message
+	 *
+	 * @var bool
+	 * @access private
+	 * @since  1.0
+	 */
+	private $display_unsubscribe_message = false;
+
+	/**
 	 * NML_Subscriber_Table constructor.
 	 *
 	 * @see    WP_List_Table::__construct()
@@ -354,6 +363,14 @@ class NML_Subscriber_Table extends WP_List_Table {
 			<?php
 		}
 
+		if ( 'top' == $which && true === $this->display_unsubscribe_message ) {
+			?>
+			<div id="message" class="updated notice notice-success">
+				<p><?php _e( 'Successfully unsubscribed.', 'naked-mailing-list' ); ?></p>
+			</div>
+			<?php
+		}
+
 		?>
 		<div class="tablenav <?php echo esc_attr( $which ); ?>">
 
@@ -381,7 +398,8 @@ class NML_Subscriber_Table extends WP_List_Table {
 	 */
 	public function get_bulk_actions() {
 		$actions = array(
-			'delete' => __( 'Delete Permanently', 'naked-mailing-list' )
+			'unsubscribe' => __( 'Unsubscribe', 'naked-mailing-list' ),
+			'delete'      => __( 'Delete Permanently', 'naked-mailing-list' )
 		);
 
 		return apply_filters( 'nml_subscribers_table_bulk_actions', $actions );
@@ -396,12 +414,16 @@ class NML_Subscriber_Table extends WP_List_Table {
 	 */
 	public function process_bulk_actions() {
 
-		if ( 'delete' == $this->current_action() ) {
+		if ( empty( $this->current_action() ) ) {
+			return;
+		}
 
-			// Check nonce.
-			if ( empty( $_GET['_wpnonce'] ) || ! wp_verify_nonce( $_GET['_wpnonce'], 'bulk-' . $this->_args['plural'] ) ) {
-				wp_die( __( 'Failed security check.', 'naked-mailing-list' ) );
-			}
+		// Check nonce.
+		if ( empty( $_GET['_wpnonce'] ) || ! wp_verify_nonce( $_GET['_wpnonce'], 'bulk-' . $this->_args['plural'] ) ) {
+			wp_die( __( 'Failed security check.', 'naked-mailing-list' ) );
+		}
+
+		if ( 'delete' == $this->current_action() ) {
 
 			// Checek capability.
 			if ( ! current_user_can( 'delete_posts' ) ) {
@@ -415,6 +437,22 @@ class NML_Subscriber_Table extends WP_List_Table {
 
 				// Display the delete message.
 				$this->display_delete_message = true;
+			}
+
+		} elseif ( 'unsubscribe' == $this->current_action() ) {
+
+			// Checek capability.
+			if ( ! current_user_can( 'edit_posts' ) ) {
+				wp_die( __( 'You don\'t have permission to edit subscribers.', 'naked-mailing-list' ) );
+			}
+
+			if ( isset( $_GET['subscribers'] ) && is_array( $_GET['subscribers'] ) && count( $_GET['subscribers'] ) ) {
+				foreach ( $_GET['subscribers'] as $subscriber_id ) {
+					nml_unsubscribe( $subscriber_id );
+				}
+
+				// Display the unsubscribe message.
+				$this->display_unsubscribe_message = true;
 			}
 
 		}

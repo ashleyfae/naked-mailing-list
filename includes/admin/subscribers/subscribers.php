@@ -71,7 +71,7 @@ function nml_subscribers_list() {
 			$subscriber_table->views();
 			$subscriber_table->display();
 			?>
-			<input type="hidden" name="page" value="nml-newsletters"/>
+			<input type="hidden" name="page" value="nml-subscribers"/>
 			<input type="hidden" name="view" value="subscribers"/>
 		</form>
 

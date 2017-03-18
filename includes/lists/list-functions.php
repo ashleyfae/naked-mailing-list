@@ -286,7 +286,7 @@ function nml_set_object_lists( $object_type, $object_id, $lists, $type, $append 
 
 				if ( $relationship ) {
 					if ( 'subscriber' == $object_type ) {
-						naked_mailing_list()->list_relationships->delete( absint( $relationship->ID ) ); // @todo do this without a foreach
+						naked_mailing_list()->list_relationships->delete( absint( $relationship->ID ) );
 
 						// Reduce the count.
 						nml_update_list_count( $list_id );
