@@ -236,6 +236,7 @@ if ( ! class_exists( 'Naked_Mailing_List' ) ) :
 				require_once NML_PLUGIN_DIR . 'includes/admin/admin-actions.php';
 				require_once NML_PLUGIN_DIR . 'includes/admin/admin-assets.php';
 				require_once NML_PLUGIN_DIR . 'includes/admin/admin-pages.php';
+				require_once NML_PLUGIN_DIR . 'includes/admin/class-nml-admin-notices.php';
 				require_once NML_PLUGIN_DIR . 'includes/admin/tools.php';
 				require_once NML_PLUGIN_DIR . 'includes/admin/import/import-actions.php';
 				require_once NML_PLUGIN_DIR . 'includes/admin/import/import-functions.php';
