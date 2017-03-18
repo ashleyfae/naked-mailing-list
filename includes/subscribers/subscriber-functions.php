@@ -350,26 +350,22 @@ function nml_confirm_subscriber() {
 	}
 
 	$subscriber = new NML_Subscriber( $subscriber_id );
+	$query_args = array(
+		'nml-action'  => 'confirm-email',
+		'nml-message' => ''
+	);
 
 	// Subscriber doesn't exist.
 	if ( empty( $subscriber->ID ) ) {
-		$query_args = array(
-			'success'   => 'false',
-			'nml_error' => 'invalid-subscriber'
-		);
+		$query_args['nml-message'] = 'invalid-subscriber';
 	} else {
 
 		// Check verification
 		if ( isset( $_GET['key'] ) && md5( $subscriber->ID . $subscriber->email ) == urldecode( $_GET['key'] ) ) {
 			$subscriber->confirm();
-			$query_args = array(
-				'success' => 'true'
-			);
+			$query_args['nml-message'] = 'email-confirmed';
 		} else {
-			$query_args = array(
-				'success'   => 'false',
-				'nml_error' => 'invalid-key'
-			);
+			$query_args['nml-message'] = 'invalid-subscriber-key';
 		}
 
 	}
@@ -402,24 +398,20 @@ function nml_process_unsubscribe() {
 	$email      = urldecode( $_GET['subscriber'] );
 	$id         = urldecode( $_GET['ID'] );
 	$subscriber = new NML_Subscriber( absint( $id ) );
+	$query_args = array(
+		'nml-action'  => 'unsubscribe',
+		'nml-message' => ''
+	);
 
 	if ( $subscriber->email != $email ) {
-		$query_args = array(
-			'unsubscribe_success'   => 'false',
-			'nml_error' => 'invalid-subscriber'
-		);
+		$query_args['nml-message'] = 'invalid-subscriber';
 	} else {
 		$result = $subscriber->unsubscribe();
 
 		if ( $result ) {
-			$query_args = array(
-				'unsubscribe_success' => 'true'
-			);
+			$query_args['nml-message'] = 'successfully-unsubscribed';
 		} else {
-			$query_args = array(
-				'unsubscribe_success'   => 'false',
-				'nml_error' => 'unexpected-error'
-			);
+			$query_args['nml-message'] = 'unexpected-error';
 		}
 	}
 

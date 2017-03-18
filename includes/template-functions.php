@@ -154,3 +154,141 @@ function nml_newsletter_preview_template( $template ) {
 }
 
 add_filter( 'template_include', 'nml_newsletter_preview_template' );
+
+/**
+ * Load base front-end template
+ *
+ * This template is used for showing confirmation/unsubscribe notices and
+ * managing lists.
+ *
+ * @param string $template
+ *
+ * @since 1.0
+ * @return string
+ */
+function nml_load_base_front_end_template( $template ) {
+	if ( ! isset( $_GET['nml-action'] ) ) {
+		return $template;
+	}
+
+	$actions = array( 'confirm-email', 'unsubscribe', 'manage-lists' );
+
+	if ( ! in_array( $_GET['nml-action'], $actions ) ) {
+		return $template;
+	}
+
+	$template = nml_get_template_part( 'base', '', false );
+
+	return $template;
+}
+
+add_filter( 'template_include', 'nml_load_base_front_end_template' );
+
+/**
+ * <title> text for the base.php template file.
+ *
+ * @param string $title  Title text.
+ * @param string $action Current action being performed.
+ *
+ * @since 1.0
+ * @return string
+ */
+function nml_base_template_title( $title, $action ) {
+
+	switch ( $action ) {
+		case 'confirm-email' :
+			$title = __( 'Your Email Has Been Confirmed!', 'naked-mailing-list' );
+			break;
+
+		case 'unsubscribe' :
+			$title = __( 'Unsubscribe', 'naked-mailing-list' );
+			break;
+
+		case 'manage-lists' :
+			$title = __( 'Manage Your Subscriptions', 'naked-mailing-list' );
+			break;
+	}
+
+	return $title;
+
+}
+
+add_filter( 'nml_base_template_title', 'nml_base_template_title', 10, 2 );
+
+/**
+ * Prints notices on the front-end pages.
+ *
+ * @since 1.0
+ * @return void
+ */
+function nml_front_end_notices() {
+
+	if ( ! isset( $_GET['nml-message'] ) ) {
+		return;
+	}
+
+	static $displayed = false;
+
+	// Only one message at a time.
+	if ( $displayed ) {
+		return;
+	}
+
+	$message = '';
+	$type    = 'success';
+	$notice  = isset( $_GET['nml-message'] ) ? $_GET['nml-message'] : '';
+
+	switch ( $notice ) {
+
+		// Successfully confirmed email.
+		case 'email-confirmed' :
+			$message = __( 'Your email address has been successfully confirmed and your subscription has been activated.', 'naked-mailing-list' );
+			break;
+
+		// Invalid subscriber.
+		case 'invalid-subscriber' :
+			$message = __( 'Error: Invalid subscriber. Please contact the site admin.', 'naked-mailing-list' );
+			$type    = 'error';
+			break;
+
+		// Subscriber key does not match email.
+		case 'invalid-subscriber-key' :
+			$message = __( 'The provided subscriber key is invalid.', 'naked-mailing-list' );
+			$type    = 'error';
+			break;
+
+		// Successfully unsubscribed.
+		case 'successfully-unsubscribed' :
+			$message = __( 'You have successfully been unsubscribed.', 'naked-mailing-list' );
+			break;
+
+		// Unexpected error.
+		case 'unexpected-error' :
+			$message = __( 'An unexpected error has occurred.', 'naked-mailing-list' );
+			$type    = 'error';
+			break;
+
+	}
+
+	/**
+	 * Used to modify the contents of the message.
+	 *
+	 * @param string $message The message to be displayed.
+	 * @param string $notice  The $_GET notice value.
+	 *
+	 * @since 1.0
+	 */
+	$message = apply_filters( 'nml_front_end_notice', $message, $notice );
+
+	if ( empty( $message ) ) {
+		return;
+	}
+
+	$class = ( 'success' == $type ) ? 'nml-success' : 'nml-error';
+	printf( '<p class="nml-notice %s">%s</p>', $class, esc_html( $message ) );
+
+	$displayed = true;
+
+}
+
+add_action( 'nml_base_template_notices', 'nml_front_end_notices' );
