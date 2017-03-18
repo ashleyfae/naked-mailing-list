@@ -352,6 +352,16 @@ function nml_save_subscriber() {
 	if ( ! empty( $subscriber_id ) ) {
 		$result = $subscriber->update( $sub_data );
 
+		// Delete lists.
+		if ( empty( $_POST['nml_subscriber_lists'] ) ) {
+			$subscriber->delete_lists( 'list' );
+		}
+
+		// Delete tags.
+		if ( empty( $_POST['nml_subscriber_tags'] ) ) {
+			$subscriber->delete_lists( 'tag' );
+		}
+
 		if ( $result ) {
 			$new_id = $subscriber->ID;
 		}

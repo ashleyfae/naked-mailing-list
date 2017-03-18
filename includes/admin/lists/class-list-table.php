@@ -130,6 +130,58 @@ class NML_List_Table extends WP_List_Table {
 	}
 
 	/**
+	 * Retrieve the view types
+	 *
+	 * @access public
+	 * @since  1.0
+	 * @return array
+	 */
+	public function get_views() {
+		$base = nml_get_admin_page_lists();
+
+		$current = isset( $_GET['type'] ) ? $_GET['type'] : 'list';
+		$types   = array(
+			'list' => __( 'Lists', 'naked-mailing-list' ),
+			'tag'  => __( 'Tags', 'naked-mailing-list' )
+		);
+		$counts  = $this->get_counts();
+		$views   = array();
+
+		foreach ( $types as $id => $name ) {
+			$views[ $id ] = sprintf( '<a href="%s"%s>%s</a>', add_query_arg( 'type', urlencode( $id ), $base ), $current === $id ? ' class="current"' : '', $name . '&nbsp;<span class="count">(' . $counts[ $id ] . ')</span>' );
+		}
+
+		return $views;
+	}
+
+	/**
+	 * Get status counts
+	 *
+	 * Returns an array of all the statuses and their number of results.
+	 *
+	 * @access public
+	 * @since  1.0
+	 * @return array
+	 */
+	public function get_counts() {
+
+		$counts = array();
+		$types  = array(
+			'list' => __( 'Lists', 'naked-mailing-list' ),
+			'tag'  => __( 'Tags', 'naked-mailing-list' )
+		);
+
+		foreach ( $types as $id => $name ) {
+			$counts[ $id ] = naked_mailing_list()->lists->count( array(
+				'type' => $id
+			) );
+		}
+
+		return $counts;
+
+	}
+
+	/**
 	 * Gets the name of the primary column.
 	 *
 	 * @access protected

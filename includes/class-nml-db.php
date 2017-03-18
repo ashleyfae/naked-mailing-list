@@ -150,6 +150,31 @@ abstract class NML_DB {
 	}
 
 	/**
+	 * Delete multiple entries by IDs
+	 *
+	 * @param array $ids Array of IDs.
+	 *
+	 * @access public
+	 * @since  1.0
+	 * @return int|false Number of rows deleted or false if none.
+	 */
+	public function delete_by_ids( $ids ) {
+
+		global $wpdb;
+
+		if ( is_array( $ids ) ) {
+			$ids = implode( ',', array_map( 'intval', $ids ) );
+		} else {
+			$ids = intval( $ids );
+		}
+
+		$results = $wpdb->query( "DELETE FROM  $this->table_name WHERE `ID` IN( {$ids} )" );
+
+		return $results;
+
+	}
+
+	/**
 	 * Insert a new row
 	 *
 	 * @param array  $data Row data.

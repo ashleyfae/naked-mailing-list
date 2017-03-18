@@ -357,7 +357,7 @@ class NML_DB_Lists extends NML_DB {
 
 		// Lists with a specific type.
 		if ( ! empty( $args['type'] ) ) {
-			$where .= $wpdb->prepare( " AND `type` LIKE '%s' ", wp_strip_all_tags( $args['type'] ) );
+			$where .= $wpdb->prepare( " AND `type` = '%s' ", wp_strip_all_tags( $args['type'] ) );
 		}
 
 		// Lists with a specific count.
@@ -381,7 +381,7 @@ class NML_DB_Lists extends NML_DB {
 
 		if ( $count === false ) {
 			$query = "SELECT COUNT($this->primary_key) FROM " . $this->table_name . "{$join} {$where};";
-			$count = $wpdb->get_results( $query );
+			$count = $wpdb->get_var( $query );
 			wp_cache_set( $cache_key, $count, 'newsletter_lists', 3600 );
 		}
 

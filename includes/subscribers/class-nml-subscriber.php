@@ -696,6 +696,41 @@ class NML_Subscriber {
 	}
 
 	/**
+	 * Deletes lists or tags from the subscriber
+	 *
+	 * @param string|bool $type Type of lists to delete (`list` or `tag`), or false for all.
+	 *
+	 * @access public
+	 * @since  1.0
+	 * @return void
+	 */
+	public function delete_lists( $type = false ) {
+
+		$lists = nml_get_object_lists( 'subscriber', $this->ID, $type, array( 'fields' => 'ids' ) );
+
+		if ( empty( $lists ) ) {
+			return;
+		}
+
+		$args = array(
+			'subscriber_id' => $this->ID,
+			'list_id'       => $lists
+		);
+
+		// Get all the relationships with these lists and subscriber.
+		$relationships = naked_mailing_list()->list_relationships->get_relationships( $args );
+
+		if ( empty( $relationships ) ) {
+			return;
+		}
+
+		$ids = wp_list_pluck( $relationships, 'ID' );
+
+		naked_mailing_list()->list_relationships->delete_by_ids( $ids );
+
+	}
+
+	/**
 	 * Increase the subscriber's email count.
 	 *
 	 * @param int $count The number to increment by.

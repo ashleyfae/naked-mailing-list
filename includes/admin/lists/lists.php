@@ -99,6 +99,7 @@ function nml_lists_table() {
 					<form id="nml-lists-filter" method="GET" action="<?php echo esc_url( nml_get_admin_page_lists() ); ?>">
 						<?php
 						$list_table->search_box( __( 'Search Lists', 'naked-mailing-list' ), 'nml-lists' );
+						$list_table->views();
 						$list_table->display();
 						?>
 						<input type="hidden" name="page" value="nml-lists"/>
