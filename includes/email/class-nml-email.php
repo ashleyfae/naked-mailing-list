@@ -114,7 +114,7 @@ class NML_Email {
 	 * @return void
 	 */
 	public function __construct( $newsletter_id = 0 ) {
-		$this->newsletter = new NML_Newsletter( $newsletter_id );
+		$this->newsletter = ! empty( $newsletter_id ) ? new NML_Newsletter( $newsletter_id ) : null;
 
 		$this->from_name    = ! empty( $this->newsletter->from_name ) ? $this->newsletter->from_name : nml_get_option( 'from_name' );
 		$this->from_address = ! empty( $this->newsletter->from_address ) ? $this->newsletter->from_address : nml_get_option( 'from_email' );
