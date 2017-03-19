@@ -209,9 +209,12 @@ function nml_process_signup() {
 		$subscriber = new NML_Subscriber( $object->ID );
 		$subscriber->update( $data );
 
+		nml_log( sprintf( __( 'New Signup: Subscriber %s already exists.', 'naked-mailing-list' ), $email ) );
+
 		if ( $lists ) {
 			foreach ( $lists as $list_id ) {
 				$subscriber->add_to_list( $list_id );
+				nml_log( sprintf( __( 'New Signup: Added subscriber %s to list ID %d.', 'naked-mailing-list' ), $email, $list_id ) );
 			}
 		}
 
@@ -243,6 +246,8 @@ function nml_process_signup() {
 
 		$subscriber = new NML_Subscriber();
 		$subscriber->create( $data );
+
+		nml_log( sprintf( __( 'New Signup: Added subscriber %d (email: %s).', 'naked-mailing-list' ), $subscriber->ID, $email ) );
 
 		$message = __( 'Almost there! Check your email to confirm your subscription.', 'naked-mailing-list' );
 	}

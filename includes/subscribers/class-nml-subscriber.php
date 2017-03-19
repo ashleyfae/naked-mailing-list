@@ -456,7 +456,7 @@ class NML_Subscriber {
 		$result = $email->send();
 
 		if ( ! $result ) {
-			error_log( 'Error sending confirmation email.' );
+			nml_log( sprintf( __( 'Error sending confirmation email to subscriber %d (email: %s).', 'naked-mailing-list' ), $this->ID, $this->email ) );
 		}
 
 		do_action( 'nml_subscriber_send_confirmation_email', $this->ID, $this );

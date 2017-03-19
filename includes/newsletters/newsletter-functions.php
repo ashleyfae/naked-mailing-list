@@ -115,8 +115,6 @@ function nml_insert_newsletter( $newsletter_data ) {
 
 	if ( array_key_exists( 'lists', $newsletter_data ) ) {
 		$result = nml_set_object_lists( 'newsletter', $newsletter_id, $newsletter_data['lists'], 'list', false );
-
-		error_log( var_export( $result, true ) );
 	}
 	if ( array_key_exists( 'tags', $newsletter_data ) ) {
 		nml_set_object_lists( 'newsletter', $newsletter_id, $newsletter_data['tags'], 'tag', false );
@@ -175,11 +173,13 @@ function nml_send_newsletter( $newsletter_id ) {
 	// Calculate and update subscriber count.
 	$newsletter->update_subscriber_count();
 
-	$result = naked_mailing_list()->queue->add( array(
+	$queue_id = naked_mailing_list()->queue->add( array(
 		'newsletter_id' => absint( $newsletter->ID )
 	) );
 
-	return $result;
+	nml_log( sprintf( __( 'Created queue entry %d for newsletter %d.', 'naked-mailing-list' ), $queue_id, $newsletter->ID ) );
+
+	return $queue_id;
 
 }
 

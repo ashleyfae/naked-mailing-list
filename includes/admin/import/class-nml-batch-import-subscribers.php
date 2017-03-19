@@ -118,19 +118,18 @@ class NML_Batch_Import_Subscribers extends NML_Batch_Import {
 
 		$args = array();
 
-		error_log( sprintf( 'Row: %s', var_export( $row, true ) ) );
-		error_log( sprintf( 'Original args: %s', var_export( $this->field_mapping, true ) ) );
-
 		foreach ( $this->field_mapping as $db_key => $import_key ) {
 			if ( ! empty( $row[ $import_key ] ) ) {
 				$args[ $db_key ] = $row[ $import_key ];
 			}
 		}
 
-		error_log( sprintf( 'Modified args: %s', var_export( $args, true ) ) );
+		nml_log( sprintf( __( 'Import: Started importing subscriber. Found args: %s', 'naked-mailing-list' ), var_export( $args, true ) ) );
 
 		// Email is required.
 		if ( empty( $args['email'] ) ) {
+			nml_log( __( 'Import: Skipping import row - no email provided.', 'naked-mailing-list' ) );
+
 			return;
 		}
 
@@ -190,6 +189,8 @@ class NML_Batch_Import_Subscribers extends NML_Batch_Import {
 			$subscriber = new NML_Subscriber( $obj->ID );
 			$subscriber->update( $data_to_update );
 
+			nml_log( sprintf( __( 'Import: Updating subscriber %d (email: %s).', 'naked-mailing-list' ), $subscriber->ID, $subscriber->email ) );
+
 		} else {
 
 			// Create a new subscriber.
@@ -201,6 +202,8 @@ class NML_Batch_Import_Subscribers extends NML_Batch_Import {
 
 			$subscriber = new NML_Subscriber();
 			$subscriber->create( $args );
+
+			nml_log( sprintf( __( 'Import: Created new subscriber %d (email: %s).', 'naked-mailing-list' ), $subscriber->ID, $subscriber->email ) );
 
 		}
 

@@ -66,6 +66,8 @@ function nml_process_queue_entry( $entry ) {
 		'status' => 'processing'
 	) );
 
+	nml_log( sprintf( __( 'Started processing queue entry %d', 'naked-mailing-list' ), $entry->ID ) );
+
 	$newsletter  = new NML_Newsletter( $entry->newsletter_id );
 	$subscribers = $newsletter->get_subscribers( array(
 		'number' => nml_number_subscribers_per_batch(),
@@ -79,8 +81,7 @@ function nml_process_queue_entry( $entry ) {
 		$result = $email->send();
 
 		if ( ! $result ) {
-			error_log( sprintf( 'Sending error: %s', var_export( $result ) ) );
-			// @todo log error for real
+			nml_log( sprintf( 'Sending error for newsletter %d: %s', $newsletter->ID, var_export( $result ) ) );
 
 			// Delay this log entry by 5 minutes.
 			naked_mailing_list()->queue->update( $entry->ID, array(
@@ -91,8 +92,10 @@ function nml_process_queue_entry( $entry ) {
 			return false;
 		}
 	} else {
-		// @todo log no subscribers
+		nml_log( sprintf( __( 'Newsletter ID %d not sent - no subscribers.', 'naked-mailing-list' ), $newsletter->ID ) );
 	}
+
+	nml_log( sprintf( __( 'Finished processing queue entry %d. Number: %d; Offset: %d', 'naked-mailing-list' ), $entry->ID, nml_number_subscribers_per_batch(), $entry->offset ) );
 
 	// Delete this queue entry.
 	naked_mailing_list()->queue->delete( $entry->ID );
@@ -110,6 +113,8 @@ function nml_process_queue_entry( $entry ) {
 			'sent_date' => gmdate( 'Y-m-d H:i:s' )
 		) );
 
+		nml_log( sprintf( __( 'Finished sending newsletter %d', 'naked-mailing-list' ), $newsletter->ID ) );
+
 		// Increment the email count for all subscribers.
 		$newsletter_lists = $newsletter->get_lists();
 
@@ -124,10 +129,12 @@ function nml_process_queue_entry( $entry ) {
 	} else {
 
 		// There's still more to do - create the next entry.
-		naked_mailing_list()->queue->add( array(
+		$queue_id = naked_mailing_list()->queue->add( array(
 			'newsletter_id' => absint( $entry->newsletter_id ),
 			'offset'        => ( $entry->offset ) + nml_number_subscribers_per_batch()
 		) );
+
+		nml_log( sprintf( __( 'Created queue entry ID %d for newsletter %d', 'naked-mailing-list' ), $queue_id, $newsletter->ID ) );
 
 	}
 

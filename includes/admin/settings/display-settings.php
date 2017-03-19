@@ -25,7 +25,7 @@ function nml_options_page() {
 
 	$settings_tabs = nml_get_settings_tabs();
 	$settings_tabs = empty( $settings_tabs ) ? array() : $settings_tabs;
-	$active_tab    = isset( $_GET['tab'] ) && array_key_exists( $_GET['tab'], $settings_tabs ) ? $_GET['tab'] : 'books';
+	$active_tab    = isset( $_GET['tab'] ) && array_key_exists( $_GET['tab'], $settings_tabs ) ? $_GET['tab'] : 'general';
 	$sections      = nml_get_settings_tab_sections( $active_tab );
 	$key           = 'main';
 

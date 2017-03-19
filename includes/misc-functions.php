@@ -149,3 +149,19 @@ function nml_month_num_to_name( $n ) {
 function nml_is_valid_timestamp( $timestamp ) {
 	return ( (string) (int) $timestamp === $timestamp ) && ( $timestamp <= PHP_INT_MAX ) && ( $timestamp >= ~PHP_INT_MAX );
 }
+
+/**
+ * Log a message if debug mode is enabled
+ *
+ * @param string $message
+ *
+ * @since 1.0
+ * @return void
+ */
+function nml_log( $message = '' ) {
+
+	if ( nml_get_option( 'debug_mode' ) ) {
+		naked_mailing_list()->logs->log( $message );
+	}
+
+}

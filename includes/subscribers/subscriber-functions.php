@@ -358,6 +358,7 @@ function nml_confirm_subscriber() {
 	// Subscriber doesn't exist.
 	if ( empty( $subscriber->ID ) ) {
 		$query_args['nml-message'] = 'invalid-subscriber';
+		nml_log( sprintf( __( 'Email Confirmation Error: Invalid subscriber ID %d.', 'naked-mailing-list' ), $subscriber_id ) );
 	} else {
 
 		// Check verification
@@ -366,6 +367,7 @@ function nml_confirm_subscriber() {
 			$query_args['nml-message'] = 'email-confirmed';
 		} else {
 			$query_args['nml-message'] = 'invalid-subscriber-key';
+			nml_log( sprintf( __( 'Email Confirmation Error: Invalid subscriber key for %s. Provided: %s; Should Be: %s.', 'naked-mailing-list' ), $subscriber->email, urldecode( $_GET['key'] ), md5( $subscriber->ID, $subscriber->email ) ) );
 		}
 
 	}
@@ -405,7 +407,8 @@ function nml_process_unsubscribe() {
 	}
 
 	if ( empty( $_GET['subscriber'] ) || empty( $_GET['ID'] ) ) {
-		// @todo error message
+		nml_log( sprintf( __( 'Unsubscribe Error: Missing "subscriber" or "ID" args. Provided: %s', 'naked-mailing-list' ), var_export( $_GET, true ) ) );
+
 		return;
 	}
 
@@ -426,6 +429,7 @@ function nml_process_unsubscribe() {
 			$query_args['nml-message'] = 'successfully-unsubscribed';
 		} else {
 			$query_args['nml-message'] = 'unexpected-error';
+			nml_log( sprintf( __( 'Unsubscribe Error: Unexpected error. Result: %s', 'naked-mailing-list' ), var_export( $result, true ) ) );
 		}
 	}
 

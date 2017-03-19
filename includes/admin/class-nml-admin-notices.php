@@ -87,6 +87,11 @@ class NML_Admin_Notices {
 					$notices['updated']['nml-settings-imported'] = __( 'The settings have been successfully imported.', 'naked-mailing-list' );
 					break;
 
+				// Logs
+				case 'log-cleared' :
+					$notice['updated']['nml-debug-log-cleared'] = __( 'Debug log successfully cleared.', 'naked-mailing-list' );
+					break;
+
 			}
 
 		}

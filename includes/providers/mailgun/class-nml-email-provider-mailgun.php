@@ -124,18 +124,16 @@ class NML_Email_Provider_MailGun extends NML_Email {
 
 		$url = "https://api.mailgun.net/v2/{$this->domain_name}/messages";
 
-		error_log(var_export($body, true));
-
 		$response = wp_remote_post( $url, $data );
 
 		if ( is_wp_error( $response ) ) {
-			error_log( sprintf( 'MailGun invalid response: %s', var_export( $response, true ) ) );
+			nml_log( sprintf( __( 'MailGun invalid response: %s', 'naked-mailing-list' ), var_export( $response, true ) ) );
 
 			return false;
 		}
 
 		if ( 200 != wp_remote_retrieve_response_code( $response ) ) {
-			error_log( sprintf( 'MailGun invalid response code: %s', var_export( wp_remote_retrieve_response_code( $response ), true ) ) );
+			nml_log( sprintf( __( 'MailGun invalid response code: %s', 'naked-mailing-list' ), wp_remote_retrieve_response_code( $response ) ) );
 
 			return false;
 		}

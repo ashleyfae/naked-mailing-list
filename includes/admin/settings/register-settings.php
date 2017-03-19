@@ -207,7 +207,19 @@ function nml_get_registered_settings() {
 	$nml_settings = array(
 		/* General Settings */
 		'general' => apply_filters( 'nml_settings_general', array(
-			'main' => array()
+			'main' => array(
+				'debug_mode' => array(
+					'id'   => 'debug_mode',
+					'name' => esc_html__( 'Enable Debug Mode', 'naked-mailing-list' ),
+					'desc' => sprintf(
+						__( 'This will turn on error/notice logging. Logs are kept in %sNewsletter > Tools > Debugging%s.', 'naked-mailing-list' ),
+						'<a href="' . esc_url( admin_url( 'admin.php?page=nml-tools&tab=debug' ) ) . '">',
+						'</a>'
+					),
+					'type' => 'checkbox',
+					'std'  => false,
+				)
+			)
 		) ),
 		/* Emails */
 		'emails'  => apply_filters( 'nml_settings_emails', array(
@@ -314,7 +326,7 @@ function nml_settings_sanitize( $input = array() ) {
 	parse_str( $_POST['_wp_http_referer'], $referrer );
 
 	$settings = nml_get_registered_settings();
-	$tab      = ( isset( $referrer['tab'] ) && $referrer['tab'] != 'import_export' ) ? $referrer['tab'] : 'books';
+	$tab      = ( isset( $referrer['tab'] ) && $referrer['tab'] != 'import_export' ) ? $referrer['tab'] : 'general';
 	$section  = isset( $referrer['section'] ) ? $referrer['section'] : 'main';
 
 	$input = $input ? $input : array();

@@ -122,6 +122,8 @@ class NML_Post_Notification {
 
 		// Error.
 		if ( empty( $newsletter_id ) || is_wp_error( $newsletter_id ) ) {
+			nml_log( sprintf( __( 'Error creating newsletter from post ID %d.', 'naked-mailing-list' ), $this->post->ID ) );
+
 			return false;
 		}
 

@@ -65,6 +65,10 @@ function nml_get_tools_tabs() {
 		'export' => __( 'Export', 'naked-mailing-list' )
 	);
 
+	if ( nml_get_option( 'debug_mode' ) ) {
+		$tabs['debug'] = __( 'Debugging', 'naked-mailing-list' );
+	}
+
 	return apply_filters( 'nml_tools_tabs', $tabs );
 
 }
@@ -226,3 +230,55 @@ function nml_tools_export_display() {
 }
 
 add_action( 'nml_tools_tab_export', 'nml_tools_export_display' );
+
+/**
+ * Display the debug tab
+ *
+ * @since 1.0
+ * @return void
+ */
+function nml_tools_debug_display() {
+
+	?>
+	<div class="postbox nml-export-subscribers">
+		<h3><span><?php _e( 'Debug Log', 'naked-mailing-list' ); ?></span></h3>
+		<div class="inside">
+			<label for="nml-debug-log"><?php _e( 'This file contains debugging information.', 'naked-mailing-list' ); ?></label>
+			<textarea id="nml-debug-log" class="large-text" rows="15"><?php echo esc_textarea( naked_mailing_list()->logs->get_log() ); ?></textarea>
+			<input type="submit" class="button" value="<?php esc_attr_e( 'Clear Debug Log', 'naked-mailing-list' ); ?>">
+			<input type="hidden" name="nml_action" value="clear_debug_log">
+			<?php wp_nonce_field( 'nml_clear_debug_log', 'nml_clear_debug_log_nonce' ); ?>
+		</div>
+	</div>
+	<?php
+
+}
+
+add_action( 'nml_tools_tab_debug', 'nml_tools_debug_display' );
+
+/**
+ * Clear the debug log
+ *
+ * @since 1.0
+ * @return void
+ */
+function nml_clear_debug_log() {
+	if ( ! isset( $_POST['nml_clear_debug_log_nonce'] ) ) {
+		return;
+	}
+
+	if ( ! wp_verify_nonce( $_POST['nml_clear_debug_log_nonce'], 'nml_clear_debug_log' ) ) {
+		return;
+	}
+
+	naked_mailing_list()->logs->clear_log();
+
+	$url = add_query_arg( array(
+		'nml-message' => 'log-cleared'
+	), admin_url( 'admin.php?page=nml-tools&tab=debug' ) );
+
+	wp_safe_redirect( $url );
+	exit;
+}
+
+add_action( 'nml_clear_debug_log', 'nml_clear_debug_log' );
