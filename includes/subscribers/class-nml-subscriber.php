@@ -188,13 +188,13 @@ class NML_Subscriber {
 			$field = 'email';
 		}
 
-		$this->db_row = $this->db->get_subscriber_by( $field, $id_or_email );
+		$subscriber = $this->db->get_subscriber_by( $field, $id_or_email );
 
-		if ( empty( $this->db_row ) || ! is_object( $this->db_row ) ) {
+		if ( empty( $subscriber ) || ! is_object( $subscriber ) ) {
 			return;
 		}
 
-		$this->setup_subscriber( $this->db_row );
+		$this->setup_subscriber( $subscriber );
 
 	}
 
@@ -212,6 +212,8 @@ class NML_Subscriber {
 		if ( ! is_object( $subscriber ) ) {
 			return false;
 		}
+
+		$this->db_row = $subscriber;
 
 		foreach ( $subscriber as $key => $value ) {
 			$this->$key = $value;
