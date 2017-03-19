@@ -150,7 +150,7 @@ function nml_newsletter_preview_template( $template ) {
 		return $template;
 	}
 
-	return nml_get_template_part( 'email/preview', null, false );
+	return nml_get_template_part( 'email-preview', nml_get_option( 'email_template', 'default' ), false );
 }
 
 add_filter( 'template_include', 'nml_newsletter_preview_template' );

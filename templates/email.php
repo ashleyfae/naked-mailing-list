@@ -1,6 +1,6 @@
 <?php
 /**
- * Email Header
+ * Email
  *
  * @package   naked-mailing-list
  * @copyright Copyright (c) 2017, Ashley Gibson
@@ -64,6 +64,23 @@ $header_content_h1  = "
 	line-height: 1.2;
 ";
 $header_img         = nml_get_option( 'email_header_img' );
+
+$template_footer = "
+	border-top:0;
+	-webkit-border-radius:3px;
+";
+
+$credit = "
+	border:0;
+	color: #000000;
+	font-family: 'Helvetica Neue', Helvetica, Arial, 'Lucida Grande', sans-serif;
+	font-size:12px;
+	line-height:125%;
+	text-align:center;
+";
+
+$footer_text = nml_get_option( 'email_footer' );
+$footer_text = str_replace( '{year}', date( 'Y' ), $footer_text );
 ?>
 <!DOCTYPE html>
 <html>
@@ -93,3 +110,75 @@ $header_img         = nml_get_option( 'email_header_img' );
 											<tr>
 												<td valign="top">
 													<div style="<?php echo $body_content_inner; ?>">
+														<?php
+														/**
+														 * Inserts content before the email body.
+														 *
+														 * @since 1.0
+														 */
+														do_action( 'nml_email_body_before' );
+														?>
+														{email}
+														<?php
+														/**
+														 * Inserts content after the email body.
+														 *
+														 * @since 1.0
+														 */
+														do_action( 'nml_email_body_after' );
+														?>
+													</div>
+												</td>
+											</tr>
+										</table>
+										<!-- End Content -->
+									</td>
+								</tr>
+							</table>
+							<!-- End Body -->
+						</td>
+					</tr>
+					<?php if ( ! empty( $footer_text ) ) : ?>
+						<tr>
+							<td align="center" valign="top">
+								<!-- Footer -->
+								<table border="0" cellpadding="10" cellspacing="0" width="600" id="template_footer" style="<?php echo $template_footer; ?>">
+									<tr>
+										<td valign="top">
+											<table border="0" cellpadding="10" cellspacing="0" width="100%">
+												<tr>
+													<td colspan="2" valign="middle" id="credit" style="<?php echo $credit; ?>">
+														<?php
+														/**
+														 * Inserts content before the footer text.
+														 *
+														 * @since 1.0
+														 */
+														do_action( 'nml_email_before_footer_text' );
+
+														echo wpautop( wp_kses_post( wptexturize( $footer_text ) ) );
+
+														/**
+														 * Inserts content after the footer text.
+														 *
+														 * @since 1.0
+														 */
+														do_action( 'nml_email_after_footer_text' );
+														?>
+													</td>
+												</tr>
+											</table>
+										</td>
+									</tr>
+								</table>
+								<!-- End Footer -->
+							</td>
+						</tr>
+					<?php endif; ?>
+				</table>
+			</td>
+		</tr>
+	</table>
+</div>
+</body>
+</html>

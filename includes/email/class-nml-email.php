@@ -294,38 +294,7 @@ class NML_Email {
 
 		ob_start();
 
-		nml_get_template_part( 'email/header', $this->get_template(), true );
-
-		/**
-		 * Hooks into the email header
-		 *
-		 * @param NML_Email $this
-		 *
-		 * @since 1.0
-		 */
-		do_action( 'nml_email_header', $this );
-
-		nml_get_template_part( 'email/body', $this->get_template(), true );
-
-		/**
-		 * Hooks into the email body
-		 *
-		 * @param NML_Email $this
-		 *
-		 * @since 1.0
-		 */
-		do_action( 'nml_email_body', $this );
-
-		nml_get_template_part( 'email/footer', $this->get_template(), true );
-
-		/**
-		 * Hooks into the email footer
-		 *
-		 * @param NML_Email $this
-		 *
-		 * @since 1.0
-		 */
-		do_action( 'nml_email_footer', $this );
+		nml_get_template_part( 'email', $this->get_template(), true );
 
 		$body    = ob_get_clean();
 		$message = str_replace( '{email}', $message, $body );
