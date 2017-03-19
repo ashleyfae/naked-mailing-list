@@ -34,8 +34,6 @@
 			tags: form.find('input[name="nml_tags"]').val()
 		};
 
-		console.log(data);
-
 		$.ajax({
 			type: "POST",
 			url: NML.ajaxurl,
@@ -46,9 +44,17 @@
 			},
 			success: function (response) {
 
-				console.log(response);
-
 				if (true == response.success) {
+					// Clear input fields.
+					form.find('input').each(function () {
+						if ('hidden' == $(this).attr('type') || 'submit' == $(this).attr('type')) {
+							return true; // Skip
+						}
+
+						$(this).val('');
+					});
+
+					// Show success message.
 					response_field.append('<div class="nml-success">' + response.data + '</div>');
 				} else if (false == response.success) {
 					response_field.append(response.data);
