@@ -89,7 +89,7 @@ class NML_Admin_Notices {
 
 				// Logs
 				case 'log-cleared' :
-					$notice['updated']['nml-debug-log-cleared'] = __( 'Debug log successfully cleared.', 'naked-mailing-list' );
+					$notices['updated']['nml-debug-log-cleared'] = __( 'Debug log successfully cleared.', 'naked-mailing-list' );
 					break;
 
 			}

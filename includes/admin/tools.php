@@ -215,7 +215,7 @@ function nml_tools_export_display() {
 		<h3><span><?php _e( 'Export Settings', 'naked-mailing-list' ); ?></span></h3>
 		<div class="inside">
 			<p><?php _e( 'Export the Naked Mailing List settings for this site as a .json file. This allows you to easily import the configuration into another site.', 'naked-mailing-list' ); ?></p>
-			<form method="post" action="<?php echo admin_url( 'wp-admin/admin.php?page=nml-tools&tab=export' ); ?>">
+			<form method="post" action="<?php echo admin_url( 'admin.php?page=nml-tools&tab=export' ); ?>">
 				<p><input type="hidden" name="nml_action" value="export_settings"></p>
 				<p>
 					<?php wp_nonce_field( 'nml_export_nonce', 'nml_export_nonce' ); ?>
@@ -243,11 +243,13 @@ function nml_tools_debug_display() {
 	<div class="postbox nml-export-subscribers">
 		<h3><span><?php _e( 'Debug Log', 'naked-mailing-list' ); ?></span></h3>
 		<div class="inside">
-			<label for="nml-debug-log"><?php _e( 'This file contains debugging information.', 'naked-mailing-list' ); ?></label>
-			<textarea id="nml-debug-log" class="large-text" rows="15"><?php echo esc_textarea( naked_mailing_list()->logs->get_log() ); ?></textarea>
-			<input type="submit" class="button" value="<?php esc_attr_e( 'Clear Debug Log', 'naked-mailing-list' ); ?>">
-			<input type="hidden" name="nml_action" value="clear_debug_log">
-			<?php wp_nonce_field( 'nml_clear_debug_log', 'nml_clear_debug_log_nonce' ); ?>
+			<form method="post" action="<?php echo admin_url( 'admin.php?page=nml-tools&tab=debug' ); ?>">
+				<label for="nml-debug-log"><?php _e( 'This file contains debugging information.', 'naked-mailing-list' ); ?></label>
+				<textarea id="nml-debug-log" class="large-text" rows="15"><?php echo esc_textarea( naked_mailing_list()->logs->get_log() ); ?></textarea>
+				<input type="submit" class="button" value="<?php esc_attr_e( 'Clear Debug Log', 'naked-mailing-list' ); ?>">
+				<input type="hidden" name="nml_action" value="clear_debug_log">
+				<?php wp_nonce_field( 'nml_clear_debug_log', 'nml_clear_debug_log_nonce' ); ?>
+			</form>
 		</div>
 	</div>
 	<?php
