@@ -124,6 +124,8 @@ class NML_Email_Provider_MailGun extends NML_Email {
 
 		$url = "https://api.mailgun.net/v2/{$this->domain_name}/messages";
 
+		nml_log( sprintf( __( 'MailGun request: %s', 'naked-mailing-list' ), var_export( $data, true ) ) );
+
 		$response = wp_remote_post( $url, $data );
 
 		if ( is_wp_error( $response ) ) {
