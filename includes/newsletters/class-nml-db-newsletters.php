@@ -445,8 +445,7 @@ class NML_DB_Newsletters extends NML_DB {
 		sent_date datetime,
 		subscriber_count bigint(20)
 		PRIMARY KEY (ID),
-		KEY status (status),
-		KEY type_status (type, status)
+		KEY status (status)
 		) CHARACTER SET utf8 COLLATE utf8_general_ci;";
 
 		dbDelta( $sql );
