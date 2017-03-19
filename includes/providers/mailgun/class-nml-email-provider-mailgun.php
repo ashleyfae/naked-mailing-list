@@ -140,6 +140,8 @@ class NML_Email_Provider_MailGun extends NML_Email {
 			return false;
 		}
 
+		nml_log( sprintf( __( 'MailGun request successful. Response: %s', 'naked-mailing-list' ), var_export( $response, true ) ) );
+
 		return true;
 
 	}
