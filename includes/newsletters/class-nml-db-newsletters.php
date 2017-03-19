@@ -443,7 +443,7 @@ class NML_DB_Newsletters extends NML_DB {
 		created_date datetime NOT NULL,
 		updated_date datetime NOT NULL,
 		sent_date datetime,
-		subscriber_count bigint(20)
+		subscriber_count bigint(20),
 		PRIMARY KEY (ID),
 		KEY status (status)
 		) CHARACTER SET utf8 COLLATE utf8_general_ci;";
