@@ -5,3 +5,7 @@
 - Import settings
 - Export settings
 - Export subscribers
+
+## Credits
+
+- [Emogrifier](https://github.com/jjriv/emogrifier) - For converting CSS to inline style attributes.
