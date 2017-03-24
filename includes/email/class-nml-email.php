@@ -299,6 +299,25 @@ class NML_Email {
 		$body    = ob_get_clean();
 		$message = str_replace( '{email}', $message, $body );
 
+		// Convert CSS styles to inline style.
+		require_once NML_PLUGIN_DIR . 'includes/libraries/emogrifier.php';
+
+		/**
+		 * Modifies the CSS file that's included in the email. This should be
+		 * the path (not URL) to the file.
+		 *
+		 * @param string $css_file Path to the CSS file to include in the email.
+		 *
+		 * @since 1.0
+		 */
+		$css_file = apply_filters( 'nml_email_css_file_path', NML_PLUGIN_DIR . 'assets/css/email.css' );
+
+		if ( file_exists( $css_file ) ) {
+			$css        = file_get_contents( $css_file );
+			$emogrifier = new \Pelago\Emogrifier( $message, $css );
+			$message    = $emogrifier->emogrify();
+		}
+
 		return apply_filters( 'nml_email_message', $message, $this );
 
 	}

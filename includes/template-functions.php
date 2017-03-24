@@ -146,11 +146,11 @@ function nml_locate_template( $template_names, $load = false, $require_once = tr
  * @return string
  */
 function nml_newsletter_preview_template( $template ) {
-	if ( ! is_preview() || ! isset( $_GET['newsletter'] ) ) {
-		return $template;
+	if ( ( is_preview() && isset( $_GET['newsletter'] ) ) || isset( $_GET['preview_email'] ) ) {
+		$template = nml_get_template_part( 'email-preview', nml_get_option( 'email_template', 'default' ), false );
 	}
 
-	return nml_get_template_part( 'email-preview', nml_get_option( 'email_template', 'default' ), false );
+	return $template;
 }
 
 add_filter( 'template_include', 'nml_newsletter_preview_template' );
