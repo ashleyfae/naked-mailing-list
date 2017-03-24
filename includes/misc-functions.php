@@ -39,6 +39,13 @@ function nml_get_ip() {
 	$ip_array = explode( ',', $ip );
 	$ip_array = array_map( 'trim', $ip_array );
 
+	/**
+	 * Filters the current user's IP address.
+	 *
+	 * @param string $ip IP address.
+	 *
+	 * @since 1.0
+	 */
 	return apply_filters( 'nml_get_ip', $ip_array[0] );
 }
 
@@ -98,7 +105,7 @@ function nml_get_current_page_slug() {
 /**
  * Get unsubscribe link
  *
- * @param string $subscriber_email Email of specific subscriber (optional).
+ * @param string|int $subscriber_email_or_id Email of specific subscriber (optional).
  *
  * @since 1.0
  * @return string
@@ -117,6 +124,14 @@ function nml_get_unsubscribe_link( $subscriber_email_or_id = '' ) {
 
 	$url = add_query_arg( $query_args, home_url() );
 
+	/**
+	 * Filters the unsubscribe link for a specific subscriber.
+	 *
+	 * @param string $url                    URL to the unsubscribe page.
+	 * @param string $subscriber_email_or_id Email or ID number of the subscriber.
+	 *
+	 * @since 1.0
+	 */
 	return apply_filters( 'nml_unsubscribe_link', $url, $subscriber_email_or_id );
 }
 

@@ -50,7 +50,16 @@ function nml_get_templates_url() {
  * @return string The template filename if one is located.
  */
 function nml_get_template_part( $slug, $name = null, $load = true ) {
-	// Execute code for this part
+	/**
+	 * Execute code before loading a template part.
+	 *
+	 * The dynamic portion of the action name, `$slug` refers to the template part slug.
+	 *
+	 * @param string $slug The slug of the template part.
+	 * @param string $name The name of the template part.
+	 *
+	 * @since 1.0
+	 */
 	do_action( 'get_template_part_' . $slug, $slug, $name );
 
 	// Setup possible parts
@@ -60,7 +69,19 @@ function nml_get_template_part( $slug, $name = null, $load = true ) {
 	}
 	$templates[] = $slug . '.php';
 
-	// Allow template parst to be filtered
+	/**
+	 * Filters the template parts. This is an array of all templates to look for.
+	 * By default, it consists of:
+	 *
+	 *  {slug}-{name}.php
+	 *  {slug.php
+	 *
+	 * @param array  $templates Array of templates to look for.
+	 * @param string $slug      The slug of the template part.
+	 * @param string $name      The name of the template part.
+	 *
+	 * @since 1.0
+	 */
 	$templates = apply_filters( 'nml_get_template_part', $templates, $slug, $name );
 
 	// Return the part that is found
@@ -96,7 +117,14 @@ function nml_locate_template( $template_names, $load = false, $require_once = tr
 	// check parent theme next
 	$template_stack[] = trailingslashit( get_template_directory() ) . 'naked-mailing-list/';
 
-	// check custom directories
+	/**
+	 * Filters the template stack to allow you to look in custom directories.
+	 *
+	 * @param array $template_names Array of directories to look in.
+	 * @param array $template_names Possible template names to look for.
+	 *
+	 * @since 1.0
+	 */
 	$template_stack = apply_filters( 'nml_template_stack', $template_stack, $template_names );
 
 	// check theme compatibility last

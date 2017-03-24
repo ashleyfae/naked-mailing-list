@@ -203,11 +203,27 @@ class NML_Email {
 	public function get_content_type() {
 
 		if ( ! $this->content_type && $this->html ) {
+			/**
+			 * Filters the default content type.
+			 *
+			 * @param string    $content_type Email content type.
+			 * @param NML_Email $this         Email object.
+			 *
+			 * @since 1.0
+			 */
 			$this->content_type = apply_filters( 'nml_email_default_content_type', 'text/html', $this );
 		} elseif ( ! $this->html ) {
 			$this->content_type = 'text/plain';
 		}
 
+		/**
+		 * Filters the email content type.
+		 *
+		 * @param string    $content_type Email content type.
+		 * @param NML_Email $this         Email object.
+		 *
+		 * @since 1.0
+		 */
 		return apply_filters( 'nml_email_content_type', $this->content_type, $this );
 
 	}
@@ -221,10 +237,24 @@ class NML_Email {
 	public function text_to_html( $message ) {
 
 		if ( 'text/html' === $this->content_type || true === $this->html ) {
+			/**
+			 * Filters whether or not `wpautop()` should be applied to the email. (Default: yes.)
+			 *
+			 * @param bool $apply Whether or not to apply the function.
+			 *
+			 * @since 1.0
+			 */
 			if ( apply_filters( 'nml_email_template_wpautop', true ) ) {
 				$message = wpautop( $message );
 			}
 
+			/**
+			 * Filters whether or not to apply `the_content` filter to the email. (Default: yes.)
+			 *
+			 * @param bool $apply Whether or not to apply the filter.
+			 *
+			 * @since 1.0
+			 */
 			if ( apply_filters( 'nml_email_template_content_filter', true ) ) {
 				$message = apply_filters( 'the_content', $message );
 			}
@@ -344,6 +374,16 @@ class NML_Email {
 			$emails = implode( ',', $emails );
 		}
 
+		/**
+		 * Filters the parsed emails from the subscriber objects.
+		 *
+		 * @param array|string|false $emails     Array of emails or comma-separated string. False on failure.
+		 * @param bool               $to_string  Whether or not to use a comma-separated string.
+		 * @param array              $recipients Array of subscriber objects.
+		 * @param NML_Email          $this       Email object.
+		 *
+		 * @since 1.0
+		 */
 		return apply_filters( 'nml_email_parse_emails', $emails, $to_string, $this->recipients, $this );
 	}
 

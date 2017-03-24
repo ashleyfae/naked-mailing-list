@@ -54,7 +54,7 @@ function nml_print_errors( $return = false ) {
 
 		// Loop error codes and display errors
 		foreach ( $errors as $error_id => $error ) {
-			$output .= '<p class="nml-error" id="nml-error-' . $error_id . '"><strong>' . __( 'Error', 'naked-mailing-list' ) . '</strong>: ' . nml_errors()->get_error_message($error_id) . '</p>';
+			$output .= '<p class="nml-error" id="nml-error-' . $error_id . '"><strong>' . __( 'Error', 'naked-mailing-list' ) . '</strong>: ' . nml_errors()->get_error_message( $error_id ) . '</p>';
 		}
 
 		$output .= '</div>';

@@ -77,6 +77,15 @@ class NML_Post_Notification {
 	public function is_valid_post_type() {
 		$is_valid = 'post' == $this->post->post_type;
 
+		/**
+		 * Filters whether or not this post type should sent out notifications.
+		 *
+		 * @param bool                  $is_valid Whether or not this is a valid post type for a notification.
+		 * @param WP_Post               $post     Post object.
+		 * @param NML_Post_Notification $this     Post notification object.
+		 *
+		 * @since 1.0
+		 */
 		return (bool) apply_filters( 'nml_is_valid_notification_post_type', $is_valid, $this->post, $this );
 	}
 
@@ -104,6 +113,13 @@ class NML_Post_Notification {
 			return false;
 		}
 
+		/**
+		 * Filters the subject of the notification. It's the title of the post by default.
+		 *
+		 * @param string                $subject Subject of the email.
+		 * @param WP_Post               $post    Post object.
+		 * @param NML_Post_Notification $this    Post notification object.
+		 */
 		$subject = apply_filters( 'nml_post_notification_subject', $this->post->post_title, $this->post, $this );
 		$message = nml_get_post_notification_message( $this->post );
 

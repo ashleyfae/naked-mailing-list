@@ -21,6 +21,14 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 function nml_load_front_end_assets() {
 
+	/**
+	 * Whether or not assets should be loaded. You can use this
+	 * filter to disable front-end assets.
+	 *
+	 * @param bool $load_assets
+	 *
+	 * @since 1.0
+	 */
 	if ( ! apply_filters( 'nml_load_assets', true ) ) {
 		return;
 	}

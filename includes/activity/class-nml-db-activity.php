@@ -107,6 +107,13 @@ class NML_DB_Activity extends NML_DB {
 			'newsletter_processing_finished'
 		);
 
+		/**
+		 * Filters the types of activities that are available.
+		 *
+		 * @param array $types
+		 *
+		 * @since 1.0
+		 */
 		return apply_filters( 'nml_activity_types', $types );
 
 	}
@@ -346,8 +353,8 @@ class NML_DB_Activity extends NML_DB {
 	/**
 	 * Count the total number of activity logs in the database
 	 *
-	 * @param array $args Arguments to override the defaults.
-	 * @param bool $full_day Whether or not to use full days.
+	 * @param array $args     Arguments to override the defaults.
+	 * @param bool  $full_day Whether or not to use full days.
 	 *
 	 * @access public
 	 * @since  1.0
@@ -447,19 +454,19 @@ class NML_DB_Activity extends NML_DB {
 
 				if ( ! empty( $args['date']['start'] ) ) {
 
-					$start_temp = nml_is_valid_timestamp( (string) $args['date']['start'] ) ? intval( $args['date']['start'] ) : strtotime( $args['date']['start'] );
+					$start_temp   = nml_is_valid_timestamp( (string) $args['date']['start'] ) ? intval( $args['date']['start'] ) : strtotime( $args['date']['start'] );
 					$start_format = $full_day ? 'Y-m-d 00:00:00' : 'Y-m-d H:i:s';
-					$start      = date( $start_format, $start_temp );
-					$where .= " AND `date` >= '{$start}'";
+					$start        = date( $start_format, $start_temp );
+					$where        .= " AND `date` >= '{$start}'";
 
 				}
 
 				if ( ! empty( $args['date']['end'] ) ) {
 
-					$end_temp = nml_is_valid_timestamp( (string) $args['date']['end'] ) ? intval( $args['date']['end'] ) : strtotime( $args['date']['end'] );
+					$end_temp   = nml_is_valid_timestamp( (string) $args['date']['end'] ) ? intval( $args['date']['end'] ) : strtotime( $args['date']['end'] );
 					$end_format = $full_day ? 'Y-m-d 23:59:59' : 'Y-m-d H:i:s';
-					$end      = date( $end_format, $end_temp );
-					$where .= " AND `date` <= '{$end}'";
+					$end        = date( $end_format, $end_temp );
+					$where      .= " AND `date` <= '{$end}'";
 
 				}
 

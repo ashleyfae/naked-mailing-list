@@ -54,6 +54,13 @@ function nml_get_email_providers() {
 		)
 	);
 
+	/**
+	 * Filters the list of available email providers.
+	 *
+	 * @param array $providers
+	 *
+	 * @since 1.0
+	 */
 	return apply_filters( 'nml_email_providers', $providers );
 }
 
@@ -114,5 +121,12 @@ function nml_get_email_templates() {
 		'none'    => esc_html__( 'No template, plain text only', 'naked-mailing-list' )
 	);
 
+	/**
+	 * Filters the list of email template types.
+	 *
+	 * @param array $templates Available template types.
+	 *
+	 * @since 1.0
+	 */
 	return apply_filters( 'nml_email_templates', $templates );
 }

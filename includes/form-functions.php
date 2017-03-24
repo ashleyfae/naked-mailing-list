@@ -44,12 +44,16 @@ function nml_subscribe_form( $atts, $content = '' ) {
 	<form class="nml-subscribe-form" method="POST">
 		<?php
 		/**
-		 * Include all form fields.
+		 * Include all form fields. Hook into here to add custom fields.
 		 *
-		 * @see nml_subscribe_form_first_name() - 10
-		 * @see nml_subscribe_form_last_name() - 20
-		 * @see nml_subscribe_form_email() - 30
-		 * @see nml_subscribe_form_submit() - 100
+		 * @see   nml_subscribe_form_first_name() - 10
+		 * @see   nml_subscribe_form_last_name() - 20
+		 * @see   nml_subscribe_form_email() - 30
+		 * @see   nml_subscribe_form_submit() - 100
+		 *
+		 * @param array $atts Shortcode attributes.
+		 *
+		 * @since 1.0
 		 */
 		do_action( 'nml_subscribe_form_fields', $atts );
 
@@ -66,6 +70,14 @@ function nml_subscribe_form( $atts, $content = '' ) {
 	</form>
 	<?php
 
+	/**
+	 * Filters the output of the subscribe form.
+	 *
+	 * @param string $output Final HTML output.
+	 * @param array  $atts   Shortcode attributes.
+	 *
+	 * @since 1.0
+	 */
 	return apply_filters( 'nml_subscribe_form', ob_get_clean(), $atts );
 
 }
