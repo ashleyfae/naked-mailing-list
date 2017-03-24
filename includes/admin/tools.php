@@ -314,7 +314,7 @@ function nml_process_settings_import() {
 	$settings = (array) json_decode( file_get_contents( $import_file ) );
 	update_option( 'nml_settings', $settings );
 
-	wp_safe_redirect( admin_url( 'eadmin.php?page=nml-tools&tab=import&nml-message=settings-imported' ) );
+	wp_safe_redirect( admin_url( 'admin.php?page=nml-tools&tab=import&nml-message=settings-imported' ) );
 
 	exit;
 
