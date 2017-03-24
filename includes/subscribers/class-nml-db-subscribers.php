@@ -57,7 +57,7 @@ class NML_DB_Subscribers extends NML_DB {
 			'signup_date'  => '%s',
 			'confirm_date' => '%s',
 			'ip'           => '%s',
-			'referer'     => '%s',
+			'referer'      => '%s',
 			'form_name'    => '%s',
 			'email_count'  => '%d',
 			'notes'        => '%s'
@@ -80,7 +80,7 @@ class NML_DB_Subscribers extends NML_DB {
 			'signup_date'  => gmdate( 'Y-m-d H:i:s' ),
 			'confirm_date' => null,
 			'ip'           => nml_get_ip(),
-			'referer'     => 'manual',
+			'referer'      => 'manual',
 			'form_name'    => '',
 			'email_count'  => 0,
 			'notes'        => ''
@@ -293,7 +293,7 @@ class NML_DB_Subscribers extends NML_DB {
 			'first_name' => null,
 			'last_name'  => null,
 			'status'     => null,
-			'referer'   => null,
+			'referer'    => null,
 			'form_name'  => null,
 			'ip'         => null,
 			'list'       => null
@@ -455,7 +455,7 @@ class NML_DB_Subscribers extends NML_DB {
 			'first_name' => null,
 			'last_name'  => null,
 			'status'     => null,
-			'referer'   => null,
+			'referer'    => null,
 			'form_name'  => null,
 			'ip'         => null,
 			'list'       => null
@@ -592,7 +592,7 @@ class NML_DB_Subscribers extends NML_DB {
 			'first_name' => null,
 			'last_name'  => null,
 			'status'     => 'subscribed',
-			'referer'   => null,
+			'referer'    => null,
 			'form_name'  => null,
 			'ip'         => null,
 			'list'       => null
@@ -696,7 +696,7 @@ class NML_DB_Subscribers extends NML_DB {
 
 		}
 
-		$query = "UPDATE {$this->table_name} s {$join} SET email_count = email_count + 1 {$where}";
+		$query  = "UPDATE {$this->table_name} s {$join} SET email_count = email_count + 1 {$where}";
 		$result = $wpdb->query( $query );
 
 	}

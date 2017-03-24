@@ -207,7 +207,29 @@ function nml_tools_export_display() {
 		<h3><span><?php _e( 'Export Subscribers', 'naked-mailing-list' ); ?></span></h3>
 		<div class="inside">
 			<p><?php _e( 'Export all the subscribers on this site as a .json file.', 'naked-mailing-list' ); ?></p>
-			<!-- @todo -->
+			<form class="nml-export-form" method="POST" action="">
+				<p>
+					<label for="nml-statuses" class="screen-reader-text"><?php _e( 'Status:', 'naked-mailing-list' ); ?></label>
+					<select id="nml-statuses" name="status">
+						<option value="" selected><?php esc_html_e( 'All Statuses', 'naked-mailing-list' ); ?></option>
+						<?php foreach ( nml_get_subscriber_statuses() as $key => $value ) : ?>
+							<option value="<?php echo esc_attr( $key ); ?>"><?php echo esc_html( $value ); ?></option>
+						<?php endforeach; ?>
+					</select>
+
+					<label for="nml-lists" class="screen-reader-text"><?php _e( 'List:', 'naked-mailing-list' ); ?></label>
+					<select id="nml-lists" name="list">
+						<option value="" selected><?php esc_html_e( 'All Lists', 'naked-mailing-list' ); ?></option>
+						<?php foreach ( nml_get_lists_array() as $id => $name ) : ?>
+							<option value="<?php echo absint( $id ); ?>"><?php echo esc_html( $name ); ?></option>
+						<?php endforeach; ?>
+					</select>
+				</p>
+
+				<p>
+					<?php submit_button( __( 'Export', 'naked-mailing-list' ), 'secondary', 'submit', false ); ?>
+				</p>
+			</form>
 		</div>
 	</div>
 
@@ -215,7 +237,7 @@ function nml_tools_export_display() {
 		<h3><span><?php _e( 'Export Settings', 'naked-mailing-list' ); ?></span></h3>
 		<div class="inside">
 			<p><?php _e( 'Export the Naked Mailing List settings for this site as a .json file. This allows you to easily import the configuration into another site.', 'naked-mailing-list' ); ?></p>
-			<form method="post" action="<?php echo admin_url( 'admin.php?page=nml-tools&tab=export' ); ?>">
+			<form method="POST" action="<?php echo admin_url( 'admin.php?page=nml-tools&tab=export' ); ?>">
 				<p><input type="hidden" name="nml_action" value="export_settings"></p>
 				<p>
 					<?php wp_nonce_field( 'nml_export_nonce', 'nml_export_nonce' ); ?>

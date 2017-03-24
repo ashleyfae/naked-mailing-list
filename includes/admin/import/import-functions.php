@@ -83,6 +83,11 @@ function nml_do_ajax_import_file_upload() {
 
 		do_action( 'nml_batch_import_class_include', $_POST['nml-import-class'] );
 
+		/**
+		 * Importer object.
+		 *
+		 * @var $import NML_Batch_Import
+		 */
 		$import = new $_POST['nml-import-class']( $import_file['file'] );
 
 		if ( ! $import->can_import() ) {
@@ -95,7 +100,7 @@ function nml_do_ajax_import_file_upload() {
 			'upload'    => $import_file,
 			'first_row' => $import->get_first_row(),
 			'columns'   => $import->get_columns(),
-			'nonce'     => wp_create_nonce( 'nml_ajax_import', 'nml_ajax_import' )
+			'nonce'     => wp_create_nonce( 'nml_ajax_import' )
 		) );
 
 	} else {
@@ -145,8 +150,14 @@ function nml_do_ajax_import() {
 
 	do_action( 'nml_batch_import_class_include', $_REQUEST['class'] );
 
-	$step   = absint( $_REQUEST['step'] );
-	$class  = $_REQUEST['class'];
+	$step  = absint( $_REQUEST['step'] );
+	$class = $_REQUEST['class'];
+
+	/**
+	 * Importer object.
+	 *
+	 * @var $import NML_Batch_Import
+	 */
 	$import = new $class( $_REQUEST['upload']['file'], $step );
 
 	if ( ! $import->can_import() ) {
@@ -157,7 +168,7 @@ function nml_do_ajax_import() {
 
 	$import->map_fields( $map['nml-import-field'] );
 
-	$ret = $import->process_step( $step );
+	$ret = $import->process_step();
 
 	$percentage = $import->get_percentage_complete();
 
