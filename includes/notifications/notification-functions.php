@@ -43,3 +43,32 @@ function nml_create_campaign_from_post( $new_status, $old_status, $post ) {
 }
 
 add_action( 'transition_post_status', 'nml_create_campaign_from_post', 10, 3 );
+
+/**
+ * Returns the body of the email for post notifications.
+ *
+ * @param WP_Post|int $post Post object or ID.
+ *
+ * @since 1.0
+ * @return string
+ */
+function nml_get_post_notification_message( $post ) {
+	if ( is_numeric( $post ) ) {
+		$post = get_post( $post );
+	}
+
+	$message = '<h1><a href="' . esc_url( get_permalink( $post ) ) . '">' . $post->post_title . '</a></h1>' . $post->post_content;
+	$message .= '<p class="text-center"><a href="' . esc_url( get_comments_link( $post ) ) . '" class="button">' . __( 'Leave a Comment', 'naked-mailing-list' ) . '</a>';
+
+	/**
+	 * Modifies the contents of the post notification message.
+	 *
+	 * @param string  $message Body of the email.
+	 * @param WP_Post $post    Post object.
+	 *
+	 * @since 1.0
+	 */
+	$message = apply_filters( 'nml_post_notification_message', $message, $post );
+
+	return $message;
+}

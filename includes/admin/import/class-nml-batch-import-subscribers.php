@@ -63,7 +63,7 @@ class NML_Batch_Import_Subscribers extends NML_Batch_Import {
 		$more = false;
 
 		if ( ! $this->can_import() ) {
-			wp_die( __( 'You do not have permissiont o import data.', 'naked-mailing-list' ) );
+			wp_die( __( 'You do not have permission to import data.', 'naked-mailing-list' ) );
 		}
 
 		// Remove actions to ensure they don't fire when creating subscribers.

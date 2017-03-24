@@ -105,9 +105,7 @@ class NML_Post_Notification {
 		}
 
 		$subject = apply_filters( 'nml_post_notification_subject', $this->post->post_title, $this->post, $this );
-
-		$message = '<h1><a href="' . esc_url( get_permalink( $this->post ) ) . '">' . $this->post->post_title . '</a></h1>' . $this->post->post_content;
-		$message = apply_filters( 'nml_post_notification_message', $message, $this->post, $this );
+		$message = nml_get_post_notification_message( $this->post );
 
 		$newsletter_id = nml_insert_newsletter( array(
 			'status'           => 'draft',
