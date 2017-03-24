@@ -286,7 +286,7 @@ function nml_process_settings_export() {
 add_action( 'nml_export_settings', 'nml_process_settings_export' );
 
 /**
- * Process settings export to .json file
+ * Process settings import from a .json file
  *
  * @since 1.0
  * @return void
