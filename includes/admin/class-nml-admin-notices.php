@@ -42,6 +42,10 @@ class NML_Admin_Notices {
 	 */
 	public function show_notices() {
 
+		if ( ! current_user_can( 'manage_options' ) ) {
+			return;
+		}
+
 		$notices = array(
 			'updated' => array(),
 			'error'   => array(),

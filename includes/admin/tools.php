@@ -238,8 +238,8 @@ function nml_tools_export_display() {
 		<div class="inside">
 			<p><?php _e( 'Export the Naked Mailing List settings for this site as a .json file. This allows you to easily import the configuration into another site.', 'naked-mailing-list' ); ?></p>
 			<form method="POST" action="<?php echo admin_url( 'admin.php?page=nml-tools&tab=export' ); ?>">
-				<p><input type="hidden" name="nml_action" value="export_settings"></p>
 				<p>
+					<input type="hidden" name="nml_action" value="export_settings">
 					<?php wp_nonce_field( 'nml_export_nonce', 'nml_export_nonce' ); ?>
 					<?php submit_button( __( 'Export', 'naked-mailing-list' ), 'secondary', 'submit', false ); ?>
 				</p>
@@ -252,6 +252,75 @@ function nml_tools_export_display() {
 }
 
 add_action( 'nml_tools_tab_export', 'nml_tools_export_display' );
+
+/**
+ * Process settings export to .json file
+ *
+ * @since 1.0
+ * @return void
+ */
+function nml_process_settings_export() {
+
+	if ( empty( $_POST['nml_export_nonce'] ) || ! wp_verify_nonce( $_POST['nml_export_nonce'], 'nml_export_nonce' ) ) {
+		return;
+	}
+
+	if ( ! current_user_can( 'manage_options' ) ) {
+		return;
+	}
+
+	$settings = get_option( 'nml_settings', array() );
+
+	ignore_user_abort( true );
+
+	nocache_headers();
+	header( 'Content-Type: application/json; charset=utf-8' );
+	header( 'Content-Disposition: attachment; filename=' . apply_filters( 'nml_settings_export_filename', 'nml-settings-export-' . date( 'm-d-Y' ) ) . '.json' );
+	header( "Expires: 0" );
+
+	echo json_encode( $settings );
+	exit;
+
+}
+
+add_action( 'nml_export_settings', 'nml_process_settings_export' );
+
+/**
+ * Process settings export to .json file
+ *
+ * @since 1.0
+ * @return void
+ */
+function nml_process_settings_import() {
+
+	if ( empty( $_POST['nml_import_nonce'] ) || ! wp_verify_nonce( $_POST['nml_import_nonce'], 'nml_import_nonce' ) ) {
+		return;
+	}
+
+	if ( ! current_user_can( 'manage_options' ) ) {
+		return;
+	}
+
+	if ( nml_get_file_extension( $_FILES['import_file']['name'] ) != 'json' ) {
+		wp_die( __( 'Please upload a valid .json file', 'naked-mailing-list' ), __( 'Error', 'naked-mailing-list' ), array( 'response' => 400 ) );
+	}
+
+	$import_file = $_FILES['import_file']['tmp_name'];
+
+	if ( empty( $import_file ) ) {
+		wp_die( __( 'Please upload a file to import', 'naked-mailing-list' ), __( 'Error', 'naked-mailing-list' ), array( 'response' => 400 ) );
+	}
+
+	$settings = (array) json_decode( file_get_contents( $import_file ) );
+	update_option( 'nml_settings', $settings );
+
+	wp_safe_redirect( admin_url( 'eadmin.php?page=nml-tools&tab=import&nml-message=settings-imported' ) );
+
+	exit;
+
+}
+
+add_action( 'nml_import_settings', 'nml_process_settings_import' );
 
 /**
  * Display the debug tab

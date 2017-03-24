@@ -165,3 +165,17 @@ function nml_log( $message = '' ) {
 	}
 
 }
+
+/**
+ * Get file extension from a file name
+ *
+ * @param string $str File name
+ *
+ * @since 1.0
+ * @return string File extension
+ */
+function nml_get_file_extension( $str ) {
+	$parts = explode( '.', $str );
+
+	return end( $parts );
+}
