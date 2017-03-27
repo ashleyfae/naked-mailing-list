@@ -380,10 +380,12 @@ class NML_Subscriber {
 			 * Set lists.
 			 */
 			if ( ! empty( $lists ) ) {
-				$this->set_lists( $lists );
+				$append = array_key_exists( 'lists_append', $data ) ? $data['lists_append'] : false;
+				$this->set_lists( $lists, $append );
 			}
 			if ( ! empty( $tags ) ) {
-				$this->set_tags( $tags );
+				$append = array_key_exists( 'tags_append', $data ) ? $data['tags_append'] : false;
+				$this->set_tags( $tags, $append );
 			}
 
 		}

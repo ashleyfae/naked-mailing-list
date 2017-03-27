@@ -177,9 +177,12 @@ class NML_Batch_Import_Subscribers extends NML_Batch_Import {
 
 			// Email already exists - let's update it.
 
-			// First, unset any empty fields.
-			$data_to_update = array();
+			$data_to_update = array(
+				'lists_append' => true,
+				'tags_append'  => true
+			);
 
+			// First, unset any empty fields.
 			foreach ( $args as $key => $value ) {
 				if ( ! empty( $value ) ) {
 					$data_to_update[ $key ] = $value;
