@@ -294,7 +294,7 @@ class NML_Email {
 			$message = $message . "\n\n" . sprintf( __( 'Unsubscribe: %s' ), esc_url( $this->get_unsubscribe_link() ) );
 
 		} else {
-			$message = $message . '<p style="text-align: center; margin-top: 3em;">' . sprintf( __( '<a href="%s" target="_blank">Unsubscribe from all emails</a>', 'naked-mailing-list' ), esc_url( $this->get_unsubscribe_link() ) ) . '</p>';
+			$message = $message . '<p id="unsubscribe">' . sprintf( __( '<a href="%s" target="_blank">Unsubscribe from all emails</a>', 'naked-mailing-list' ), esc_url( $this->get_unsubscribe_link() ) ) . '</p>';
 		}
 
 		return $message;

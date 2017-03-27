@@ -44,6 +44,10 @@ body {
   line-height: 1.4;
   text-align: center; }
 
+#unsubscribe {
+  margin-top: 4em !important;
+  text-align: center; }
+
 /* Element Styles
 -------------------------------------------------------------- */
 h1 {
