@@ -54,6 +54,11 @@
 						$(this).val('');
 					});
 
+					// Send Google Analytics event.
+					if (typeof ga != 'undefined') {
+						ga('send', 'event', 'Email', 'subscribe', 'Email Subscribe ' + data.form_name);
+					}
+
 					// Show success message.
 					response_field.append('<div class="nml-success">' + response.data + '</div>');
 				} else if (false == response.success) {
