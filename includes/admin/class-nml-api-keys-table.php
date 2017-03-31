@@ -107,15 +107,30 @@ class NML_API_Keys_Table extends WP_List_Table {
 	 */
 	public function get_columns() {
 		$columns = array(
-			'cb'         => '<input type="checkbox">',
-			'ID'         => __( 'ID', 'naked-mailing-list' ),
-			'user_id'    => __( 'Username', 'naked-mailing-list' ),
-			'api_key'    => __( 'Public Key', 'naked-mailing-list' ),
-			'api_secret' => __( 'Secret Key', 'naked-mailing-list' ),
-			'active'     => __( 'Status', 'naked-mailing-list' )
+			'cb'           => '<input type="checkbox">',
+			'ID'           => __( 'ID', 'naked-mailing-list' ),
+			'user_id'      => __( 'Username', 'naked-mailing-list' ),
+			'api_key'      => __( 'Public Key', 'naked-mailing-list' ),
+			'api_secret'   => __( 'Secret Key', 'naked-mailing-list' ),
+			'active'       => __( 'Status', 'naked-mailing-list' ),
+			'last_updated' => __( 'Last Updated', 'naked-mailing-list' )
 		);
 
 		return apply_filters( 'nml_api_key_table_columns', $columns );
+	}
+
+	/**
+	 * Get the sortable columns.
+	 *
+	 * @access public
+	 * @since  1.0
+	 * @return array
+	 */
+	public function get_sortable_columns() {
+		return array(
+			'ID'           => array( 'ID', true ),
+			'last_updated' => array( 'last_updated', true )
+		);
 	}
 
 	/**
@@ -143,6 +158,10 @@ class NML_API_Keys_Table extends WP_List_Table {
 
 			case 'active' :
 				$value = ( 1 === intval( $item->active ) ) ? __( 'Active', 'naked-mailing-list' ) : __( 'Disabled', 'naked-mailing-list' );
+				break;
+
+			case 'last_updated' :
+				$value = nml_format_mysql_date( $item->last_updated, nml_full_date_time_format() );
 				break;
 
 			default :

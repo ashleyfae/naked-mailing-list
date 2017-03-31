@@ -51,11 +51,12 @@ class NML_DB_API_Keys extends NML_DB {
 	 */
 	public function get_columns() {
 		return array(
-			'ID'         => '%d',
-			'user_id'    => '%d',
-			'api_key'    => '%s',
-			'api_secret' => '%s',
-			'active'     => '%d'
+			'ID'           => '%d',
+			'user_id'      => '%d',
+			'api_key'      => '%s',
+			'api_secret'   => '%s',
+			'active'       => '%d',
+			'last_updated' => '%s'
 		);
 	}
 
@@ -68,10 +69,11 @@ class NML_DB_API_Keys extends NML_DB {
 	 */
 	public function get_column_defaults() {
 		return array(
-			'user_id'    => 0,
-			'api_key'    => '',
-			'api_secret' => '',
-			'active'     => 1
+			'user_id'      => 0,
+			'api_key'      => '',
+			'api_secret'   => '',
+			'active'       => 1,
+			'last_updated' => gmdate( 'Y-m-d H:i:s' )
 		);
 	}
 
@@ -102,6 +104,9 @@ class NML_DB_API_Keys extends NML_DB {
 		if ( empty( $args['api_secret'] ) ) {
 			$args['api_secret'] = $this->generate_secret( $args['user_id'] );
 		}
+
+		// Add last updated as now.
+		$args['last_updated'] = gmdate( 'Y-m-d H:i:s' );
 
 		$key = $this->get_key_by( 'user_id', $args['user_id'] );
 
@@ -245,7 +250,7 @@ class NML_DB_API_Keys extends NML_DB {
 				if ( empty( $id ) ) {
 					wp_die( __( 'Invalid API key ID', 'naked-mailing-list' ) );
 				}
-				$this->update( $id, array( 'active' => 1 ) );
+				$this->update( $id, array( 'active' => 1, 'last_updated' => gmdate( 'Y-m-d H:i:s' ) ) );
 
 				$url = add_query_arg( array(
 					'nml-message' => 'api-key-activated'
@@ -259,7 +264,7 @@ class NML_DB_API_Keys extends NML_DB {
 				if ( empty( $id ) ) {
 					wp_die( __( 'Invalid API key ID', 'naked-mailing-list' ) );
 				}
-				$this->update( $id, array( 'active' => 0 ) );
+				$this->update( $id, array( 'active' => 0, 'last_updated' => gmdate( 'Y-m-d H:i:s' ) ) );
 
 				$url = add_query_arg( array(
 					'nml-message' => 'api-key-deactivated'
@@ -579,7 +584,8 @@ class NML_DB_API_Keys extends NML_DB {
 		user_id bigint(20) NOT NULL,
 		api_key char(32) NOT NULL,
 		api_secret char(32) NOT NULL,
-		active tinyint(1) NOT NULL, 
+		active tinyint(1) NOT NULL,
+		last_updated datetime NOT NULL,
 		PRIMARY KEY (ID),
 		KEY user_id (user_id)
 		) CHARACTER SET utf8 COLLATE utf8_general_ci;";
