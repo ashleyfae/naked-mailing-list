@@ -181,7 +181,7 @@ class NML_API_Subscribers_Route extends WP_REST_Controller {
 				$subscribers[ $object->ID ] = $object;
 			}
 		} else {
-			$subscribers = new WP_Error( 'no-subscribers', __( 'No subscribers found', 'naked-mailing-list' ), array( 'status' => 404 ) );
+			return new WP_Error( 'no-subscribers', __( 'No subscribers found', 'naked-mailing-list' ), array( 'status' => 404 ) );
 		}
 
 		return new WP_REST_Response( $subscribers );
