@@ -199,11 +199,13 @@ class NML_API_Subscribers_Route extends WP_REST_Controller {
 	 */
 	public function get_item( $request ) {
 
-		$subscriber = new NML_Subscriber( absint( $request->get_param( 'id' ) ) );
+		$subscriber = new NML_API_Subscriber( absint( $request->get_param( 'id' ) ) );
 
 		if ( empty( $subscriber->ID ) ) {
 			$subscriber = new WP_Error( 'no-subscriber', __( 'Invalid subscriber', 'naked-mailing-list' ), array( 'status' => 404 ) );
 		}
+
+		$subscriber->setup_api_properties();
 
 		return $subscriber;
 
@@ -240,7 +242,7 @@ class NML_API_Subscribers_Route extends WP_REST_Controller {
 			return new WP_Error( 'subscriber-exists', __( 'Subscriber already exists with this email address', 'naked-mailing-list' ), array( 'status' => 500 ) );
 		}
 
-		$subscriber = new NML_Subscriber();
+		$subscriber = new NML_API_Subscriber();
 		$created    = $subscriber->create( $args );
 
 		if ( empty( $created ) ) {
@@ -281,7 +283,7 @@ class NML_API_Subscribers_Route extends WP_REST_Controller {
 			return new WP_Error( 'missing-id', __( 'No subscriber ID specified', 'naked-mailing-list' ), array( 'status' => 500 ) );
 		}
 
-		$subscriber = new NML_Subscriber( $id );
+		$subscriber = new NML_API_Subscriber( $id );
 		$result     = $subscriber->update( $args );
 
 		if ( empty( $result ) ) {
