@@ -143,35 +143,18 @@ class NML_API_Subscribers_Route extends WP_REST_Controller {
 	 */
 	public function permission_check( $request ) {
 
-		return true; // @todo remove
-
 		$params = $request->get_params();
 
 		if ( ! array_key_exists( 'api_key', $params ) || empty( $params['api_key'] ) ) {
 			return new WP_Error( 'missing-api-key', __( 'Missing API key', 'naked-mailing-list' ), array( 'status' => 403 ) );
 		}
 
-		if ( ! $this->is_valid_api_key( $params['api_key'] ) ) {
+		if ( ! naked_mailing_list()->api_keys->is_valid_key( $params['api_key'] ) ) {
 			return new WP_Error( 'invalid-api-key', __( 'Invalid API key', 'naked-mailing-list' ), array( 'status' => 403 ) );
 		}
 
 		return true;
 
-	}
-
-	/**
-	 * Check if an API key is valid.
-	 *
-	 * @param string $api_key API key to check.
-	 *
-	 * @access public
-	 * @since  1.0
-	 * @return bool
-	 */
-	public function is_valid_api_key( $api_key ) {
-		// @todo
-
-		return true;
 	}
 
 	/**

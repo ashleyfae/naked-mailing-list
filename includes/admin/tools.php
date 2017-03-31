@@ -61,8 +61,9 @@ function nml_tools_page() {
 function nml_get_tools_tabs() {
 
 	$tabs = array(
-		'import' => __( 'Import', 'naked-mailing-list' ),
-		'export' => __( 'Export', 'naked-mailing-list' )
+		'import'   => __( 'Import', 'naked-mailing-list' ),
+		'export'   => __( 'Export', 'naked-mailing-list' ),
+		'api_keys' => __( 'API Keys', 'naked-mailing-list' )
 	);
 
 	if ( nml_get_option( 'debug_mode' ) ) {
@@ -321,6 +322,24 @@ function nml_process_settings_import() {
 }
 
 add_action( 'nml_import_settings', 'nml_process_settings_import' );
+
+/**
+ * Display the API keys tab
+ *
+ * @since 1.0
+ * @return void
+ */
+function nml_tools_api_keys_display() {
+
+	require_once NML_PLUGIN_DIR . 'includes/admin/class-nml-api-keys-table.php';
+
+	$table = new NML_API_Keys_Table();
+	$table->prepare_items();
+	$table->display();
+
+}
+
+add_action( 'nml_tools_tab_api_keys', 'nml_tools_api_keys_display' );
 
 /**
  * Display the debug tab

@@ -38,7 +38,7 @@ class NML_Subscriber_Table extends WP_List_Table {
 	public $per_page = 20;
 
 	/**
-	 * Number of books found
+	 * Number of subscribers found
 	 *
 	 * @var int
 	 * @access public
@@ -47,7 +47,7 @@ class NML_Subscriber_Table extends WP_List_Table {
 	public $count = 0;
 
 	/**
-	 * Total number of books
+	 * Total number of subscribers
 	 *
 	 * @var int
 	 * @access public
