@@ -311,6 +311,11 @@ class NML_API_Subscribers_Route extends WP_REST_Controller {
 			return new WP_Error( 'missing-id', __( 'No subscriber ID specified', 'naked-mailing-list' ), array( 'status' => 500 ) );
 		}
 
+		// Subscriber doesn't exist.
+		if ( ! naked_mailing_list()->subscribers->exists( $id, 'ID' ) ) {
+			return new WP_REST_Response( 1 );
+		}
+
 		$success = nml_delete_subscriber( $id );
 
 		if ( is_wp_error( $success ) ) {
