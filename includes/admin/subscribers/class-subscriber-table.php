@@ -216,12 +216,25 @@ class NML_Subscriber_Table extends WP_List_Table {
 	 */
 	public function column_default( $item, $column_name ) {
 
-		$value = '';
+		$value      = '';
+		$subscriber = new NML_Subscriber();
+		$subscriber->setup_subscriber( $item );
 
 		switch ( $column_name ) {
 
 			case 'name' :
 				$value = sprintf( '%s %s', $item->first_name, $item->last_name );
+				break;
+
+			case 'lists' :
+				$lists     = $subscriber->get_lists();
+				$list_html = array();
+				if ( is_array( $lists ) ) {
+					foreach ( $lists as $list ) {
+						$list_html[] = '<a href="' . esc_url( add_query_arg( 'list', $list->ID, admin_url( 'admin.php?page=nml-subscribers' ) ) ) . '">' . esc_html( $list->name ) . '</a>';
+					}
+				}
+				$value = implode( ', ', $list_html );
 				break;
 
 			case 'status' :
@@ -312,6 +325,7 @@ class NML_Subscriber_Table extends WP_List_Table {
 			'cb'          => '<input type="checkbox">',
 			'email'       => __( 'Email', 'naked-mailing-list' ),
 			'name'        => __( 'Name', 'naked-mailing-list' ),
+			'lists'       => __( 'Lists', 'naked-mailing-list' ),
 			'status'      => __( 'Status', 'naked-mailing-list' ),
 			'signup_date' => __( 'Signup Date', 'naked-mailing-list' ),
 			'email_count' => __( 'Email Count', 'naked-mailing-list' )
@@ -515,6 +529,11 @@ class NML_Subscriber_Table extends WP_List_Table {
 		// Filter by status
 		if ( isset( $_GET['status'] ) ) {
 			$args['status'] = sanitize_text_field( $_GET['status'] );
+		}
+
+		// Filter by list
+		if ( isset( $_GET['list'] ) ) {
+			$args['list'] = absint( $_GET['list'] );
 		}
 
 		$this->args  = $args;

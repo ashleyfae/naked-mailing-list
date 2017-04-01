@@ -99,10 +99,10 @@ function nml_subscribe_form_first_name( $atts ) {
 	}
 
 	?>
-	<div class="nml-form-field">
+	<p class="nml-form-field">
 		<label for="nml_first_name"><?php _e( 'First name', 'naked-mailing-list' ); ?></label>
 		<input type="text" id="nml_first_name" name="nml_first_name" placeholder="<?php echo esc_attr( apply_filters( 'nml_subscribe_form_first_name_placeholder', __( 'Enter your first name', 'naked-mailing-list' ) ) ); ?>">
-	</div>
+	</p>
 	<?php
 
 }
@@ -124,10 +124,10 @@ function nml_subscribe_form_last_name( $atts ) {
 	}
 
 	?>
-	<div class="nml-form-field">
+	<p class="nml-form-field">
 		<label for="nml_last_name"><?php _e( 'Last name', 'naked-mailing-list' ); ?></label>
 		<input type="text" id="nml_last_name" name="nml_last_name" placeholder="<?php echo esc_attr( apply_filters( 'nml_subscribe_form_last_name_placeholder', __( 'Enter your last name', 'naked-mailing-list' ) ) ); ?>">
-	</div>
+	</p>
 	<?php
 
 }
@@ -145,10 +145,10 @@ add_action( 'nml_subscribe_form_fields', 'nml_subscribe_form_last_name', 20 );
 function nml_subscribe_form_email( $atts ) {
 
 	?>
-	<div class="nml-form-field">
+	<p class="nml-form-field">
 		<label for="nml_email_address"><?php _e( 'Email address', 'naked-mailing-list' ); ?></label>
 		<input type="text" id="nml_email_address" name="nml_email_address" placeholder="<?php echo esc_attr( apply_filters( 'nml_subscribe_form_email_placeholder', __( 'Enter your email address', 'naked-mailing-list' ) ) ); ?>">
-	</div>
+	</p>
 	<?php
 
 }
@@ -166,9 +166,9 @@ add_action( 'nml_subscribe_form_fields', 'nml_subscribe_form_email', 30 );
 function nml_subscribe_form_submit( $atts ) {
 
 	?>
-	<div class="nml-submit-field">
+	<p class="nml-submit-field">
 		<button type="submit" class="button"><?php echo $atts['submit']; ?></button>
-	</div>
+	</p>
 	<?php
 
 }
