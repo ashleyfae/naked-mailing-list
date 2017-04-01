@@ -314,6 +314,10 @@ class NML_Email {
 	 */
 	public function build_email( $message ) {
 
+		if ( ! defined( 'NML_SENDING_EMAIL' ) ) {
+			define( 'NML_SENDING_EMAIL', true );
+		}
+
 		$message = $this->maybe_add_unsubscribe_link( $message );
 
 		if ( false === $this->html ) {
