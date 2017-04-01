@@ -562,7 +562,7 @@ class NML_DB_Subscribers extends NML_DB {
 		$count = wp_cache_get( $cache_key, 'subscribers' );
 
 		if ( false === $count ) {
-			$query = "SELECT COUNT({$this->primary_key}) FROM  $this->table_name $join $where";
+			$query = "SELECT COUNT(s.{$this->primary_key}) FROM  $this->table_name s $join $where";
 			$count = $wpdb->get_var( $query );
 			wp_cache_set( $cache_key, $count, 'subscribers', 3600 );
 		}
