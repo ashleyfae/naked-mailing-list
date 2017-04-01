@@ -204,8 +204,11 @@ class NML_List_Table extends WP_List_Table {
 	 */
 	public function column_default( $item, $column_name ) {
 
-		$value = isset( $item->$column_name ) ? $item->$column_name : null;
-
+		if ( 'count' == $column_name ) {
+			$value = '<a href="' . esc_url( add_query_arg( 'list', $item->ID, admin_url( 'admin.php?page=nml-subscribers' ) ) ) . '">' . $item->count . '</a>';
+		} else {
+			$value = isset( $item->$column_name ) ? $item->$column_name : null;
+		}
 
 		return apply_filters( 'nml_list_table_column_' . $column_name, $value, $item );
 

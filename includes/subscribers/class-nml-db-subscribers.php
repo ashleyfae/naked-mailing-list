@@ -397,7 +397,7 @@ class NML_DB_Subscribers extends NML_DB {
 
 			$relationship_table = naked_mailing_list()->list_relationships->table_name;
 
-			$join .= " RIGHT JOIN $relationship_table as r on s.ID = r.subscriber_id AND r.list_id IN( {$list_ids} )";
+			$join .= " INNER JOIN $relationship_table as r on s.ID = r.subscriber_id AND r.list_id IN( {$list_ids} )";
 
 		}
 
