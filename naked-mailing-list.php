@@ -105,6 +105,12 @@ if ( ! class_exists( 'Naked_Mailing_List' ) ) :
 		public $logs;
 
 		/**
+		 * @var NML_DB_API_Keys
+		 * @since 1.0
+		 */
+		public $api_keys;
+
+		/**
 		 * Main Naked_Mailing_List Instance
 		 *
 		 * Ensures that only one instance of Naked_Mailing_List exists in memory at any one
@@ -132,6 +138,7 @@ if ( ! class_exists( 'Naked_Mailing_List' ) ) :
 				self::$instance->newsletters                   = new NML_DB_Newsletters();
 				self::$instance->newsletter_list_relationships = new NML_DB_Newsletter_List_Relationships();
 				self::$instance->queue                         = new NML_DB_Queue();
+				self::$instance->api_keys                      = new NML_DB_API_Keys();
 				self::$instance->logs                          = new NML_Logging();
 			}
 
@@ -216,6 +223,7 @@ if ( ! class_exists( 'Naked_Mailing_List' ) ) :
 
 			require_once NML_PLUGIN_DIR . 'includes/class-nml-cron.php';
 			require_once NML_PLUGIN_DIR . 'includes/class-nml-db.php';
+			require_once NML_PLUGIN_DIR . 'includes/class-nml-db-api-keys.php';
 			require_once NML_PLUGIN_DIR . 'includes/class-nml-logging.php';
 			require_once NML_PLUGIN_DIR . 'includes/activity/class-nml-db-activity.php';
 			require_once NML_PLUGIN_DIR . 'includes/email/class-nml-email.php';
@@ -240,6 +248,8 @@ if ( ! class_exists( 'Naked_Mailing_List' ) ) :
 			require_once NML_PLUGIN_DIR . 'includes/misc-functions.php';
 			require_once NML_PLUGIN_DIR . 'includes/scripts.php';
 			require_once NML_PLUGIN_DIR . 'includes/template-functions.php';
+			require_once NML_PLUGIN_DIR . 'includes/api/class-nml-api-subscribers-route.php';
+			require_once NML_PLUGIN_DIR . 'includes/api/class-nml-api-subscriber.php';
 
 			require_once NML_PLUGIN_DIR . 'includes/install.php';
 

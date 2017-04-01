@@ -448,8 +448,6 @@ class NML_DB_Subscribers extends NML_DB {
 		global $wpdb;
 
 		$defaults = array(
-			'orderby'    => 'ID',
-			'order'      => 'DESC',
 			'ID'         => null,
 			'email'      => null,
 			'first_name' => null,

@@ -203,11 +203,11 @@ class NML_Subscriber {
 	 *
 	 * @param object $subscriber Subscriber object from the database.
 	 *
-	 * @access private
+	 * @access public
 	 * @since  1.0
 	 * @return bool
 	 */
-	private function setup_subscriber( $subscriber ) {
+	public function setup_subscriber( $subscriber ) {
 
 		if ( ! is_object( $subscriber ) ) {
 			return false;
