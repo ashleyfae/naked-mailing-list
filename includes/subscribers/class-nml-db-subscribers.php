@@ -105,6 +105,9 @@ class NML_DB_Subscribers extends NML_DB {
 			return false;
 		}
 
+		// Convert email to lowercase.
+		$args['email'] = strtolower( $args['email'] );
+
 		$subscriber = $this->get_subscriber_by( 'email', $args['email'] );
 
 		if ( $subscriber ) {
