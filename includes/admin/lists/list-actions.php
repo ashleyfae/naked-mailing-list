@@ -184,7 +184,7 @@ add_action( 'nml_delete_list', 'nml_process_delete_list' );
  * @return void
  */
 function nml_suggest_tags() {
-	error_log('Suggest');
+
 	if ( ! isset( $_REQUEST['q'] ) ) {
 		exit;
 	}
@@ -203,6 +203,7 @@ function nml_suggest_tags() {
 	}
 
 	exit;
+
 }
 
 add_action( 'wp_ajax_nml_suggest_tags', 'nml_suggest_tags' );

@@ -252,7 +252,10 @@ class NML_Newsletter {
 		$defaults = array();
 
 		$args = wp_parse_args( $data, $defaults );
-		$args = $this->sanitize_columns( $args );
+
+		$lists = array_key_exists( 'lists', $data ) ? $data['lists'] : false;
+		$tags  = array_key_exists( 'tags', $data ) ? $data['tags'] : false;
+		$args  = $this->sanitize_columns( $args );
 
 		/**
 		 * Fires before a newsletter is created
@@ -287,6 +290,16 @@ class NML_Newsletter {
 			do_action( 'nml_newsletter_transition_status', $this->status, '', $this->ID, $this );
 			do_action( 'nml_newsletter_set_status_' . $this->status, '', $this->ID, $this );
 
+			/**
+			 * Set lists.
+			 */
+			if ( ! empty( $lists ) ) {
+				$this->set_lists( $lists );
+			}
+			if ( ! empty( $tags ) ) {
+				$this->set_tags( $tags );
+			}
+
 			$created = $this->ID;
 
 		}
@@ -318,7 +331,9 @@ class NML_Newsletter {
 			return false;
 		}
 
-		$data = $this->sanitize_columns( $data );
+		$lists = array_key_exists( 'lists', $data ) ? $data['lists'] : false;
+		$tags  = array_key_exists( 'tags', $data ) ? $data['tags'] : false;
+		$data  = $this->sanitize_columns( $data );
 
 		do_action( 'nml_newsletter_pre_update', $this->ID, $data );
 
@@ -345,6 +360,18 @@ class NML_Newsletter {
 			if ( array_key_exists( 'status', $data ) && $data['status'] != $old_status ) {
 				do_action( 'nml_newsletter_transition_status', $this->status, $old_status, $this->ID, $this );
 				do_action( 'nml_newsletter_set_status_' . $this->status, $old_status, $this->ID, $this );
+			}
+
+			/**
+			 * Set lists.
+			 */
+			if ( ! empty( $lists ) ) {
+				$append = array_key_exists( 'lists_append', $data ) ? $data['lists_append'] : false;
+				$this->set_lists( $lists, $append );
+			}
+			if ( ! empty( $tags ) ) {
+				$append = array_key_exists( 'tags_append', $data ) ? $data['tags_append'] : false;
+				$this->set_tags( $tags, $append );
 			}
 
 		}
@@ -384,17 +411,17 @@ class NML_Newsletter {
 	 *
 	 * @access public
 	 * @since  1.0
-	 * @return array
+	 * @return array|false
 	 */
 	public function get_lists( $type = 'all' ) {
 
 		switch ( $type ) {
 			case 'lists' :
-				$lists = nml_get_object_lists( 'newsletter', $this->ID, 'lists' );
+				$lists = nml_get_object_lists( 'newsletter', $this->ID, 'list' );
 				break;
 
 			case 'tags' :
-				$lists = nml_get_object_lists( 'newsletter', $this->ID, 'tags' );
+				$lists = nml_get_object_lists( 'newsletter', $this->ID, 'tag' );
 				break;
 
 			default :
@@ -402,7 +429,85 @@ class NML_Newsletter {
 				break;
 		}
 
-		return apply_filters( 'nml_newsletter_get_tags', $lists, $this->ID, $this );
+		return apply_filters( 'nml_newsletter_get_lists', $lists, $this->ID, $this );
+
+	}
+
+	/**
+	 * Get an array of tags associated with this newsletter
+	 *
+	 * @access public
+	 * @since  1.0
+	 * @return array|false
+	 */
+	public function get_tags() {
+
+		$tags = $this->get_lists( 'tags' );
+
+		return apply_filters( 'nml_newsletter_get_tags', $tags, $this->ID, $this );
+
+	}
+
+	/**
+	 * Set lists
+	 *
+	 * @param int|array $lists  List(s) to add the newsletter to.
+	 * @param bool      $append Whether or not to append the lists to existing ones.
+	 *
+	 * @access public
+	 * @since  1.0
+	 * @return void
+	 */
+	public function set_lists( $lists, $append = false ) {
+		nml_set_object_lists( 'newsletter', $this->ID, $lists, 'list', $append );
+	}
+
+	/**
+	 * Set tags
+	 *
+	 * @param int|array $tags   Tag(s) to add the newsletter to.
+	 * @param bool      $append Whether or not to append the tags to existing ones.
+	 *
+	 * @access public
+	 * @since  1.0
+	 * @return void
+	 */
+	public function set_tags( $tags, $append = false ) {
+		nml_set_object_lists( 'newsletter', $this->ID, $tags, 'tag', $append );
+	}
+
+	/**
+	 * Deletes lists or tags from the newsletter
+	 *
+	 * @param string|bool $type Type of lists to delete (`list` or `tag`), or false for all.
+	 *
+	 * @access public
+	 * @since  1.0
+	 * @return void
+	 */
+	public function delete_lists( $type = false ) {
+
+		$lists = nml_get_object_lists( 'newsletter', $this->ID, $type, array( 'fields' => 'ids' ) );
+
+		if ( empty( $lists ) ) {
+			return;
+		}
+
+		$args = array(
+			'newsletter_id' => $this->ID,
+			'list_id'       => $lists
+		);
+
+		// Get all the relationships with these lists and subscriber.
+		$relationships = naked_mailing_list()->newsletter_list_relationships->get_relationships( $args );
+
+		if ( empty( $relationships ) ) {
+			return;
+		}
+
+		$ids = wp_list_pluck( $relationships, 'ID' );
+
+		naked_mailing_list()->newsletter_list_relationships->delete_by_ids( $ids );
 
 	}
 

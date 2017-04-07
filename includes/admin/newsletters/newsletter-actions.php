@@ -158,7 +158,7 @@ function nml_newsletter_selected_lists_field( $newsletter ) {
 		'order'   => 'ASC'
 	) );
 	?>
-	<div class="nml-field">
+	<div class="nml-field nml-lists-wrap">
 		<div class="nml-multicheck-wrap">
 			<?php foreach ( $all_lists as $list_name ) :
 				$checked = in_array( $list_name, $selected_list_names ) ? ' checked="checked"' : '';
@@ -181,6 +181,42 @@ function nml_newsletter_selected_lists_field( $newsletter ) {
 }
 
 add_action( 'nml_edit_newsletter_lists_box', 'nml_newsletter_selected_lists_field' );
+
+/**
+ * Field: Tags
+ *
+ * @param NML_Newsletter $newsletter
+ *
+ * @since 1.0
+ * @return void
+ */
+function nml_newsletter_tags_box( $newsletter ) {
+
+	$newsletter_tags = $newsletter->get_tags();
+	$names           = wp_list_pluck( $newsletter_tags, 'name' );
+	?>
+	<div class="nml-field nml-tags-wrap">
+		<div class="jaxtag">
+			<div class="nojs-tags hide-if-js">
+				<label for="nml_tags"><?php _e( 'Tags', 'naked-mailing-list' ); ?></label>
+				<textarea id="nml_tags" name="nml_newsletter_tags" rows="5" cols="50"><?php echo esc_textarea( implode( ', ', $names ) ); ?></textarea>
+			</div>
+		</div>
+		<div class="nml-ajaxtag hide-if-no-js">
+			<p>
+				<label for="nml_new_tag" class="screen-reader-text"><?php _e( 'Add a new tag to the subscriber', 'naked-mailing-list' ); ?></label>
+				<input type="text" id="nml_new_tag" name="nml_new_tag" class="form-input-tip regular-text nml-new-tag" size="16" autocomplete="off" value="">
+				<input type="button" class="button" value="<?php esc_attr_e( 'Add', 'naked-mailing-list' ); ?>" tabindex="3">
+			</p>
+		</div>
+		<p class="description"><?php _e( 'Separate tags with commas', 'naked-mailing-list' ); ?></p>
+		<div class="nml-tags-checklist"></div>
+	</div>
+	<?php
+
+}
+
+add_action( 'nml_edit_newsletter_tags_box', 'nml_newsletter_tags_box' );
 
 /**
  * List of template tags
@@ -251,6 +287,27 @@ function nml_save_newsletter() {
 		}
 	}
 
+	// Add lists.
+	if ( ! empty( $_POST['nml_newsletter_lists'] ) ) {
+		if ( is_array( $_POST['nml_newsletter_lists'] ) ) {
+			$list_array = $_POST['nml_newsletter_lists'];
+		} else {
+			$list_array = $_POST['nml_newsletter_lists'] ? explode( ',', $_POST['nml_newsletter_lists'] ) : array();
+		}
+
+		$data['lists'] = array_map( 'trim', $list_array );
+	}
+
+	// Add tags.
+	if ( ! empty( $_POST['nml_newsletter_tags'] ) ) {
+		if ( is_array( $_POST['nml_newsletter_tags'] ) ) {
+			$tag_array = $_POST['nml_newsletter_tags'];
+		} else {
+			$tag_array = $_POST['nml_newsletter_tags'] ? explode( ',', $_POST['nml_newsletter_tags'] ) : array();
+		}
+		$data['tags'] = array_map( 'trim', $tag_array );
+	}
+
 	// Send newsletter!
 	if ( isset( $_POST['send_newsletter'] ) ) {
 		$data['status'] = 'sending';
@@ -273,17 +330,14 @@ function nml_save_newsletter() {
 		wp_die( __( 'An error occurred while inserting the newsletter.', 'naked-mailing-list' ) );
 	}
 
-	// Add lists.
-	if ( isset( $_POST['nml_newsletter_lists'] ) ) {
-		if ( is_array( $_POST['nml_newsletter_lists'] ) ) {
-			$list_array = $_POST['nml_newsletter_lists'];
-		} else {
-			$list_array = $_POST['nml_newsletter_lists'] ? explode( ',', $_POST['nml_newsletter_lists'] ) : array();
-		}
+	// Maybe add lists.
+	if ( empty( $_POST['nml_newsletter_lists'] ) ) {
+		$newsletter->delete_lists( 'list' );
+	}
 
-		$lists = array_map( 'trim', $list_array );
-
-		nml_set_object_lists( 'newsletter', $new_id, $lists, 'list' );
+	// Maybe delete tags.
+	if ( empty( $_POST['nml_newsletter_tags'] ) ) {
+		$newsletter->delete_lists( 'tag' );
 	}
 
 	$edit_url = add_query_arg( array(

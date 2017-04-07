@@ -139,7 +139,7 @@ function nml_edit_subscriber_lists_box( $subscriber ) {
 		'order'   => 'ASC'
 	) );
 	?>
-	<div class="nml-field">
+	<div class="nml-field nml-lists-wrap">
 		<div class="nml-multicheck-wrap">
 			<?php foreach ( $all_lists as $list_name ) :
 				$checked = in_array( $list_name, $selected_list_names ) ? ' checked="checked"' : '';
