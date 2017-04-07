@@ -173,8 +173,10 @@ function nml_send_newsletter( $newsletter_id ) {
 	// Calculate and update subscriber count.
 	$newsletter->update_subscriber_count();
 
+	// Delay processing date by 5 minutes in case we want to undo a publish... #LessonLearned
 	$queue_id = naked_mailing_list()->queue->add( array(
-		'newsletter_id' => absint( $newsletter->ID )
+		'newsletter_id'   => absint( $newsletter->ID ),
+		'date_to_process' => gmdate( 'Y-m-d H:i:s', strtotime( '+5minutes' ) )
 	) );
 
 	nml_log( sprintf( __( 'Created queue entry %d for newsletter %d.', 'naked-mailing-list' ), $queue_id, $newsletter->ID ) );
