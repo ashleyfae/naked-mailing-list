@@ -440,3 +440,54 @@ function nml_process_unsubscribe() {
 }
 
 add_action( 'template_redirect', 'nml_process_unsubscribe' );
+
+/**
+ * Resend confirmation emails to pending users x days after subscribing
+ *
+ * @since 1.0
+ * @return void
+ */
+function nml_schedule_resend_confirmations() {
+
+	$days = nml_get_option( 'resend_confirmations', 7 );
+
+	if ( empty( $days ) ) {
+		return;
+	}
+
+	$period = '-' . absint( $days ) . 'days';
+
+	// Get all subscribers who signed up x days ago.
+	$subscribers = nml_get_subscribers( array(
+		'number'      => - 1,
+		'status'      => 'pending',
+		'signup_date' => array(
+			'start' => date( 'Y-m-d H:i:s', strtotime( $period . ' midnight' ) ),
+			'end'   => date( 'Y-m-d H:i:s', strtotime( $period . ' midnight' ) + ( DAY_IN_SECONDS - 1 ) )
+		)
+	) );
+
+	if ( empty( $subscribers ) || ! is_array( $subscribers ) ) {
+		return;
+	}
+
+	foreach ( $subscribers as $subscriber ) {
+		$object = new NML_Subscriber();
+		$object->setup_subscriber( $subscriber );
+
+		// Don't send the email twice.
+		if ( $object->get_meta( 'confirmation_resent' ) ) {
+			nml_log( sprintf( 'Confirmation email already sent for subscriber #%d - skipping.', $object->ID ) );
+
+			continue;
+		}
+
+		$object->send_confirmation_email();
+		$object->add_meta( 'confirmation_resent', current_time( 'mysql', true ) );
+
+		nml_log( sprintf( 'Confirmation email resent to subscriber #%d via cron job.', $object->ID ) );
+	}
+
+}
+
+add_action( 'nml_daily_scheduled_events', 'nml_schedule_resend_confirmations' );
