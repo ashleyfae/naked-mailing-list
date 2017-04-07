@@ -427,7 +427,14 @@ class NML_Subscriber {
 				break;
 
 			default :
-				$referer = '<a href="' . esc_url( home_url( $this->referer ) ) . '" target="_blank">' . esc_html( $this->referer ) . '</a>';
+				if ( false !== filter_var( $this->referer, FILTER_VALIDATE_URL ) ) {
+					// A full URL was provided (usually external signups).
+					$url = $this->referer;
+				} else {
+					// A path was provided so we build our own URL. This signup took place on-site.
+					$url = home_url( $this->referer );
+				}
+				$referer = '<a href="' . esc_url( $url ) . '" target="_blank">' . esc_html( $this->referer ) . '</a>';
 				break;
 
 		}
