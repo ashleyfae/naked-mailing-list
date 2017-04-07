@@ -208,7 +208,18 @@ function nml_get_registered_settings() {
 		/* General Settings */
 		'general' => apply_filters( 'nml_settings_general', array(
 			'main' => array(
-				'debug_mode' => array(
+				'resend_confirmations' => array(
+					'id'      => 'resend_confirmations',
+					'name'    => esc_html__( 'Resend Confirmations', 'naked-mailing-list' ),
+					'desc'    => __( 'Resend confirmation emails after this many days. Set to 0 to disable.', 'naked-mailing-list' ),
+					'type'    => 'text',
+					'options' => array(
+						'type' => 'number'
+					),
+					'size'    => 'small',
+					'std'     => '7'
+				),
+				'debug_mode'           => array(
 					'id'   => 'debug_mode',
 					'name' => esc_html__( 'Enable Debug Mode', 'naked-mailing-list' ),
 					'desc' => sprintf(
@@ -566,7 +577,7 @@ function nml_text_callback( $args ) {
 	}
 
 	$size = ( isset( $args['size'] ) && ! is_null( $args['size'] ) ) ? $args['size'] : 'regular';
-	$type = ( isset( $args['type'] ) ) ? $args['type'] : 'text';
+	$type = ( isset( $args['options']['type'] ) ) ? $args['options']['type'] : 'text';
 	?>
 	<input type="<?php echo esc_attr( $type ); ?>" class="<?php echo esc_attr( sanitize_html_class( $size ) . '-text' ); ?>" id="nml_settings_<?php echo nml_sanitize_key( $args['id'] ); ?>" <?php echo $name; ?> value="<?php echo esc_attr( wp_unslash( $value ) ); ?>">
 	<?php if ( $args['desc'] ) : ?>

@@ -286,20 +286,21 @@ class NML_DB_Subscribers extends NML_DB {
 		global $wpdb;
 
 		$defaults = array(
-			'number'     => 20,
-			'offset'     => 0,
-			'orderby'    => 'ID',
-			'order'      => 'DESC',
-			'fields'     => 'all',
-			'ID'         => null,
-			'email'      => null,
-			'first_name' => null,
-			'last_name'  => null,
-			'status'     => null,
-			'referer'    => null,
-			'form_name'  => null,
-			'ip'         => null,
-			'list'       => null
+			'number'      => 20,
+			'offset'      => 0,
+			'orderby'     => 'ID',
+			'order'       => 'DESC',
+			'fields'      => 'all',
+			'ID'          => null,
+			'email'       => null,
+			'first_name'  => null,
+			'last_name'   => null,
+			'status'      => null,
+			'referer'     => null,
+			'form_name'   => null,
+			'ip'          => null,
+			'list'        => null,
+			'signup_date' => null
 		);
 
 		$args = wp_parse_args( $args, $defaults );
@@ -382,7 +383,31 @@ class NML_DB_Subscribers extends NML_DB {
 			$where .= $wpdb->prepare( " AND `form_name` = %s ", $args['form_name'] );
 		}
 
-		// @todo by date
+		// By signup date
+		if ( ! empty( $args['signup_date'] ) ) {
+
+			if ( is_array( $args['signup_date'] ) ) {
+
+				if ( ! empty( $args['signup_date']['start'] ) ) {
+					$start = date( 'Y-m-d H:i:s', strtotime( $args['signup_date']['start'] ) );
+					$where .= $wpdb->prepare( " AND `signup_date` >= %s", $start );
+				}
+
+				if ( ! empty( $args['signup_date']['end'] ) ) {
+					$end = date( 'Y-m-d H:i:s', strtotime( $args['signup_date']['end'] ) );
+					$where .= $wpdb->prepare( " AND `signup_date` <= %s", $end );
+				}
+
+			} else {
+
+				$year  = get_gmt_from_date( wp_strip_all_tags( $args['signup_date'] ), 'Y' );
+				$month = get_gmt_from_date( wp_strip_all_tags( $args['signup_date'] ), 'm' );
+				$day   = get_gmt_from_date( wp_strip_all_tags( $args['signup_date'] ), 'd' );
+				$where .= $wpdb->prepare( " AND %d = YEAR ( signup_date ) AND %d = MONTH ( signup_date ) AND %d = DAY ( signup_date )", $year, $month, $day );
+
+			}
+
+		}
 
 		// By IP
 		if ( ! empty( $args['ip'] ) ) {

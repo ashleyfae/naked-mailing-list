@@ -52,6 +52,7 @@ class NML_DB_Activity extends NML_DB {
 	private function init() {
 
 		add_action( 'nml_post_insert_subscriber', array( $this, 'new_subscriber' ), 10, 2 );
+		add_action( 'nml_subscriber_send_confirmation_email', array( $this, 'confirmation_sent' ), 10, 2 );
 		add_action( 'nml_subscriber_confirm', array( $this, 'confirm_subscriber' ), 10, 2 );
 		add_action( 'nml_subscriber_set_unsubscribed', array( $this, 'unsubscribe' ), 10, 3 );
 
@@ -101,6 +102,7 @@ class NML_DB_Activity extends NML_DB {
 
 		$types = array(
 			'new_subscriber',
+			'subscriber_confirmation_sent',
 			'subscriber_confirm',
 			'unsubscribe',
 			'newsletter_processing_started',
@@ -513,6 +515,33 @@ class NML_DB_Activity extends NML_DB {
 
 		$activity_data = array(
 			'type'          => 'new_subscriber',
+			'subscriber_id' => absint( $subscriber_id )
+		);
+
+		$this->add( $activity_data );
+
+	}
+
+	/**
+	 * Insert new activity log when a confirmation email is sent to a subscriber.
+	 * This can happen multiple times (when confirmations are resent via cron job
+	 * or manually).
+	 *
+	 * @param int            $subscriber_id
+	 * @param NML_Subscriber $subscriber
+	 *
+	 * @access public
+	 * @since  1.0
+	 * @return void
+	 */
+	public function confirmation_sent( $subscriber_id = 0, $subscriber ) {
+
+		if ( empty( $subscriber_id ) ) {
+			return;
+		}
+
+		$activity_data = array(
+			'type'          => 'subscriber_confirmation_sent',
 			'subscriber_id' => absint( $subscriber_id )
 		);
 

@@ -309,7 +309,7 @@ class NML_DB_Queue extends NML_DB {
 
 				if ( ! empty( $args['date_created']['end'] ) ) {
 					$end = get_gmt_from_date( wp_strip_all_tags( $args['date_created']['end'] ), 'Y-m-d H:i:s' );
-					$wpdb->prepare( " AND `date_created` <= %s", $end );
+					$where .= $wpdb->prepare( " AND `date_created` <= %s", $end );
 				}
 
 			} else {

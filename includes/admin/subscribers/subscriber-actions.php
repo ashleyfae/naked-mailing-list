@@ -232,6 +232,13 @@ function nml_subscriber_activity_box( $subscriber ) {
 									);
 									break;
 
+								case 'subscriber_confirmation_sent' :
+									printf(
+										__( 'Confirmation email sent to %s.', 'naked-mailing-list' ),
+										esc_html( $name )
+									);
+									break;
+
 								case 'subscriber_confirm' :
 									printf(
 										__( '%s confirmed their subscription.', 'naked-mailing-list' ),

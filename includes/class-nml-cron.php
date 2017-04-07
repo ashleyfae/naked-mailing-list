@@ -65,6 +65,7 @@ class NML_Cron {
 	 */
 	public function schedule_events() {
 		$this->every_minute_events();
+		$this->daily_events();
 	}
 
 	/**
@@ -78,6 +79,21 @@ class NML_Cron {
 
 		if ( ! wp_next_scheduled( 'nml_every_minute_scheduled_events' ) ) {
 			wp_schedule_event( current_time( 'timestamp', true ), 'once_per_minute', 'nml_every_minute_scheduled_events' );
+		}
+
+	}
+
+	/**
+	 * Schedule daily events
+	 *
+	 * @access private
+	 * @since  1.0
+	 * @return void
+	 */
+	private function daily_events() {
+
+		if ( ! wp_next_scheduled( 'nml_daily_scheduled_events' ) ) {
+			wp_schedule_event( current_time( 'timestamp', true ), 'daily', 'nml_daily_scheduled_events' );
 		}
 
 	}
