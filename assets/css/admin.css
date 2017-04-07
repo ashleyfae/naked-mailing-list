@@ -37,7 +37,7 @@
   float: left;
   height: 28px;
   margin: 0 4px 0 0;
-  max-width: 180px;
+  max-width: 204px;
   position: relative; }
 
 .nml-tags-checklist {
@@ -83,6 +83,24 @@
         -webkit-font-smoothing: antialiased; }
       .nml-tags-checklist span a:hover:before {
         color: #c00; }
+
+/* Lists */
+.nml-multicheck-wrap {
+  background: #fdfdfd;
+  border: 1px solid #ddd;
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  margin-bottom: 1em;
+  max-height: 150px;
+  max-width: 550px;
+  overflow-y: scroll;
+  padding: .9em; }
+  .nml-multicheck-wrap label {
+    float: none;
+    font-weight: normal;
+    margin-bottom: 3px;
+    width: auto; }
 
 .nml-import-export-form {
   position: relative; }

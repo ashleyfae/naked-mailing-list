@@ -140,7 +140,7 @@ function nml_edit_subscriber_lists_box( $subscriber ) {
 	) );
 	?>
 	<div class="nml-field nml-lists-wrap">
-		<div class="nml-multicheck-wrap">
+		<div class="nml-multicheck-wrap" data-name="nml_subscriber_lists[]">
 			<?php foreach ( $all_lists as $list_name ) :
 				$checked = in_array( $list_name, $selected_list_names ) ? ' checked="checked"' : '';
 				?>
@@ -151,7 +151,6 @@ function nml_edit_subscriber_lists_box( $subscriber ) {
 			<?php endforeach; ?>
 		</div>
 
-		<?php // @todo make this work ?>
 		<div class="nml-add-new-list">
 			<label for="nml-add-new-list" class="screen-reader-text"><?php esc_html__( 'Enter the name of the new list', 'naked-mailing-list' ); ?></label>
 			<input type="text" id="nml-add-new-list" name="nml_new_list" class="regular-text nml-new-list-value">

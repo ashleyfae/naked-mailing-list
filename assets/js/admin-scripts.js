@@ -1,6 +1,44 @@
 jQuery(document).ready(function ($) {
 
 	/**
+	 * General NML
+	 */
+	var Naked_Mailing_List = {
+
+		init: function () {
+			$('.nml-add-new-list').on('click', '.button', this.addListCheckbox);
+			$('#nml-add-new-list').keypress(this.addListCheckbox);
+		},
+
+		/**
+		 * Add new list checkbox
+		 * @param e
+		 * @returns {boolean}
+		 */
+		addListCheckbox: function (e) {
+			if ('click' == e.type) {
+				e.preventDefault();
+			}
+
+			if ('keypress' == e.type && 13 != e.which) {
+				return true;
+			} else {
+				e.preventDefault();
+			}
+
+			var wrap = $(this).parents('.nml-lists-wrap'),
+				checkboxWrap = wrap.find('.nml-multicheck-wrap'),
+				checkboxName = checkboxWrap.data('name'),
+				newTerm = wrap.find('#nml-add-new-list');
+
+			checkboxWrap.append('<label><input type="checkbox" name="' + checkboxName + '" value="' + newTerm.val() + '" checked="checked"> ' + newTerm.val() + '</label>');
+			newTerm.val('');
+		}
+
+	};
+	Naked_Mailing_List.init();
+
+	/**
 	 * Export JavaScript
 	 */
 	var NML_Export = {
