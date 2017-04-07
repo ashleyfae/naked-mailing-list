@@ -139,8 +139,8 @@ function nml_edit_subscriber_lists_box( $subscriber ) {
 		'order'   => 'ASC'
 	) );
 	?>
-	<div class="nml-field">
-		<div class="nml-multicheck-wrap">
+	<div class="nml-field nml-lists-wrap">
+		<div class="nml-multicheck-wrap" data-name="nml_subscriber_lists[]">
 			<?php foreach ( $all_lists as $list_name ) :
 				$checked = in_array( $list_name, $selected_list_names ) ? ' checked="checked"' : '';
 				?>
@@ -151,7 +151,6 @@ function nml_edit_subscriber_lists_box( $subscriber ) {
 			<?php endforeach; ?>
 		</div>
 
-		<?php // @todo make this work ?>
 		<div class="nml-add-new-list">
 			<label for="nml-add-new-list" class="screen-reader-text"><?php esc_html__( 'Enter the name of the new list', 'naked-mailing-list' ); ?></label>
 			<input type="text" id="nml-add-new-list" name="nml_new_list" class="regular-text nml-new-list-value">
@@ -177,10 +176,22 @@ function nml_edit_subscriber_tags_box( $subscriber ) {
 	$subscriber_tags = $subscriber->get_tags();
 	$names           = wp_list_pluck( $subscriber_tags, 'name' );
 	?>
-	<div class="nml-field">
-		<label for="nml_subscriber_tags" class="screen-reader-text"><?php _e( 'Tags', 'naked-mailing-list' ); ?></label>
-		<textarea id="nml_subscriber_tags" class="large-text" name="nml_subscriber_tags" rows="5" cols="50"><?php echo esc_textarea( implode( ', ', $names ) ); ?></textarea>
-		<div class="description"><?php _e( 'Separate multiples with a comma.', 'naked-mailing-list' ); ?></div>
+	<div class="nml-field nml-tags-wrap">
+		<div class="jaxtag">
+			<div class="nojs-tags hide-if-js">
+				<label for="nml_tags"><?php _e( 'Tags', 'naked-mailing-list' ); ?></label>
+				<textarea id="nml_tags" name="nml_subscriber_tags" rows="5" cols="50"><?php echo esc_textarea( implode( ', ', $names ) ); ?></textarea>
+			</div>
+		</div>
+		<div class="nml-ajaxtag hide-if-no-js">
+			<p>
+				<label for="nml_new_tag" class="screen-reader-text"><?php _e( 'Add a new tag to the subscriber', 'naked-mailing-list' ); ?></label>
+				<input type="text" id="nml_new_tag" name="nml_new_tag" class="form-input-tip regular-text nml-new-tag" size="16" autocomplete="off" value="">
+				<input type="button" class="button" value="<?php esc_attr_e( 'Add', 'naked-mailing-list' ); ?>" tabindex="3">
+			</p>
+		</div>
+		<p class="description"><?php _e( 'Separate tags with commas', 'naked-mailing-list' ); ?></p>
+		<div class="nml-tags-checklist"></div>
 	</div>
 	<?php
 

@@ -281,7 +281,7 @@ function nml_set_object_lists( $object_type, $object_id, $lists, $type, $append 
 					$relationship = nml_get_relationship( array(
 						'newsletter_id' => $object_id,
 						'list_id'       => $list_id
-					) );
+					), 'newsletter' );
 				}
 
 				if ( $relationship ) {

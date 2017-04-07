@@ -176,3 +176,34 @@ function nml_process_delete_list() {
 }
 
 add_action( 'nml_delete_list', 'nml_process_delete_list' );
+
+/**
+ * Suggest tags for autocomplete
+ *
+ * @since 1.0
+ * @return void
+ */
+function nml_suggest_tags() {
+
+	if ( ! isset( $_REQUEST['q'] ) ) {
+		exit;
+	}
+
+	$search = strtolower( wp_strip_all_tags( $_REQUEST['q'] ) );
+	$args   = array(
+		'name'   => $search,
+		'fields' => 'names'
+	);
+	$terms  = nml_get_tags( $args );
+
+	if ( $terms ) {
+		foreach ( $terms as $term ) {
+			echo $term . "\n";
+		}
+	}
+
+	exit;
+
+}
+
+add_action( 'wp_ajax_nml_suggest_tags', 'nml_suggest_tags' );
