@@ -489,4 +489,191 @@ jQuery(document).ready(function ($) {
 	};
 	NML_Reports.init();
 
+	/**
+	 * Autocomplete for Tags
+	 */
+	var NML_Tags = {
+
+		/**
+		 * Initialize
+		 */
+		init: function () {
+			var self = this,
+				ajaxtag = $('.nml-ajaxtag'),
+				wrapper = ajaxtag.parents('.nml-tags-wrap');
+
+			$('.nml-tags-wrap').each(function () {
+				NML_Tags.quickClicks($(this));
+			});
+
+			$('.button', ajaxtag).click(function () {
+				self.flushTags($(this).closest('.nml-tags-wrap'));
+			});
+
+			ajaxtag.each(function () {
+				var newTag = $('.nml-new-tag', $(this));
+				var type = $(this).parents('.nml-tags-wrap').data('type');
+
+				newTag.keyup(function (e) {
+					if (e.which == 13) {
+						NML_Tags.flushTags($(this).closest('.nml-tags-wrap'));
+						return false;
+					}
+				}).keypress(function (e) {
+					if (13 == e.which) {
+						e.preventDefault();
+						return false;
+					}
+				}).suggest(ajaxurl + '?action=nml_suggest_tags&type=' + type);
+			});
+
+			// Save tags on save/publish.
+			$('#nml-newsletters-page-wrapper, #nml-subscribers-page-wrapper > form').submit(function (e) {
+				$('.nml-tags-wrap').each(function () {
+					NML_Tags.flushTags(this, false, 1);
+				});
+			});
+		},
+
+		/**
+		 * Clean Tags
+		 */
+		clean: function (tags) {
+			return tags.replace(/\s*,\s*/g, ',').replace(/,+/g, ',').replace(/[,\s]+$/, '').replace(/^[,\s]+/, '');
+		},
+
+		/**
+		 * Parse Tags
+		 */
+		parseTags: function (el) {
+			var id = el.id,
+				num = id.split('-check-num-')[1],
+				tagbox = $(el).closest('.nml-tags-wrap'),
+				thetags = tagbox.find('textarea'),
+				current_tags = thetags.val().split(','),
+				new_tags = [];
+
+			delete current_tags[num];
+
+			$.each(current_tags, function (key, val) {
+				val = $.trim(val);
+				if (val) {
+					new_tags.push(val);
+				}
+			});
+
+			thetags.val(this.clean(new_tags.join(',')));
+
+			this.quickClicks(tagbox);
+
+			return false;
+		},
+
+		/**
+		 * Quick Links
+		 *
+		 * Handles adding tags.
+		 *
+		 * @param el
+		 */
+		quickClicks: function (el) {
+			var thetags = $('textarea', el),
+				tagchecklist = $('.nml-tags-checklist', el),
+				id = $(el).attr('id'),
+				current_tags,
+				disabled;
+
+			if (!thetags.length)
+				return;
+
+			disabled = thetags.prop('disabled');
+
+			current_tags = thetags.val().split(',');
+			tagchecklist.empty();
+
+			$.each(current_tags, function (key, val) {
+				var span, xbutton;
+
+				val = $.trim(val);
+
+				if (!val)
+					return;
+
+				// Create a new span, and ensure the text is properly escaped.
+				span = $('<span />').text(val);
+
+				// If tags editing isn't disabled, create the X button.
+				if (!disabled) {
+					xbutton = $('<a id="' + id + '-check-num-' + key + '" class="ntdelbutton">X</a>');
+					xbutton.click(function () {
+						NML_Tags.parseTags(this);
+					});
+					span.prepend('&nbsp;').prepend(xbutton);
+				}
+
+				// Append the span to the tag list.
+				tagchecklist.append(span);
+			});
+		},
+
+		/**
+		 * Flush Tags
+		 *
+		 * Called on add tag and save.
+		 *
+		 * @param el
+		 * @param a
+		 * @param f
+		 */
+		flushTags: function (el, a, f) {
+			a = a || false;
+
+			var text,
+				tags = $('textarea', el),
+				newtag = $('.nml-new-tag', el),
+				tagsval,
+				newtags;
+
+			text = a ? $(a).text() : newtag.val();
+
+			tagsval = tags.val();
+			newtags = tagsval ? tagsval + ',' + text : text;
+
+			newtags = this.clean(newtags);
+			newtags = NML_Tags.uniqueArray(newtags.split(',')).join(',');
+
+			tags.val(newtags);
+			this.quickClicks(el);
+
+			if (!a)
+				newtag.val('');
+			if ('undefined' == typeof(f))
+				newtag.focus();
+
+			return false;
+		},
+
+		/**
+		 * Unique Array, No Empty
+		 *
+		 * @param array
+		 * @returns {Array}
+		 */
+		uniqueArray: function (array) {
+			var out = [];
+
+			$.each(array, function (key, val) {
+				val = $.trim(val);
+
+				if (val && $.inArray(val, out) === -1) {
+					out.push(val);
+				}
+			});
+
+			return out;
+		}
+
+	};
+	NML_Tags.init();
+
 });

@@ -38,7 +38,7 @@ function nml_load_admin_assets( $hook ) {
 
 	// JS
 	wp_register_script( 'chart-js', $js_dir . 'chart' . $suffix . '.js', array( 'jquery' ), '2.5.0', true );
-	$deps = array( 'jquery', 'jquery-form' );
+	$deps = array( 'jquery', 'jquery-form', 'suggest' );
 
 	if ( 'newsletter_page_nml-reports' == $screen->id ) {
 		$deps[] = 'chart-js';
