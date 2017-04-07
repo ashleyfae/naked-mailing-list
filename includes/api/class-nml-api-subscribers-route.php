@@ -77,6 +77,8 @@ class NML_API_Subscribers_Route extends WP_REST_Controller {
 			'signup_date'  => 'signup_date',
 			'confirm_date' => 'confirm_date',
 			'ip'           => 'ip',
+			'referer'      => 'referer',
+			'form_name'    => 'form_name',
 			'email_count'  => 'email_count',
 			'notes'        => 'notes',
 			'lists'        => 'lists',
