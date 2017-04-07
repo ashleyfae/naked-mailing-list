@@ -195,7 +195,7 @@ function nml_set_object_lists( $object_type, $object_id, $lists, $type, $append 
 			continue;
 		}
 
-		if ( is_int( $list ) ) {
+		if ( is_numeric( $list ) ) {
 
 			// We have a list ID.
 

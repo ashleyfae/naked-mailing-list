@@ -212,7 +212,7 @@ function nml_process_signup() {
 		wp_send_json_error( nml_print_errors( true ) );
 	}
 
-	if ( naked_mailing_list()->subscribers->exists( $email ) ) {
+	if ( naked_mailing_list()->subscribers->exists( $data['email'] ) ) {
 
 		/*
 		 * Subscriber already exists - let's update them.
@@ -239,7 +239,11 @@ function nml_process_signup() {
 		if ( 'subscribed' == $subscriber->status ) {
 			$message = __( 'You\'ve successfully been added to the list!', 'naked-mailing-list' );
 		} else {
-			$subscriber->update( array( 'status' => 'pending' ) );
+			if ( 'pending' == $subscriber->status ) {
+				$subscriber->send_confirmation_email();
+			} else {
+				$subscriber->update( array( 'status' => 'pending' ) );
+			}
 			$message = __( 'Almost there! Check your email to confirm your subscription.', 'naked-mailing-list' );
 		}
 

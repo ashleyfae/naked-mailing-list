@@ -18,8 +18,12 @@
 
 		var form = $(this);
 		var response_field = form.find('.nml-subscribe-response');
+		var button = form.find('button');
+		var button_text = button.html();
 
-		// @todo better loading stuff
+		// Setup loading.
+		button.attr('disabled', true);
+		button.empty().append('<i class="fa fa-spinner fa-spin"></i>');
 
 		response_field.empty();
 
@@ -43,6 +47,9 @@
 				withCredentials: true
 			},
 			success: function (response) {
+
+				button.attr('disabled', false);
+				button.empty().append(button_text);
 
 				if (true == response.success) {
 					// Clear input fields.

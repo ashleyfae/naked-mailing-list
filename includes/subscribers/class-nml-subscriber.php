@@ -371,7 +371,7 @@ class NML_Subscriber {
 			 *
 			 * @since 1.0
 			 */
-			if ( array_key_exists( 'status', $data ) && $data['status'] != $old_status ) {
+			if ( array_key_exists( 'status', $data ) ) {
 				do_action( 'nml_subscriber_transition_status', $this->status, $old_status, $this->ID, $this );
 				do_action( 'nml_subscriber_set_' . $this->status, $old_status, $this->ID, $this );
 			}
