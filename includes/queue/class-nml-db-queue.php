@@ -303,20 +303,20 @@ class NML_DB_Queue extends NML_DB {
 			if ( is_array( $args['date_created'] ) ) {
 
 				if ( ! empty( $args['date_created']['start'] ) ) {
-					$start = get_gmt_from_date( wp_strip_all_tags( $args['date_created']['start'] ), 'Y-m-d H:i:s' );
+					$start = date( 'Y-m-d H:i:s', strtotime( $args['date_created']['start'] ) );
 					$where .= $wpdb->prepare( " AND `date_created` >= %s", $start );
 				}
 
 				if ( ! empty( $args['date_created']['end'] ) ) {
-					$end = get_gmt_from_date( wp_strip_all_tags( $args['date_created']['end'] ), 'Y-m-d H:i:s' );
+					$end   = date( 'Y-m-d H:i:s', strtotime( $args['date_created']['end'] ) );
 					$where .= $wpdb->prepare( " AND `date_created` <= %s", $end );
 				}
 
 			} else {
 
-				$year  = get_gmt_from_date( wp_strip_all_tags( $args['date_created'] ), 'Y' );
-				$month = get_gmt_from_date( wp_strip_all_tags( $args['date_created'] ), 'm' );
-				$day   = get_gmt_from_date( wp_strip_all_tags( $args['date_created'] ), 'd' );
+				$year  = date( 'Y', strtotime( $args['date_created'] ) );
+				$month = date( 'm', strtotime( $args['date_created'] ) );
+				$day   = date( 'd', strtotime( $args['date_created'] ) );
 				$where .= $wpdb->prepare( " AND %d = YEAR ( date_created ) AND %d = MONTH ( date_created ) AND %d = DAY ( date_created )", $year, $month, $day );
 
 			}
@@ -329,20 +329,20 @@ class NML_DB_Queue extends NML_DB {
 			if ( is_array( $args['date_to_process'] ) ) {
 
 				if ( ! empty( $args['date_to_process']['start'] ) ) {
-					$start = get_gmt_from_date( wp_strip_all_tags( $args['date_to_process']['start'] ), 'Y-m-d H:i:s' );
+					$start = date( 'Y-m-d H:i:s', strtotime( $args['date_to_process']['start'] ) );
 					$where .= $wpdb->prepare( " AND `date_to_process` >= %s", $start );
 				}
 
 				if ( ! empty( $args['date_to_process']['end'] ) ) {
-					$end = get_gmt_from_date( wp_strip_all_tags( $args['date_to_process']['end'] ), 'Y-m-d H:i:s' );
-					$wpdb->prepare( " AND `date_to_process` <= %s", $end );
+					$end   = date( 'Y-m-d H:i:s', strtotime( $args['date_to_process']['end'] ) );
+					$where .= $wpdb->prepare( " AND `date_to_process` <= %s", $end );
 				}
 
 			} else {
 
-				$year  = get_gmt_from_date( wp_strip_all_tags( $args['date_to_process'] ), 'Y' );
-				$month = get_gmt_from_date( wp_strip_all_tags( $args['date_to_process'] ), 'm' );
-				$day   = get_gmt_from_date( wp_strip_all_tags( $args['date_to_process'] ), 'd' );
+				$year  = date( 'Y', strtotime( $args['date_to_process'] ) );
+				$month = date( 'm', strtotime( $args['date_to_process'] ) );
+				$day   = date( 'd', strtotime( $args['date_to_process'] ) );
 				$where .= $wpdb->prepare( " AND %d = YEAR ( date_to_process ) AND %d = MONTH ( date_to_process ) AND %d = DAY ( date_to_process )", $year, $month, $day );
 
 			}
@@ -359,7 +359,8 @@ class NML_DB_Queue extends NML_DB {
 		$args['order']   = esc_sql( $args['order'] );
 
 		if ( false === $entries ) {
-			$query   = $wpdb->prepare( "SELECT * FROM  $this->table_name $join $where GROUP BY $this->primary_key ORDER BY {$args['orderby']} {$args['order']} LIMIT %d,%d;", absint( $args['offset'] ), absint( $args['number'] ) );
+			$query = $wpdb->prepare( "SELECT * FROM  $this->table_name $join $where GROUP BY $this->primary_key ORDER BY {$args['orderby']} {$args['order']} LIMIT %d,%d;", absint( $args['offset'] ), absint( $args['number'] ) );
+			var_dump( $query );
 			$entries = $wpdb->get_results( $query );
 			wp_cache_set( $cache_key, $entries, 'newsletter_queue', 3600 );
 		}
