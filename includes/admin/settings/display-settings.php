@@ -5,7 +5,7 @@
  * @package   naked-mailing-list
  * @copyright Copyright (c) 2017, Ashley Gibson
  * @license   GPL2+
- * @since 1.0
+ * @since     1.0
  */
 
 // Exit if accessed directly
@@ -113,9 +113,9 @@ function nml_options_page() {
 				</table>
 
 				<div class="nml-settings-buttons">
-					<?php submit_button(); ?>
+					<p class="submit">
+						<?php submit_button( __( 'Save Changes', 'naked-mailing-list' ), 'primary', 'submit', false ); ?>
 
-					<p id="nml-reset-tab">
 						<button type="button" id="nml-reset-tab-button" name="nml-reset-defaults" class="button-secondary" data-current-tab="<?php echo esc_attr( $active_tab ); ?>" data-current-section="<?php echo esc_attr( $section ); ?>"><?php esc_attr_e( 'Reset Tab', 'naked-mailing-list' ); ?></button>
 					</p>
 				</div>
