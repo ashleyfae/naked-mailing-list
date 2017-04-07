@@ -479,3 +479,38 @@ function nml_get_admin_page_delete_list( $list_id ) {
 
 	return apply_filters( 'nml_admin_page_delete_list', $delete_list_page );
 }
+
+/**
+ * Recalculate the number of subscribers on each list to ensure accuracy
+ *
+ * @since 1.0
+ * @return void
+ */
+function nml_recount_subscriber_lists() {
+
+	$lists = nml_get_lists( array(
+		'fields' => 'ids',
+		'type'   => false
+	) );
+
+	if ( empty( $lists ) || ! is_array( $lists ) ) {
+		return;
+	}
+
+	foreach ( $lists as $list_id ) {
+
+		// Get number of subscribers on this list.
+		$count = naked_mailing_list()->subscribers->count( array(
+			'list' => absint( $list_id )
+		) );
+
+		// Update the list count.
+		naked_mailing_list()->lists->update( $list_id, array( 'count' => absint( $count ) ) );
+
+		nml_log( sprintf( 'Updating list ID #%d count to %d.', $list_id, $count ) );
+
+	}
+
+}
+
+add_action( 'nml_daily_scheduled_events', 'nml_recount_subscriber_lists' );
