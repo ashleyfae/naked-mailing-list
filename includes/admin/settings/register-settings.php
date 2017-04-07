@@ -219,6 +219,17 @@ function nml_get_registered_settings() {
 					'size'    => 'small',
 					'std'     => '7'
 				),
+				'delete_unconfirmed'   => array(
+					'id'      => 'delete_unconfirmed',
+					'name'    => esc_html__( 'Delete Unconfirmed Subscribers', 'naked-mailing-list' ),
+					'desc'    => __( 'Delete unconfirmed subscribers this many days after their signup. If you enter 30, subscribers will be deleted if they\'re still unconfirmed 30 days after their original signup date. Set to 0 to disable.', 'naked-mailing-list' ),
+					'type'    => 'text',
+					'options' => array(
+						'type' => 'number'
+					),
+					'size'    => 'small',
+					'std'     => '30'
+				),
 				'debug_mode'           => array(
 					'id'   => 'debug_mode',
 					'name' => esc_html__( 'Enable Debug Mode', 'naked-mailing-list' ),
