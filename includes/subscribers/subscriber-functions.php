@@ -455,6 +455,8 @@ function nml_schedule_resend_confirmations() {
 		return;
 	}
 
+	nml_log( 'Beginning cron job: resending confirmations.' );
+
 	$period = '-' . absint( $days ) . 'days';
 
 	// Get all subscribers who signed up x days ago.
@@ -491,3 +493,44 @@ function nml_schedule_resend_confirmations() {
 }
 
 add_action( 'nml_daily_scheduled_events', 'nml_schedule_resend_confirmations' );
+
+/**
+ * Delete unconfirmed subscribers x days after subscribing
+ *
+ * @since 1.0
+ * @return void
+ */
+function nml_schedule_delete_unconfirmed() {
+
+	$days = nml_get_option( 'delete_unconfirmed', 30 );
+
+	if ( empty( $days ) ) {
+		return;
+	}
+
+	nml_log( 'Beginning cron job: delete unconfirmed subscribers.' );
+
+	$period = '-' . absint( $days ) . 'days';
+
+	// Get all subscribers who signed up x days ago.
+	$subscribers = nml_get_subscribers( array(
+		'number'      => - 1,
+		'status'      => 'pending',
+		'signup_date' => array(
+			'start' => date( 'Y-m-d H:i:s', strtotime( $period . ' midnight' ) ),
+			'end'   => date( 'Y-m-d H:i:s', strtotime( $period . ' midnight' ) + ( DAY_IN_SECONDS - 1 ) )
+		),
+		'fields'      => 'ID'
+	) );
+
+	if ( empty( $subscribers ) || ! is_array( $subscribers ) ) {
+		return;
+	}
+
+	nml_log( sprintf( 'Deleting these unconfirmed subscriber IDs: %s', implode( ', ', $subscribers ) ) );
+
+	naked_mailing_list()->subscribers->delete_by_ids( $subscribers );
+
+}
+
+add_action( 'nml_daily_scheduled_events', 'nml_schedule_delete_unconfirmed' );
