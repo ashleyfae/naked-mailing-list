@@ -163,7 +163,7 @@ class NML_Batch_Import_Subscribers extends NML_Batch_Import {
 		if ( ! empty( $args['signup_date'] ) ) {
 			$timestamp = strtotime( $args['signup_date'] );
 
-			if ( empty( $timestamp ) ) {
+			if ( empty( $timestamp ) || $this->date_needs_converting( $args['signup_date'] ) ) {
 				$timestamp = $this->convert_date( $args['signup_date'] );
 			}
 
@@ -182,7 +182,7 @@ class NML_Batch_Import_Subscribers extends NML_Batch_Import {
 		if ( ! empty( $args['confirm_date'] ) ) {
 			$timestamp = strtotime( $args['confirm_date'] );
 
-			if ( empty( $timestamp ) ) {
+			if ( empty( $timestamp ) || $this->date_needs_converting( $args['confirm_date'] ) ) {
 				$timestamp = $this->convert_date( $args['confirm_date'] );
 			}
 
@@ -271,13 +271,46 @@ class NML_Batch_Import_Subscribers extends NML_Batch_Import {
 	 */
 	public function convert_date( $date_string ) {
 
-		// Test for 'd/m/Y G'
+		// Test for 'd/m/Y H:i:s'
+		$new_date = DateTime::createFromFormat( 'd/m/Y H:i:s', $date_string );
+		if ( $new_date && $new_date->format( 'd/m/Y H:i:s' ) == $date_string ) {
+			return $new_date->format( 'U' );
+		}
+
+		// Test for 'd/m/Y H:i'
 		$new_date = DateTime::createFromFormat( 'd/m/Y H:i', $date_string );
 		if ( $new_date && $new_date->format( 'd/m/Y H:i' ) == $date_string ) {
 			return $new_date->format( 'U' );
 		}
 
 		return false;
+
+	}
+
+	/**
+	 * Check to see if the date needs converting.
+	 *
+	 * @param string $date_string
+	 *
+	 * @access public
+	 * @since  1.0
+	 * @return bool
+	 */
+	public function date_needs_converting( $date_string ) {
+
+		// Test for 'd/m/Y H:i:s'
+		$d     = DateTime::createFromFormat( 'd/m/Y H:i:s', $date_string );
+		$needs = $d && $d->format( 'd/m/Y H:i:s' ) === $date_string;
+
+		if ( $needs ) {
+			return true;
+		}
+
+		// Test for 'd/m/Y H:i'
+		$d     = DateTime::createFromFormat( 'd/m/Y H:i', $date_string );
+		$needs = $d && $d->format( 'd/m/Y H:i' ) === $date_string;
+
+		return $needs;
 
 	}
 
