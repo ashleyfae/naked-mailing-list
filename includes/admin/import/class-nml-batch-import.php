@@ -315,4 +315,16 @@ class NML_Batch_Import {
 
 	}
 
+	/**
+	 * Set the properties specific to the import
+	 *
+	 * @param array $request The Form Data passed into the batch processing
+	 *
+	 * @access public
+	 * @since  1.0
+	 * @return void
+	 */
+	public function set_properties( $request ) {
+	}
+
 }

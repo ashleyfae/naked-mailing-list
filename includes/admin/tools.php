@@ -101,6 +101,10 @@ function nml_tools_import_display() {
 						<label for="nml-subscribers-import-file" class="screen-reader-text"><?php _e( 'Upload a CSV file', 'naked-mailing-list' ); ?></label>
 						<input type="file" name="nml-import-file" id="nml-subscribers-import-file">
 					</p>
+					<p>
+						<input type="checkbox" id="nml-subscribers-import-update" name="nml-update-only" value="1">
+						<label for="nml-subscribers-import-update"><?php _e( 'Check to only update existing records and not create new ones.', 'naked-mailing-list' ); ?></label>
+					</p>
 					<span>
 						<input type="submit" value="<?php _e( 'Import CSV', 'naked-mailing-list' ); ?>" class="button-secondary">
 						<span class="spinner"></span>

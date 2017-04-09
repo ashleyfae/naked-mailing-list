@@ -24,6 +24,15 @@ if ( ! defined( 'ABSPATH' ) ) {
 class NML_Batch_Import_Subscribers extends NML_Batch_Import {
 
 	/**
+	 * Whether to only update existing records and skip new ones.
+	 *
+	 * @var bool
+	 * @access public
+	 * @since  1.0
+	 */
+	public $update_only = false;
+
+	/**
 	 * Set up our import config
 	 *
 	 * @access public
@@ -170,8 +179,28 @@ class NML_Batch_Import_Subscribers extends NML_Batch_Import {
 				unset( $args['signup_date'] ); // will default to today
 			}
 		}
+		if ( ! empty( $args['confirm_date'] ) ) {
+			$timestamp = strtotime( $args['confirm_date'] );
 
-		$obj = naked_mailing_list()->subscribers->get_subscriber_by( 'email', $args['email'] );
+			if ( empty( $timestamp ) ) {
+				$timestamp = $this->convert_date( $args['confirm_date'] );
+			}
+
+			if ( ! empty( $timestamp ) ) {
+				$date = gmdate( 'Y-m-d H:i:s', $timestamp );
+			} else {
+				$date = false;
+			}
+
+			if ( ! empty( $date ) ) {
+				$args['confirm_date'] = $date;
+			} else {
+				unset( $args['confirm_date'] ); // will default to today
+			}
+		}
+
+		$obj        = naked_mailing_list()->subscribers->get_subscriber_by( 'email', $args['email'] );
+		$subscriber = false;
 
 		if ( ! empty( $obj ) && is_object( $obj ) ) {
 
@@ -194,7 +223,7 @@ class NML_Batch_Import_Subscribers extends NML_Batch_Import {
 
 			nml_log( sprintf( __( 'Import: Updating subscriber %d (email: %s).', 'naked-mailing-list' ), $subscriber->ID, $subscriber->email ) );
 
-		} else {
+		} elseif ( ! $this->update_only ) {
 
 			// Create a new subscriber.
 
@@ -208,21 +237,25 @@ class NML_Batch_Import_Subscribers extends NML_Batch_Import {
 
 			nml_log( sprintf( __( 'Import: Created new subscriber %d (email: %s).', 'naked-mailing-list' ), $subscriber->ID, $subscriber->email ) );
 
+		} else {
+			nml_log( sprintf( __( 'Import: Skipping new subscriber %s.', 'naked-mailing-list' ), $args['email'] ) );
 		}
 
 		// Back-date the activity log.
-		$logs = naked_mailing_list()->activity->get_activity( array(
-			'number'        => 1,
-			'subscriber_id' => $subscriber->ID,
-			'type'          => 'new_subscriber'
-		) );
-
-		if ( $logs && is_array( $logs ) && array_key_exists( 0, $logs ) ) {
-			$log = $logs[0];
-
-			naked_mailing_list()->activity->update( $log->ID, array(
-				'date' => $subscriber->signup_date
+		if ( is_object( $subscriber ) ) {
+			$logs = naked_mailing_list()->activity->get_activity( array(
+				'number'        => 1,
+				'subscriber_id' => $subscriber->ID,
+				'type'          => 'new_subscriber'
 			) );
+
+			if ( $logs && is_array( $logs ) && array_key_exists( 0, $logs ) ) {
+				$log = $logs[0];
+
+				naked_mailing_list()->activity->update( $log->ID, array(
+					'date' => $subscriber->signup_date
+				) );
+			}
 		}
 
 	}
@@ -268,6 +301,19 @@ class NML_Batch_Import_Subscribers extends NML_Batch_Import {
 	 */
 	public function get_import_type_label() {
 		return __( 'Subscribers', 'naked-mailing-list' );
+	}
+
+	/**
+	 * Set the properties specific to this export
+	 *
+	 * @param array $request Array of properties.
+	 *
+	 * @access public
+	 * @since  1.0
+	 * @return void
+	 */
+	public function set_properties( $request ) {
+		$this->update_only = ( isset( $request['update_only'] ) && ! empty( $request['update_only'] ) && 'false' != $request['update_only'] ) ? true : false;
 	}
 
 }

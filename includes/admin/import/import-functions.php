@@ -95,12 +95,13 @@ function nml_do_ajax_import_file_upload() {
 		}
 
 		wp_send_json_success( array(
-			'form'      => $_POST,
-			'class'     => $_POST['nml-import-class'],
-			'upload'    => $import_file,
-			'first_row' => $import->get_first_row(),
-			'columns'   => $import->get_columns(),
-			'nonce'     => wp_create_nonce( 'nml_ajax_import' )
+			'form'        => $_POST,
+			'class'       => $_POST['nml-import-class'],
+			'upload'      => $import_file,
+			'update_only' => isset( $_POST['nml-update-only'] ),
+			'first_row'   => $import->get_first_row(),
+			'columns'     => $import->get_columns(),
+			'nonce'       => wp_create_nonce( 'nml_ajax_import' )
 		) );
 
 	} else {
@@ -167,9 +168,8 @@ function nml_do_ajax_import() {
 	parse_str( $_REQUEST['mapping'], $map );
 
 	$import->map_fields( $map['nml-import-field'] );
-
-	$ret = $import->process_step();
-
+	$import->set_properties( $_REQUEST );
+	$ret        = $import->process_step();
 	$percentage = $import->get_percentage_complete();
 
 	if ( $ret ) {

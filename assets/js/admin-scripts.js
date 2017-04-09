@@ -293,6 +293,7 @@ jQuery(document).ready(function ($) {
 					nonce: import_data.nonce,
 					class: import_data.class,
 					upload: import_data.upload,
+					update_only: import_data.update_only,
 					mapping: import_data.mapping,
 					action: 'nml_do_ajax_import',
 					step: step
@@ -458,7 +459,7 @@ jQuery(document).ready(function ($) {
 						yAxes: [{
 							ticks: {
 								beginAtZero: true,
-								userCallback: function(label, index, labels) {
+								userCallback: function (label, index, labels) {
 									// when the floored value is the same as the value we have a whole number
 									if (Math.floor(label) === label) {
 										return label;
