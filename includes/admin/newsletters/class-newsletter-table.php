@@ -219,6 +219,8 @@ class NML_Newsletter_Table extends WP_List_Table {
 					</div>
 					<?php
 					$value = ob_get_clean();
+				} elseif ( 'sent' == $item->status ) {
+					$value = sprintf( __( 'sent to %d subscribers', 'naked-mailing-list' ), $newsletter->subscriber_count );
 				}
 				break;
 
