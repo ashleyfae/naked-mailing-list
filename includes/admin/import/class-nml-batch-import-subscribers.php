@@ -199,6 +199,14 @@ class NML_Batch_Import_Subscribers extends NML_Batch_Import {
 			}
 		}
 
+		// Fix tags and lists.
+		$lists         = array_key_exists( 'lists', $args ) ? explode( ',', $args['lists'] ) : array();
+		$lists         = array_map( 'trim', $lists );
+		$args['lists'] = $lists;
+		$tags          = array_key_exists( 'tags', $args ) ? explode( ',', $args['tags'] ) : array();
+		$tags          = array_map( 'trim', $tags );
+		$args['tags']  = $tags;
+
 		$obj        = naked_mailing_list()->subscribers->get_subscriber_by( 'email', $args['email'] );
 		$subscriber = false;
 

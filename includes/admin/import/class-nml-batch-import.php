@@ -206,7 +206,7 @@ class NML_Batch_Import {
 		$percentage = 100;
 
 		if ( $this->total > 0 ) {
-			$percentage = ( $this->step / $this->total ) * 100;
+			$percentage = ( ( $this->step * $this->per_step ) / $this->total ) * 100;
 		}
 
 		if ( $percentage > 100 ) {
