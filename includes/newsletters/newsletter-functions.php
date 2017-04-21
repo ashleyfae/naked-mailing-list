@@ -179,7 +179,7 @@ function nml_send_newsletter( $newsletter_id ) {
 		'date_to_process' => gmdate( 'Y-m-d H:i:s', strtotime( '+5minutes' ) )
 	) );
 
-	nml_log( sprintf( __( 'Created queue entry %d for newsletter %d.', 'naked-mailing-list' ), $queue_id, $newsletter->ID ) );
+	nml_log( sprintf( 'Created queue entry #%d for newsletter #%d.', $queue_id, $newsletter->ID ) );
 
 	return $queue_id;
 

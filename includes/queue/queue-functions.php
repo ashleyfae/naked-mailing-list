@@ -66,7 +66,7 @@ function nml_process_queue_entry( $entry ) {
 		'status' => 'processing'
 	) );
 
-	nml_log( sprintf( __( 'Started processing queue entry %d', 'naked-mailing-list' ), $entry->ID ) );
+	nml_log( sprintf( 'Started processing queue entry %d', $entry->ID ) );
 
 	$newsletter  = new NML_Newsletter( $entry->newsletter_id );
 	$subscribers = $newsletter->get_subscribers( array(
@@ -92,10 +92,10 @@ function nml_process_queue_entry( $entry ) {
 			return false;
 		}
 	} else {
-		nml_log( sprintf( __( 'Newsletter ID %d not sent - no subscribers.', 'naked-mailing-list' ), $newsletter->ID ) );
+		nml_log( sprintf( 'Newsletter ID %d not sent - no subscribers.', $newsletter->ID ) );
 	}
 
-	nml_log( sprintf( __( 'Finished processing queue entry %d. Number: %d; Offset: %d', 'naked-mailing-list' ), $entry->ID, nml_number_subscribers_per_batch(), $entry->offset ) );
+	nml_log( sprintf( 'Finished processing queue entry %d. Number: %d; Offset: %d', $entry->ID, nml_number_subscribers_per_batch(), $entry->offset ) );
 
 	// Delete this queue entry.
 	naked_mailing_list()->queue->delete( $entry->ID );
@@ -113,7 +113,7 @@ function nml_process_queue_entry( $entry ) {
 			'sent_date' => gmdate( 'Y-m-d H:i:s' )
 		) );
 
-		nml_log( sprintf( __( 'Finished sending newsletter %d', 'naked-mailing-list' ), $newsletter->ID ) );
+		nml_log( sprintf( 'Finished sending newsletter %d', $newsletter->ID ) );
 
 		// Increment the email count for all subscribers.
 		$newsletter_lists = $newsletter->get_lists();
@@ -134,7 +134,7 @@ function nml_process_queue_entry( $entry ) {
 			'offset'        => ( $entry->offset ) + nml_number_subscribers_per_batch()
 		) );
 
-		nml_log( sprintf( __( 'Created queue entry ID %d for newsletter %d', 'naked-mailing-list' ), $queue_id, $newsletter->ID ) );
+		nml_log( sprintf( 'Created queue entry ID %d for newsletter %d', $queue_id, $newsletter->ID ) );
 
 	}
 
