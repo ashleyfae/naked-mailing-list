@@ -194,7 +194,7 @@ function nml_do_ajax_import() {
 		wp_send_json_success( array(
 			'step'    => 'done',
 			'message' => sprintf(
-				__( 'Import complete! <a href="%s">View imported %s</a>.', 'easy-digital-downloads' ),
+				__( 'Import complete! <a href="%s">View imported %s</a>.', 'naked-mailing-list' ),
 				$import->get_list_table_url(),
 				$import->get_import_type_label()
 			)

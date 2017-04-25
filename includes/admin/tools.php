@@ -114,7 +114,7 @@ function nml_tools_import_display() {
 				<div class="nml-import-options" id="nml-import-subscribers-options" style="display: none;">
 
 					<p>
-						<?php _e( 'Each column loaded from the CSV needs to be mapped to a payment field. Select the column that should be mapped to each field below. Any columns not needed can be ignored.', 'naked-mailing-list' ); ?>
+						<?php _e( 'Each column loaded from the CSV needs to be mapped to a subscriber field. Select the column that should be mapped to each field below. Any columns not needed can be ignored.', 'naked-mailing-list' ); ?>
 					</p>
 
 					<table class="widefat nml-mapped-import-fields-table">
