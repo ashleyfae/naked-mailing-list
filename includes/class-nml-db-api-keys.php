@@ -38,7 +38,7 @@ class NML_DB_API_Keys extends NML_DB {
 		$this->primary_key = 'ID';
 		$this->version     = '1.0';
 
-		add_action( 'nml_process_api_key', array( $this, 'process_api_key' ) );
+		add_action( 'nml_action_process_api_key', array( $this, 'process_api_key' ) );
 
 	}
 

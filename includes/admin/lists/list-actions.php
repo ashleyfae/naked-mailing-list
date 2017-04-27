@@ -135,7 +135,7 @@ function nml_save_list() {
 
 }
 
-add_action( 'nml_save_list', 'nml_save_list' );
+add_action( 'nml_action_save_list', 'nml_save_list' );
 
 /**
  * Process delete list
@@ -175,7 +175,7 @@ function nml_process_delete_list() {
 
 }
 
-add_action( 'nml_delete_list', 'nml_process_delete_list' );
+add_action( 'nml_action_delete_list', 'nml_process_delete_list' );
 
 /**
  * Suggest tags for autocomplete

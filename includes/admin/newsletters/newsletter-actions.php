@@ -349,7 +349,7 @@ function nml_save_newsletter() {
 
 }
 
-add_action( 'nml_save_newsletter', 'nml_save_newsletter' );
+add_action( 'nml_action_save_newsletter', 'nml_save_newsletter' );
 
 /**
  * Process delete newsletter
@@ -389,4 +389,4 @@ function nml_process_delete_newsletter() {
 
 }
 
-add_action( 'nml_delete_newsletter', 'nml_process_delete_newsletter' );
+add_action( 'nml_action_delete_newsletter', 'nml_process_delete_newsletter' );

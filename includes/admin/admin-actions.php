@@ -22,11 +22,11 @@ if ( ! defined( 'ABSPATH' ) ) {
  */
 function nml_process_actions() {
 	if ( isset( $_POST['nml_action'] ) ) {
-		do_action( 'nml_' . $_POST['nml_action'], $_POST );
+		do_action( 'nml_action_' . $_POST['nml_action'], $_POST );
 	}
 
 	if ( isset( $_GET['nml_action'] ) ) {
-		do_action( 'nml_' . $_GET['nml_action'], $_GET );
+		do_action( 'nml_action_' . $_GET['nml_action'], $_GET );
 	}
 }
 

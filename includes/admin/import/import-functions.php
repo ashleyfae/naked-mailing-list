@@ -119,7 +119,7 @@ function nml_do_ajax_import_file_upload() {
 
 }
 
-add_action( 'nml_upload_import_file', 'nml_do_ajax_import_file_upload' );
+add_action( 'nml_action_upload_import_file', 'nml_do_ajax_import_file_upload' );
 
 /**
  * Process batch imports via ajax

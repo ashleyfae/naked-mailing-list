@@ -119,4 +119,4 @@ function nml_download_batch_export() {
 
 }
 
-add_action( 'nml_download_batch_export', 'nml_download_batch_export' );
+add_action( 'nml_action_download_batch_export', 'nml_download_batch_export' );

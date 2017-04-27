@@ -401,7 +401,7 @@ function nml_save_subscriber() {
 
 }
 
-add_action( 'nml_save_subscriber', 'nml_save_subscriber' );
+add_action( 'nml_action_save_subscriber', 'nml_save_subscriber' );
 
 /**
  * Process delete a subscriber
@@ -441,7 +441,7 @@ function nml_process_delete_subscriber() {
 
 }
 
-add_action( 'nml_delete_subscriber', 'nml_process_delete_subscriber' );
+add_action( 'nml_action_delete_subscriber', 'nml_process_delete_subscriber' );
 
 /**
  * Resend subscriber confirmation email
@@ -472,4 +472,4 @@ function nml_resend_confirmation_email() {
 
 }
 
-add_action( 'nml_resend_confirmation', 'nml_resend_confirmation_email' );
+add_action( 'nml_action_resend_confirmation', 'nml_resend_confirmation_email' );

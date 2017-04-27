@@ -288,7 +288,7 @@ function nml_process_settings_export() {
 
 }
 
-add_action( 'nml_export_settings', 'nml_process_settings_export' );
+add_action( 'nml_action_export_settings', 'nml_process_settings_export' );
 
 /**
  * Process settings import from a .json file
@@ -325,7 +325,7 @@ function nml_process_settings_import() {
 
 }
 
-add_action( 'nml_import_settings', 'nml_process_settings_import' );
+add_action( 'nml_action_import_settings', 'nml_process_settings_import' );
 
 /**
  * Display the API keys tab
@@ -397,4 +397,4 @@ function nml_clear_debug_log() {
 	exit;
 }
 
-add_action( 'nml_clear_debug_log', 'nml_clear_debug_log' );
+add_action( 'nml_action_clear_debug_log', 'nml_clear_debug_log' );
