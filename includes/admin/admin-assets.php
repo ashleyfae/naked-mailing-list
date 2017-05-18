@@ -45,13 +45,13 @@ function nml_load_admin_assets( $hook ) {
 		$deps[] = 'chart-js';
 	}
 
-	wp_enqueue_script( 'naked-mailing-list', $js_dir . 'admin-scripts' . $suffix . '.js', $deps, NML_VERSION, true );
+	wp_enqueue_script( 'naked-mailing-list', $js_dir . 'admin-scripts' . $suffix . '.js', $deps, time(), true ); // @todo replace with version
 	wp_localize_script( 'naked-mailing-list', 'nml_vars', array(
 		'unsupported_browser' => __( 'Sorry but your browser is not compatible with this kind of file upload. Please upgrade your browser.', 'naked-mailing-list' )
 	) );
 
 	// CSS
-	wp_enqueue_style( 'naked-mailing-list', $css_dir . 'admin' . $suffix . '.css', array(), NML_VERSION );
+	wp_enqueue_style( 'naked-mailing-list', $css_dir . 'admin' . $suffix . '.css', array(), time() ); // @todo replace with version
 
 }
 
