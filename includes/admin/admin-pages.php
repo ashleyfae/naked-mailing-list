@@ -47,6 +47,7 @@ function nml_is_admin_page() {
 		'toplevel_page_nml-newsletters',
 		'newsletter_page_nml-subscribers',
 		'newsletter_page_nml-lists',
+		'newsletter_page_nml-settings',
 		'newsletter_page_nml-tools',
 		'newsletter_page_nml-reports'
 	);

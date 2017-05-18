@@ -15,9 +15,9 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
-$header_img  = nml_get_option( 'email_header_img' );
-$footer_text = nml_get_option( 'email_footer' );
-$footer_text = str_replace( '{year}', date( 'Y' ), $footer_text );
+$header_img_id = nml_get_option( 'email_header_img' );
+$footer_text   = nml_get_option( 'email_footer' );
+$footer_text   = str_replace( '{year}', date( 'Y' ), $footer_text );
 ?>
 <!DOCTYPE html>
 <html>
@@ -30,9 +30,9 @@ $footer_text = str_replace( '{year}', date( 'Y' ), $footer_text );
 	<table border="0" cellpadding="0" cellspacing="0" height="100%" width="100%">
 		<tr>
 			<td align="center" valign="top">
-				<?php if ( ! empty( $header_img ) ) : ?>
+				<?php if ( ! empty( $header_img_id ) ) : ?>
 					<div id="template_header_image">
-						<?php echo '<p style="margin-top:0;"><img src="' . esc_url( $header_img ) . '" alt="' . esc_attr( get_bloginfo( 'name' ) ) . '" /></p>'; ?>
+						<?php echo '<p style="margin-top:0;"><img src="' . esc_url( wp_get_attachment_url( $header_img_id ) ) . '" alt="' . esc_attr( get_bloginfo( 'name' ) ) . '" /></p>'; ?>
 					</div>
 				<?php endif; ?>
 				<table border="0" cellpadding="0" cellspacing="0" id="template-container">

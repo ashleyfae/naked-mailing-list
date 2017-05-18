@@ -37,6 +37,7 @@ function nml_load_admin_assets( $hook ) {
 	$suffix = ( defined( 'SCRIPT_DEBUG' ) && SCRIPT_DEBUG ) ? '' : '.min';
 
 	// JS
+	wp_enqueue_media();
 	wp_register_script( 'chart-js', $js_dir . 'chart' . $suffix . '.js', array( 'jquery' ), '2.5.0', true );
 	$deps = array( 'jquery', 'jquery-form', 'suggest' );
 

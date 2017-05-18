@@ -246,14 +246,20 @@ function nml_get_registered_settings() {
 		/* Emails */
 		'emails'  => apply_filters( 'nml_settings_emails', array(
 			'main' => array(
-				'email_template' => array(
+				'email_template'   => array(
 					'id'      => 'email_template',
 					'name'    => esc_html__( 'Template', 'naked-mailing-list' ),
 					'type'    => 'select',
 					'std'     => 'default',
 					'options' => nml_get_email_templates()
 				),
-				'email_footer'   => array(
+				'email_header_img' => array(
+					'id'   => 'email_header_img',
+					'name' => esc_html__( 'Header Image', 'naked-mailing-list' ),
+					'type' => 'image',
+					'std'  => ''
+				),
+				'email_footer'     => array(
 					'id'   => 'email_footer',
 					'name' => esc_html__( 'Footer Text', 'naked-mailing-list' ),
 					'type' => 'textarea',
@@ -668,6 +674,39 @@ function nml_select_callback( $args ) {
 	<?php if ( $args['desc'] ) : ?>
 		<label for="nml_settings_<?php echo nml_sanitize_key( $args['id'] ); ?>" class="nml-description"><?php echo wp_kses_post( $args['desc'] ); ?></label>
 	<?php endif;
+}
+
+/**
+ * Callback: Image
+ *
+ * @param array $args Arguments passed by the setting.
+ */
+function nml_image_callback( $args ) {
+
+	$value = nml_get_option( $args['id'], $args['std'] );
+
+	// Display the image if it exists.
+	if ( ! empty( $value ) ) {
+		$attr = array(
+			'id'    => 'nml_settings_' . nml_sanitize_key( $args['id'] ) . '_image',
+			'class' => 'nml-image-upload-image'
+		);
+		echo wp_get_attachment_image( absint( $value ), 'medium', false, $attr );
+	} else {
+		// Empty image.
+		echo '<img src="" id="' . 'nml_settings_' . nml_sanitize_key( $args['id'] ) . '_image' . '" style="display:none;">';
+	}
+
+	// Display the buttons.
+	?>
+	<div class="nml-image-upload-fields" data-image="#nml_settings_<?php echo nml_sanitize_key( $args['id'] ); ?>_image" data-image-id="#nml_settings_<?php echo nml_sanitize_key( $args['id'] ); ?>" data-image-url="">
+		<button class="button nml-upload-image" id="nml_settings_<?php echo nml_sanitize_key( $args['id'] ); ?>_upload"><?php _e( 'Upload Image', 'naked-mailing-list' ); ?></button>
+		<button class="button nml-remove-image" id="nml_settings_<?php echo nml_sanitize_key( $args['id'] ); ?>_remove" style="<?php echo empty( $value ) ? 'display:none;' : ''; ?>"><?php _e( 'Remove Image', 'naked-mailing-list' ); ?></button>
+	</div>
+
+	<input type="hidden" name="nml_settings[<?php echo nml_sanitize_key( $args['id'] ); ?>]" id="nml_settings_<?php echo nml_sanitize_key( $args['id'] ); ?>" value="<?php echo esc_attr( $value ) ? esc_attr( $value ) : ''; ?>">
+	<?php
+
 }
 
 /**

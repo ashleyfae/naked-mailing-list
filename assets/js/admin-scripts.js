@@ -1,6 +1,11 @@
 jQuery(document).ready(function ($) {
 
 	/**
+	 * Media Frame
+	 */
+	var NML_Media_Frame;
+
+	/**
 	 * General NML
 	 */
 	var Naked_Mailing_List = {
@@ -8,6 +13,8 @@ jQuery(document).ready(function ($) {
 		init: function () {
 			$('.nml-add-new-list').on('click', '.button', this.addListCheckbox);
 			$('#nml-add-new-list').keypress(this.addListCheckbox);
+			$('.nml-upload-image').on('click', this.setMediaImage);
+			$('.nml-remove-image').on('click', this.removeMediaImage);
 		},
 
 		/**
@@ -16,6 +23,7 @@ jQuery(document).ready(function ($) {
 		 * @returns {boolean}
 		 */
 		addListCheckbox: function (e) {
+
 			if ('click' == e.type) {
 				e.preventDefault();
 			}
@@ -33,6 +41,103 @@ jQuery(document).ready(function ($) {
 
 			checkboxWrap.append('<label><input type="checkbox" name="' + checkboxName + '" value="' + newTerm.val() + '" checked="checked"> ' + newTerm.val() + '</label>');
 			newTerm.val('');
+
+		},
+
+		setMediaImage: function (e) {
+
+			var self = $(this),
+				imageField = $(this).parent().data('image'),
+				imageIDField = $(this).parent().data('image-id'),
+				imageURLField = $(this).parent().data('image-url'),
+				imageSize = $(this).parent().data('image-size');
+
+			if (!imageSize || 'undefined' === typeof imageSize) {
+				imageSize = 'full';
+			}
+
+			e.preventDefault();
+
+			// Create the media frame.
+			NML_Media_Frame = wp.media.frames.ubb = wp.media({
+				// Set the title of the modal.
+				title: self.data('choose'),
+				button: {
+					text: self.data('update')
+				},
+				states: [
+					new wp.media.controller.Library({
+						title: self.data('choose'),
+						filterable: 'all',
+						multiple: false
+					})
+				]
+			});
+
+			// When an image is selected, run a callback.
+			NML_Media_Frame.on('select', function () {
+				var selection = NML_Media_Frame.state().get('selection');
+
+				selection.map(function (attachment) {
+					attachment = attachment.toJSON();
+
+					if (attachment.id) {
+						$(imageIDField).val(attachment.id);
+						var attachmentImage = attachment.sizes && attachment.sizes[imageSize] ? attachment.sizes[imageSize].url : attachment.url;
+
+						// Remove all image attributes.
+						if (typeof $(imageIDField).attributes != 'undefined') {
+							while ($(imageIDField).attributes.length > 0) {
+								elem.removeAttribute(elem.attributes[0].name);
+							}
+						}
+
+						// Update image src and alt text, then show image.
+						$(imageField).attr('src', attachmentImage).attr('alt', attachment.alt).show();
+
+						if ('' !== imageURLField) {
+							$(imageURLField).val(attachmentImage);
+						}
+
+						// Show remove button.
+						self.parent().find('.nml-remove-image').show();
+					}
+				});
+			});
+
+			// Finally, open the modal.
+			NML_Media_Frame.open();
+
+		},
+
+		removeMediaImage: function (e) {
+
+			var self = $(this),
+				imageField = $(this).parent().data('image'),
+				imageIDField = $(this).parent().data('image-id'),
+				imageURLField = $(this).parent().data('image-url');
+
+			// Remove image attributes and hide.
+			if (typeof $(imageField).attributes != 'undefined') {
+				while ($(imageField).attributes.length > 0) {
+					elem.removeAttribute(elem.attributes[0].name);
+				}
+			}
+
+			$(imageField).hide();
+
+			// Delete image ID value.
+			$(imageIDField).val('');
+
+			if ('' !== imageURLField) {
+				$(imageURLField).val('');
+			}
+
+			// Now hide the remove button.
+			self.hide();
+
+			return false;
+
 		}
 
 	};
