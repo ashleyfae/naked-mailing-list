@@ -31,7 +31,7 @@ $footer_text   = str_replace( '{year}', date( 'Y' ), $footer_text );
 		<tr>
 			<td align="center" valign="top">
 				<?php if ( ! empty( $header_img_id ) ) : ?>
-					<div id="template_header_image">
+					<div id="template-header-image">
 						<?php echo '<p style="margin-top:0;"><img src="' . esc_url( wp_get_attachment_url( $header_img_id ) ) . '" alt="' . esc_attr( get_bloginfo( 'name' ) ) . '" /></p>'; ?>
 					</div>
 				<?php endif; ?>
