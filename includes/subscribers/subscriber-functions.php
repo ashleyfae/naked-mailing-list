@@ -228,6 +228,29 @@ function nml_get_subscribers( $args = array() ) {
 }
 
 /**
+ * Get subscriber by email address
+ *
+ * @param string $email
+ *
+ * @since 1.0
+ * @return NML_Subscriber|false
+ */
+function nml_get_subscriber_by_email( $email ) {
+
+	$subscribers = nml_get_subscribers( array(
+		'number' => 1,
+		'email'  => $email
+	) );
+
+	if ( empty( $subscribers ) || ! is_array( $subscribers ) || ! array_key_exists( 0, $subscribers ) ) {
+		return false;
+	}
+
+	return new NML_Subscriber( $subscribers[0] );
+
+}
+
+/**
  * Get admin page: subscribers list
  *
  * @since 1.0

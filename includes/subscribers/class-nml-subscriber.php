@@ -168,27 +168,35 @@ class NML_Subscriber {
 	/**
 	 * NML_Subscriber constructor.
 	 *
-	 * @param string|int $id_or_email Subscriber ID or email address.
+	 * @param int|string|object $_id_email_or_object Subscriber ID or email address.
 	 *
 	 * @access public
 	 * @since  1.0
 	 * @return void
 	 */
-	public function __construct( $id_or_email = 0 ) {
+	public function __construct( $_id_email_or_object = 0 ) {
 
 		$this->db = new NML_DB_Subscribers();
 
-		if ( empty( $id_or_email ) ) {
+		if ( empty( $_id_email_or_object ) ) {
 			return;
 		}
 
-		if ( is_numeric( $id_or_email ) ) {
-			$field = 'ID';
-		} else {
-			$field = 'email';
-		}
+		if ( is_object( $_id_email_or_object ) ) {
 
-		$subscriber = $this->db->get_subscriber_by( $field, $id_or_email );
+			$subscriber = $_id_email_or_object;
+
+		} else {
+
+			if ( is_numeric( $_id_email_or_object ) ) {
+				$field = 'ID';
+			} else {
+				$field = 'email';
+			}
+
+			$subscriber = $this->db->get_subscriber_by( $field, $_id_email_or_object );
+
+		}
 
 		if ( empty( $subscriber ) || ! is_object( $subscriber ) ) {
 			return;
