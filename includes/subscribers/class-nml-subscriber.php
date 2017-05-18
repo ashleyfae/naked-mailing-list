@@ -782,6 +782,17 @@ class NML_Subscriber {
 	}
 
 	/**
+	 * Checks if the subscriber is active ("subscribed" status)
+	 *
+	 * @access public
+	 * @since  1.0
+	 * @return bool
+	 */
+	public function is_subscribed() {
+		return 'subscribed' == $this->status;
+	}
+
+	/**
 	 * Retrieve meta field for a subscriber.
 	 *
 	 * @param string $meta_key The meta key to retrieve.
