@@ -501,7 +501,8 @@ function nml_recount_subscriber_lists() {
 
 		// Get number of subscribers on this list.
 		$count = naked_mailing_list()->subscribers->count( array(
-			'list' => absint( $list_id )
+			'list'   => absint( $list_id ),
+			'status' => 'subscribed'
 		) );
 
 		// Update the list count.
