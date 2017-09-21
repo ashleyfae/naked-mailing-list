@@ -330,15 +330,16 @@ class NML_DB_Subscribers extends NML_DB {
 
 			if ( is_array( $args['email'] ) ) {
 
-				$emails_count       = count( $args['email'] );
-				$emails_placeholder = array_fill( 0, $emails_count, '%s' );
-				$emails             = implode( ', ', $emails_placeholder );
+				$emails_count             = count( $args['email'] );
+				$emails_placeholder       = array_fill( 0, $emails_count, '%s' );
+				$email_placeholder_string = implode( ', ', $emails_placeholder );
+				$emails                   = array_map( 'sanitize_text_field', $args['email'] );
 
-				$where .= $wpdb->prepare( " AND `email` IN( $emails ) ", $args['email'] );
+				$where .= $wpdb->prepare( " AND `email` IN( $email_placeholder_string ) ", $emails );
 
 			} else {
 
-				$where .= $wpdb->prepare( " AND `email` = %s ", $args['email'] );
+				$where .= $wpdb->prepare( " AND `email` = %s ", sanitize_text_field( $args['email'] ) );
 
 			}
 
@@ -346,12 +347,12 @@ class NML_DB_Subscribers extends NML_DB {
 
 		// Specific subscriber by first name.
 		if ( ! empty( $args['first_name'] ) ) {
-			$where .= $wpdb->prepare( " AND `first_name` LIKE '%%%%" . '%s' . "%%%%' ", $args['first_name'] );
+			$where .= $wpdb->prepare( " AND `first_name` LIKE '%%%%" . '%s' . "%%%%' ", sanitize_text_field( $args['first_name'] ) );
 		}
 
 		// Specific subscriber by last name.
 		if ( ! empty( $args['last_name'] ) ) {
-			$where .= $wpdb->prepare( " AND `last_name` LIKE '%%%%" . '%s' . "%%%%' ", $args['last_name'] );
+			$where .= $wpdb->prepare( " AND `last_name` LIKE '%%%%" . '%s' . "%%%%' ", sanitize_text_field( $args['last_name'] ) );
 		}
 
 		// By status
@@ -362,12 +363,13 @@ class NML_DB_Subscribers extends NML_DB {
 				$status_count       = count( $args['status'] );
 				$status_placeholder = array_fill( 0, $status_count, '%s' );
 				$statuses           = implode( ', ', $status_placeholder );
+				$status_values      = array_map( 'sanitize_text_field', $args['status'] );
 
-				$where .= $wpdb->prepare( " AND `status` IN( $statuses ) ", $args['status'] );
+				$where .= $wpdb->prepare( " AND `status` IN( $statuses ) ", $status_values );
 
 			} else {
 
-				$where .= $wpdb->prepare( " AND `status` = %s ", $args['status'] );
+				$where .= $wpdb->prepare( " AND `status` = %s ", sanitize_text_field( $args['status'] ) );
 
 			}
 
@@ -375,12 +377,12 @@ class NML_DB_Subscribers extends NML_DB {
 
 		// By referer
 		if ( ! empty( $args['referer'] ) ) {
-			$where .= $wpdb->prepare( " AND `referer` = %s ", $args['referer'] );
+			$where .= $wpdb->prepare( " AND `referer` = %s ", sanitize_text_field( $args['referer'] ) );
 		}
 
 		// By form name
 		if ( ! empty( $args['form_name'] ) ) {
-			$where .= $wpdb->prepare( " AND `form_name` = %s ", $args['form_name'] );
+			$where .= $wpdb->prepare( " AND `form_name` = %s ", sanitize_text_field( $args['form_name'] ) );
 		}
 
 		// By signup date
@@ -390,19 +392,19 @@ class NML_DB_Subscribers extends NML_DB {
 
 				if ( ! empty( $args['signup_date']['start'] ) ) {
 					$start = date( 'Y-m-d H:i:s', strtotime( $args['signup_date']['start'] ) );
-					$where .= $wpdb->prepare( " AND `signup_date` >= %s", $start );
+					$where .= $wpdb->prepare( " AND `signup_date` >= %s", sanitize_text_field( $start ) );
 				}
 
 				if ( ! empty( $args['signup_date']['end'] ) ) {
-					$end = date( 'Y-m-d H:i:s', strtotime( $args['signup_date']['end'] ) );
-					$where .= $wpdb->prepare( " AND `signup_date` <= %s", $end );
+					$end   = date( 'Y-m-d H:i:s', strtotime( $args['signup_date']['end'] ) );
+					$where .= $wpdb->prepare( " AND `signup_date` <= %s", sanitize_text_field( $end ) );
 				}
 
 			} else {
 
-				$year  = get_gmt_from_date( wp_strip_all_tags( $args['signup_date'] ), 'Y' );
-				$month = get_gmt_from_date( wp_strip_all_tags( $args['signup_date'] ), 'm' );
-				$day   = get_gmt_from_date( wp_strip_all_tags( $args['signup_date'] ), 'd' );
+				$year  = get_gmt_from_date( sanitize_text_field( $args['signup_date'] ), 'Y' );
+				$month = get_gmt_from_date( sanitize_text_field( $args['signup_date'] ), 'm' );
+				$day   = get_gmt_from_date( sanitize_text_field( $args['signup_date'] ), 'd' );
 				$where .= $wpdb->prepare( " AND %d = YEAR ( signup_date ) AND %d = MONTH ( signup_date ) AND %d = DAY ( signup_date )", $year, $month, $day );
 
 			}
@@ -411,7 +413,7 @@ class NML_DB_Subscribers extends NML_DB {
 
 		// By IP
 		if ( ! empty( $args['ip'] ) ) {
-			$where .= $wpdb->prepare( " AND `ip` = %s ", $args['ip'] );
+			$where .= $wpdb->prepare( " AND `ip` = %s ", sanitize_text_field($args['ip'] ));
 		}
 
 		// By list(s)
@@ -510,15 +512,16 @@ class NML_DB_Subscribers extends NML_DB {
 
 			if ( is_array( $args['email'] ) ) {
 
-				$emails_count       = count( $args['email'] );
-				$emails_placeholder = array_fill( 0, $emails_count, '%s' );
-				$emails             = implode( ', ', $emails_placeholder );
+				$emails_count             = count( $args['email'] );
+				$emails_placeholder       = array_fill( 0, $emails_count, '%s' );
+				$email_placeholder_string = implode( ', ', $emails_placeholder );
+				$emails                   = array_map( 'sanitize_text_field', $args['email'] );
 
-				$where .= $wpdb->prepare( " AND `email` IN( $emails ) ", $args['email'] );
+				$where .= $wpdb->prepare( " AND `email` IN( $email_placeholder_string ) ", $emails );
 
 			} else {
 
-				$where .= $wpdb->prepare( " AND `email` = %s ", $args['email'] );
+				$where .= $wpdb->prepare( " AND `email` = %s ", sanitize_text_field( $args['email'] ) );
 
 			}
 
@@ -526,12 +529,12 @@ class NML_DB_Subscribers extends NML_DB {
 
 		// Specific subscriber by first name.
 		if ( ! empty( $args['first_name'] ) ) {
-			$where .= $wpdb->prepare( " AND `first_name` LIKE '%%%%" . '%s' . "%%%%' ", $args['first_name'] );
+			$where .= $wpdb->prepare( " AND `first_name` LIKE '%%%%" . '%s' . "%%%%' ", sanitize_text_field( $args['first_name'] ) );
 		}
 
 		// Specific subscriber by last name.
 		if ( ! empty( $args['last_name'] ) ) {
-			$where .= $wpdb->prepare( " AND `last_name` LIKE '%%%%" . '%s' . "%%%%' ", $args['last_name'] );
+			$where .= $wpdb->prepare( " AND `last_name` LIKE '%%%%" . '%s' . "%%%%' ", sanitize_text_field( $args['last_name'] ) );
 		}
 
 		// By status
@@ -542,12 +545,13 @@ class NML_DB_Subscribers extends NML_DB {
 				$status_count       = count( $args['status'] );
 				$status_placeholder = array_fill( 0, $status_count, '%s' );
 				$statuses           = implode( ', ', $status_placeholder );
+				$status_values      = array_map( 'sanitize_text_field', $args['status'] );
 
-				$where .= $wpdb->prepare( " AND `status` IN( $statuses ) ", $args['status'] );
+				$where .= $wpdb->prepare( " AND `status` IN( $statuses ) ", $status_values );
 
 			} else {
 
-				$where .= $wpdb->prepare( " AND `status` = %s ", $args['status'] );
+				$where .= $wpdb->prepare( " AND `status` = %s ", sanitize_text_field( $args['status'] ) );
 
 			}
 
@@ -555,19 +559,43 @@ class NML_DB_Subscribers extends NML_DB {
 
 		// By referer
 		if ( ! empty( $args['referer'] ) ) {
-			$where .= $wpdb->prepare( " AND `referer` = %s ", $args['referer'] );
+			$where .= $wpdb->prepare( " AND `referer` = %s ", sanitize_text_field( $args['referer'] ) );
 		}
 
 		// By form name
 		if ( ! empty( $args['form_name'] ) ) {
-			$where .= $wpdb->prepare( " AND `form_name` = %s ", $args['form_name'] );
+			$where .= $wpdb->prepare( " AND `form_name` = %s ", sanitize_text_field( $args['form_name'] ) );
 		}
 
-		// @todo by date
+		// By signup date
+		if ( ! empty( $args['signup_date'] ) ) {
+
+			if ( is_array( $args['signup_date'] ) ) {
+
+				if ( ! empty( $args['signup_date']['start'] ) ) {
+					$start = date( 'Y-m-d H:i:s', strtotime( $args['signup_date']['start'] ) );
+					$where .= $wpdb->prepare( " AND `signup_date` >= %s", sanitize_text_field( $start ) );
+				}
+
+				if ( ! empty( $args['signup_date']['end'] ) ) {
+					$end   = date( 'Y-m-d H:i:s', strtotime( $args['signup_date']['end'] ) );
+					$where .= $wpdb->prepare( " AND `signup_date` <= %s", sanitize_text_field( $end ) );
+				}
+
+			} else {
+
+				$year  = get_gmt_from_date( sanitize_text_field( $args['signup_date'] ), 'Y' );
+				$month = get_gmt_from_date( sanitize_text_field( $args['signup_date'] ), 'm' );
+				$day   = get_gmt_from_date( sanitize_text_field( $args['signup_date'] ), 'd' );
+				$where .= $wpdb->prepare( " AND %d = YEAR ( signup_date ) AND %d = MONTH ( signup_date ) AND %d = DAY ( signup_date )", $year, $month, $day );
+
+			}
+
+		}
 
 		// By IP
 		if ( ! empty( $args['ip'] ) ) {
-			$where .= $wpdb->prepare( " AND `ip` = %s ", $args['ip'] );
+			$where .= $wpdb->prepare( " AND `ip` = %s ", sanitize_text_field($args['ip'] ));
 		}
 
 		// By list(s)
@@ -739,18 +767,18 @@ class NML_DB_Subscribers extends NML_DB {
 		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 
 		$sql = "CREATE TABLE " . $this->table_name . " (
-		ID bigint(20) NOT NULL AUTO_INCREMENT,
-		email varchar(50) NOT NULL,
-		first_name mediumtext NOT NULL,
-		last_name mediumtext NOT NULL,
-		status varchar(50) NOT NULL,
-		signup_date datetime NOT NULL,
-		confirm_date datetime,
-		ip mediumtext NOT NULL,
-		referer varchar(255),
-		form_name varchar(255),
-		email_count bigint(20) NOT NULL,
-		notes longtext NOT NULL,
+		ID BIGINT(20) NOT NULL AUTO_INCREMENT,
+		email VARCHAR(50) NOT NULL,
+		first_name MEDIUMTEXT NOT NULL,
+		last_name MEDIUMTEXT NOT NULL,
+		status VARCHAR(50) NOT NULL,
+		signup_date DATETIME NOT NULL,
+		confirm_date DATETIME,
+		ip MEDIUMTEXT NOT NULL,
+		referer VARCHAR(255),
+		form_name VARCHAR(255),
+		email_count BIGINT(20) NOT NULL,
+		notes LONGTEXT NOT NULL,
 		PRIMARY KEY (ID),
 		UNIQUE KEY email (email),
 		KEY status (status),

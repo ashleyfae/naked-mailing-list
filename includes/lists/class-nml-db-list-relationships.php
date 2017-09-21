@@ -288,7 +288,7 @@ class NML_DB_List_Relationships extends NML_DB {
 			$where .= " AND `subscriber_id` IN( {$ids} ) ";
 		}
 
-		$orderby = ! array_key_exists( $args['orderby'], $this->get_columns() ) ? 'list_id' : wp_strip_all_tags( $args['orderby'] );
+		$orderby = ! array_key_exists( $args['orderby'], $this->get_columns() ) ? 'list_id' : sanitize_text_field( $args['orderby'] );
 		$order   = ( 'ASC' == strtoupper( $args['order'] ) ) ? 'ASC' : 'DESC';
 		$orderby = esc_sql( $orderby );
 		$order   = esc_sql( $order );

@@ -262,12 +262,12 @@ class NML_DB_Lists extends NML_DB {
 
 		// Lists with a specific name.
 		if ( ! empty( $args['name'] ) ) {
-			$where .= $wpdb->prepare( " AND `name` LIKE '%%%%" . '%s' . "%%%%' ", wp_strip_all_tags( $args['name'] ) );
+			$where .= $wpdb->prepare( " AND `name` LIKE '%%%%" . '%s' . "%%%%' ", sanitize_text_field( $args['name'] ) );
 		}
 
 		// Lists with a specific type.
 		if ( ! empty( $args['type'] ) ) {
-			$where .= $wpdb->prepare( " AND `type` LIKE '%s' ", wp_strip_all_tags( $args['type'] ) );
+			$where .= $wpdb->prepare( " AND `type` LIKE '%s' ", sanitize_text_field( $args['type'] ) );
 		}
 
 		// Lists with a specific count.
@@ -285,7 +285,7 @@ class NML_DB_Lists extends NML_DB {
 			}
 		}
 
-		$orderby = ! array_key_exists( $args['orderby'], $this->get_columns() ) ? 'ID' : wp_strip_all_tags( $args['orderby'] );
+		$orderby = ! array_key_exists( $args['orderby'], $this->get_columns() ) ? 'ID' : sanitize_text_field( $args['orderby'] );
 		$order   = ( 'ASC' == strtoupper( $args['order'] ) ) ? 'ASC' : 'DESC';
 		$orderby = esc_sql( $orderby );
 		$order   = esc_sql( $order );
@@ -352,12 +352,12 @@ class NML_DB_Lists extends NML_DB {
 
 		// Lists with a specific name.
 		if ( ! empty( $args['name'] ) ) {
-			$where .= $wpdb->prepare( " AND `name` LIKE '%%%%" . '%s' . "%%%%' ", wp_strip_all_tags( $args['name'] ) );
+			$where .= $wpdb->prepare( " AND `name` LIKE '%%%%" . '%s' . "%%%%' ", sanitize_text_field( $args['name'] ) );
 		}
 
 		// Lists with a specific type.
 		if ( ! empty( $args['type'] ) ) {
-			$where .= $wpdb->prepare( " AND `type` = '%s' ", wp_strip_all_tags( $args['type'] ) );
+			$where .= $wpdb->prepare( " AND `type` = '%s' ", sanitize_text_field( $args['type'] ) );
 		}
 
 		// Lists with a specific count.

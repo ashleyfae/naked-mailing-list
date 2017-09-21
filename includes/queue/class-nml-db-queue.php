@@ -286,12 +286,13 @@ class NML_DB_Queue extends NML_DB {
 				$status_count       = count( $args['status'] );
 				$status_placeholder = array_fill( 0, $status_count, '%s' );
 				$statuses           = implode( ', ', $status_placeholder );
+				$status_values      = array_map( 'sanitize_text_field', $args['status'] );
 
-				$where .= $wpdb->prepare( " AND `status` IN( $statuses ) ", $args['status'] );
+				$where .= $wpdb->prepare( " AND `status` IN( $statuses ) ", $status_values );
 
 			} else {
 
-				$where .= $wpdb->prepare( " AND `status` = %s ", $args['status'] );
+				$where .= $wpdb->prepare( " AND `status` = %s ", sanitize_text_field( $args['status'] ) );
 
 			}
 
@@ -304,12 +305,12 @@ class NML_DB_Queue extends NML_DB {
 
 				if ( ! empty( $args['date_created']['start'] ) ) {
 					$start = date( 'Y-m-d H:i:s', strtotime( $args['date_created']['start'] ) );
-					$where .= $wpdb->prepare( " AND `date_created` >= %s", $start );
+					$where .= $wpdb->prepare( " AND `date_created` >= %s", sanitize_text_field( $start ) );
 				}
 
 				if ( ! empty( $args['date_created']['end'] ) ) {
 					$end   = date( 'Y-m-d H:i:s', strtotime( $args['date_created']['end'] ) );
-					$where .= $wpdb->prepare( " AND `date_created` <= %s", $end );
+					$where .= $wpdb->prepare( " AND `date_created` <= %s", sanitize_text_field( $end ) );
 				}
 
 			} else {
@@ -330,12 +331,12 @@ class NML_DB_Queue extends NML_DB {
 
 				if ( ! empty( $args['date_to_process']['start'] ) ) {
 					$start = date( 'Y-m-d H:i:s', strtotime( $args['date_to_process']['start'] ) );
-					$where .= $wpdb->prepare( " AND `date_to_process` >= %s", $start );
+					$where .= $wpdb->prepare( " AND `date_to_process` >= %s", sanitize_text_field( $start ) );
 				}
 
 				if ( ! empty( $args['date_to_process']['end'] ) ) {
 					$end   = date( 'Y-m-d H:i:s', strtotime( $args['date_to_process']['end'] ) );
-					$where .= $wpdb->prepare( " AND `date_to_process` <= %s", $end );
+					$where .= $wpdb->prepare( " AND `date_to_process` <= %s", sanitize_text_field( $end ) );
 				}
 
 			} else {
@@ -518,12 +519,12 @@ class NML_DB_Queue extends NML_DB {
 		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 
 		$sql = "CREATE TABLE " . $this->table_name . " (
-		ID bigint(20) NOT NULL AUTO_INCREMENT,
-		newsletter_id bigint(20) NOT NULL,
-		status varchar(50) NOT NULL,
-		offset bigint(20) NOT NULL,
-		date_created datetime NOT NULL,
-		date_to_process datetime NOT NULL,
+		ID BIGINT(20) NOT NULL AUTO_INCREMENT,
+		newsletter_id BIGINT(20) NOT NULL,
+		status VARCHAR(50) NOT NULL,
+		offset BIGINT(20) NOT NULL,
+		date_created DATETIME NOT NULL,
+		date_to_process DATETIME NOT NULL,
 		PRIMARY KEY (ID),
 		KEY status (status),
 		KEY date_to_process_status (date_to_process, status)

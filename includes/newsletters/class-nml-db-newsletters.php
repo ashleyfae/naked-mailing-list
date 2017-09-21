@@ -287,12 +287,13 @@ class NML_DB_Newsletters extends NML_DB {
 				$status_count       = count( $args['status'] );
 				$status_placeholder = array_fill( 0, $status_count, '%s' );
 				$statuses           = implode( ', ', $status_placeholder );
+				$status_values      = array_map( 'sanitize_text_field', $args['status'] );
 
-				$where .= $wpdb->prepare( " AND `status` IN( $statuses ) ", $args['status'] );
+				$where .= $wpdb->prepare( " AND `status` IN( $statuses ) ", $status_values );
 
 			} else {
 
-				$where .= $wpdb->prepare( " AND `status` = %s ", $args['status'] );
+				$where .= $wpdb->prepare( " AND `status` = %s ", sanitize_text_field( $args['status'] ) );
 
 			}
 
@@ -300,7 +301,7 @@ class NML_DB_Newsletters extends NML_DB {
 
 		// Specific newsletters by subject
 		if ( ! empty( $args['subject'] ) ) {
-			$where .= $wpdb->prepare( " AND `subject` LIKE '%%%%" . '%s' . "%%%%' ", $args['subject'] );
+			$where .= $wpdb->prepare( " AND `subject` LIKE '%%%%" . '%s' . "%%%%' ", sanitize_text_field( $args['subject'] ) );
 		}
 
 		// By list(s)
@@ -387,12 +388,13 @@ class NML_DB_Newsletters extends NML_DB {
 				$status_count       = count( $args['status'] );
 				$status_placeholder = array_fill( 0, $status_count, '%s' );
 				$statuses           = implode( ', ', $status_placeholder );
+				$status_values      = array_map( 'sanitize_text_field', $args['status'] );
 
-				$where .= $wpdb->prepare( " AND `status` IN( $statuses ) ", $args['status'] );
+				$where .= $wpdb->prepare( " AND `status` IN( $statuses ) ", $status_values );
 
 			} else {
 
-				$where .= $wpdb->prepare( " AND `status` = %s ", $args['status'] );
+				$where .= $wpdb->prepare( " AND `status` = %s ", sanitize_text_field( $args['status'] ) );
 
 			}
 
@@ -400,7 +402,7 @@ class NML_DB_Newsletters extends NML_DB {
 
 		// Specific newsletters by subject
 		if ( ! empty( $args['subject'] ) ) {
-			$where .= $wpdb->prepare( " AND `subject` LIKE '%%%%" . '%s' . "%%%%' ", $args['subject'] );
+			$where .= $wpdb->prepare( " AND `subject` LIKE '%%%%" . '%s' . "%%%%' ", sanitize_text_field( $args['subject'] ) );
 		}
 
 		// @todo by date created
@@ -432,18 +434,18 @@ class NML_DB_Newsletters extends NML_DB {
 		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
 
 		$sql = "CREATE TABLE " . $this->table_name . " (
-		ID bigint(20) NOT NULL AUTO_INCREMENT,
-		status varchar(50) NOT NULL,
-		subject varchar(250) NOT NULL,
-		body longtext NOT NULL,
-		from_address varchar(150) NOT NULL,
-		from_name varchar(150) NOT NULL,
-		reply_to_address varchar(150) NOT NULL,
-		reply_to_name varchar(150) NOT NULL,
-		created_date datetime NOT NULL,
-		updated_date datetime NOT NULL,
-		sent_date datetime,
-		subscriber_count bigint(20),
+		ID BIGINT(20) NOT NULL AUTO_INCREMENT,
+		status VARCHAR(50) NOT NULL,
+		subject VARCHAR(250) NOT NULL,
+		body LONGTEXT NOT NULL,
+		from_address VARCHAR(150) NOT NULL,
+		from_name VARCHAR(150) NOT NULL,
+		reply_to_address VARCHAR(150) NOT NULL,
+		reply_to_name VARCHAR(150) NOT NULL,
+		created_date DATETIME NOT NULL,
+		updated_date DATETIME NOT NULL,
+		sent_date DATETIME,
+		subscriber_count BIGINT(20),
 		PRIMARY KEY (ID),
 		KEY status (status)
 		) CHARACTER SET utf8 COLLATE utf8_general_ci;";
