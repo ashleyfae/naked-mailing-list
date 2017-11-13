@@ -118,7 +118,7 @@ function nml_get_unsubscribe_link( $subscriber_email_or_id = '' ) {
 	);
 
 	if ( ! empty( $subscriber_email_or_id ) ) {
-		$query_args['subscriber'] = urlencode( $subscriber->email );
+		$query_args['subscriber'] = urlencode( strtr( base64_encode( $subscriber->email ), '+/=', '._-' ) );
 		$query_args['ID']         = urlencode( $subscriber->ID );
 	}
 

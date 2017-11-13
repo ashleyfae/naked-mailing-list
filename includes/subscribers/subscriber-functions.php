@@ -435,13 +435,17 @@ function nml_process_unsubscribe() {
 		return;
 	}
 
-	$email      = urldecode( $_GET['subscriber'] );
+	$email      = base64_decode( strtr( urldecode( $_GET['subscriber'] ), '._-', '+/=' ) );
 	$id         = urldecode( $_GET['ID'] );
 	$subscriber = new NML_Subscriber( absint( $id ) );
 	$query_args = array(
 		'nml-action'  => 'unsubscribe',
 		'nml-message' => ''
 	);
+
+	//var_dump( nml_get_unsubscribe_link( 3483 ) );
+	var_dump($email);
+	wp_die();
 
 	if ( $subscriber->email != $email ) {
 		$query_args['nml-message'] = 'invalid-subscriber';
