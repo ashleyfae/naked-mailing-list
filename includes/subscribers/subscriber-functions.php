@@ -443,10 +443,6 @@ function nml_process_unsubscribe() {
 		'nml-message' => ''
 	);
 
-	//var_dump( nml_get_unsubscribe_link( 3483 ) );
-	var_dump($email);
-	wp_die();
-
 	if ( $subscriber->email != $email ) {
 		$query_args['nml-message'] = 'invalid-subscriber';
 	} else {
