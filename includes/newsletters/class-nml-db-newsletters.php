@@ -227,7 +227,7 @@ class NML_DB_Newsletters extends NML_DB {
 			return false;
 		}
 
-		return $newsletter;
+		return wp_unslash( $newsletter );
 
 	}
 
