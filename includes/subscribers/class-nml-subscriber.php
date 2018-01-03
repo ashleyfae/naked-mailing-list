@@ -507,6 +507,8 @@ class NML_Subscriber {
 		if ( $updated ) {
 			do_action( 'nml_subscriber_confirm', $this->ID, $this );
 
+			nml_log( sprintf( 'Subscriber #%d confirmed subscription.', $this->ID ) );
+
 			return true;
 		}
 
