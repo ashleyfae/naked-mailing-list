@@ -445,6 +445,7 @@ function nml_process_unsubscribe() {
 
 	if ( $subscriber->email != $email ) {
 		$query_args['nml-message'] = 'invalid-subscriber';
+		nml_log( sprintf( 'Unsubscribe Error: Invalid subscriber for ID #%d. Provided: %s', $subscriber->ID, $email ) );
 	} else {
 		$result = $subscriber->unsubscribe();
 
