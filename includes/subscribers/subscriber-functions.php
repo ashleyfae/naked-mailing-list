@@ -435,17 +435,18 @@ function nml_process_unsubscribe() {
 		return;
 	}
 
-	$email      = base64_decode( strtr( urldecode( $_GET['subscriber'] ), '._-', '+/=' ) );
+	$email      = urldecode( $_GET['subscriber'] );
 	$id         = urldecode( $_GET['ID'] );
 	$subscriber = new NML_Subscriber( absint( $id ) );
+	//$hash       = strtr( md5( $subscriber->ID . $subscriber->email ), '._-', '+/=' );
 	$query_args = array(
 		'nml-action'  => 'unsubscribe',
 		'nml-message' => ''
 	);
 
-	if ( $subscriber->email != $email ) {
+	if ( $email != $subscriber->email ) {
 		$query_args['nml-message'] = 'invalid-subscriber';
-		nml_log( sprintf( 'Unsubscribe Error: Invalid subscriber for ID #%d. Provided: %s', $subscriber->ID, $email ) );
+		nml_log( sprintf( 'Unsubscribe Error: Invalid subscriber for ID #%d. Provided: %s; Expected: %s', $subscriber->ID, $email, $hash ) );
 	} else {
 		$result = $subscriber->unsubscribe();
 
