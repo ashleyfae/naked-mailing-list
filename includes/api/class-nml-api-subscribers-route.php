@@ -318,7 +318,7 @@ class NML_API_Subscribers_Route extends WP_REST_Controller {
 			return new WP_REST_Response( 1 );
 		}
 
-		$success = nml_delete_subscriber( $id );
+		$success = nml_subscriber_delete( $id );
 
 		if ( is_wp_error( $success ) ) {
 			return $success;

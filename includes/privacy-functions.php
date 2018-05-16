@@ -105,3 +105,70 @@ function nml_privacy_subscriber_record_exporter( $email_address = '', $page = 1 
 	return array( 'data' => array( $export_data ), 'done' => true );
 
 }
+
+/**
+ * Register eraser.
+ *
+ * @param array $erasers
+ *
+ * @since 1.0
+ * @return array
+ */
+function nml_privacy_erasers( $erasers = array() ) {
+
+	$erasers[] = array(
+		'eraser_friendly_name' => __( 'Mailing List Subscriber Record', 'naked-mailing-list' ),
+		'callback'             => 'nml_privacy_subscriber_record_eraser'
+	);
+
+	return $erasers;
+
+}
+
+add_filter( 'wp_privacy_personal_data_erasers', 'nml_privacy_erasers' );
+
+/**
+ * Erase mailing list data.
+ *
+ * @param string $email_address
+ * @param int    $page
+ *
+ * @since 1.0
+ * @return array
+ */
+function nml_privacy_subscriber_record_eraser( $email_address, $page = 1 ) {
+
+	$subscriber = new NML_Subscriber( $email_address );
+
+	$messages       = array();
+	$items_removed  = false;
+	$items_retained = false;
+
+	if ( empty( $subscriber->ID ) ) {
+		$messages[] = __( 'No subscriber record found.', 'naked-mailing-list' );
+
+		return array(
+			'items_removed'  => $items_removed,
+			'items_retained' => $items_retained,
+			'messages'       => $messages,
+			'done'           => true
+		);
+	}
+
+	$result = nml_subscriber_delete( $subscriber->ID );
+
+	if ( is_wp_error( $result ) ) {
+		$items_retained = true;
+		$messages[]     = __( 'Your mailing list subscriber record was unable to be removed at this time.', 'naked-mailing-list' );
+	} else {
+		$items_removed = true;
+	}
+
+	return array(
+		'items_removed'  => $items_removed,
+		'items_retained' => $items_retained,
+		'messages'       => $messages,
+		'done'           => true
+	);
+
+}
