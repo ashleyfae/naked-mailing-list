@@ -318,27 +318,6 @@ function nml_get_admin_page_delete_subscriber( $sub_id ) {
 }
 
 /**
- * Delete a subscriber
- *
- * @param int $subscriber_id ID of the subscriber to delete.
- *
- * @since 1.0
- * @return true|WP_Error
- */
-function nml_delete_subscriber( $subscriber_id ) {
-	$result = naked_mailing_list()->subscribers->delete( $subscriber_id );
-
-	if ( ! $result ) {
-		return new WP_Error( 'failed-deleting-subscriber', __( 'An error occurred while deleting the subscriber.', 'naked-mailing-list' ) );
-	}
-
-	// Delete all list relationships.
-	naked_mailing_list()->list_relationships->delete_subscriber_relationships( $subscriber_id ); // @todo recount
-
-	return true;
-}
-
-/**
  * Send subscriber a confirmation email
  *
  * @param string         $old_status    Previous status before the update.

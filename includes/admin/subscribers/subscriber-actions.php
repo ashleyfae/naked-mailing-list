@@ -425,7 +425,7 @@ function nml_process_delete_subscriber() {
 		wp_die( __( 'Invalid subscriber ID.', 'naked-mailing-list' ) );
 	}
 
-	$deleted = nml_delete_subscriber( absint( $_GET['ID'] ) );
+	$deleted = nml_subscriber_delete( absint( $_GET['ID'] ) );
 
 	if ( is_wp_error( $deleted ) ) {
 		wp_die( $deleted->get_error_message() );
