@@ -361,7 +361,6 @@ class NML_DB_Queue extends NML_DB {
 
 		if ( false === $entries ) {
 			$query = $wpdb->prepare( "SELECT * FROM  $this->table_name $join $where GROUP BY $this->primary_key ORDER BY {$args['orderby']} {$args['order']} LIMIT %d,%d;", absint( $args['offset'] ), absint( $args['number'] ) );
-			var_dump( $query );
 			$entries = $wpdb->get_results( $query );
 			wp_cache_set( $cache_key, $entries, 'newsletter_queue', 3600 );
 		}
