@@ -334,7 +334,7 @@ class NML_Email {
 		$message = str_replace( '{email}', $message, $body );
 
 		// Convert CSS styles to inline style.
-		require_once NML_PLUGIN_DIR . 'includes/libraries/emogrifier.php';
+		require_once NML_PLUGIN_DIR . 'vendor/autoload.php';
 
 		/**
 		 * Modifies the CSS file that's included in the email. This should be
