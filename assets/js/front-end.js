@@ -21,6 +21,12 @@
 		var button = form.find('button');
 		var button_text = button.html();
 
+		var userName = form.find( 'input[name="nml_user_name"]' );
+
+		if ( userName.length && '' !== userName.val() ) {
+			return;
+		}
+
 		// Setup loading.
 		button.attr('disabled', true);
 		button.empty().append('<i class="fa fa-spinner fa-spin"></i>');
