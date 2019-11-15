@@ -521,7 +521,6 @@ function nml_schedule_delete_unconfirmed() {
 		'number'      => - 1,
 		'status'      => 'pending',
 		'signup_date' => array(
-			'start' => date( 'Y-m-d H:i:s', strtotime( $period . ' midnight' ) ),
 			'end'   => date( 'Y-m-d H:i:s', strtotime( $period . ' midnight' ) + ( DAY_IN_SECONDS - 1 ) )
 		),
 		'fields'      => 'ID'
