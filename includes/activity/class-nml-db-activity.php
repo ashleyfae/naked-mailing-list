@@ -534,7 +534,7 @@ class NML_DB_Activity extends NML_DB {
 	 * @since  1.0
 	 * @return void
 	 */
-	public function confirmation_sent( $subscriber_id = 0, $subscriber ) {
+	public function confirmation_sent( $subscriber_id, $subscriber ) {
 
 		if ( empty( $subscriber_id ) ) {
 			return;
