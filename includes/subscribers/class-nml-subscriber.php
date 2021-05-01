@@ -819,7 +819,7 @@ class NML_Subscriber {
 	 * @since  1.0
 	 * @return bool False for failure, true for success.
 	 */
-	public function add_meta( $meta_key = '', $meta_value, $unique = false ) {
+	public function add_meta( $meta_key, $meta_value, $unique = false ) {
 		return naked_mailing_list()->subscriber_meta->add_meta( $this->ID, $meta_key, $meta_value, $unique );
 	}
 
@@ -834,7 +834,7 @@ class NML_Subscriber {
 	 * @since  1.0
 	 * @return bool False for failure, true for success.
 	 */
-	public function update_meta( $meta_key = '', $meta_value, $prev_value = '' ) {
+	public function update_meta( $meta_key, $meta_value, $prev_value = '' ) {
 		return naked_mailing_list()->subscriber_meta->update_meta( $this->ID, $meta_key, $meta_value, $prev_value );
 	}
 
@@ -848,7 +848,7 @@ class NML_Subscriber {
 	 * @since  1.0
 	 * @return bool False for failure, true for success.
 	 */
-	public function delete_meta( $meta_key = '', $meta_value ) {
+	public function delete_meta( $meta_key, $meta_value ) {
 		return naked_mailing_list()->subscriber_meta->delete_meta( $this->ID, $meta_key, $meta_value );
 	}
 

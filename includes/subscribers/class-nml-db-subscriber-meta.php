@@ -105,7 +105,7 @@ class NML_DB_Subscriber_Meta extends NML_DB {
 	 * @since  1.0
 	 * @return bool False for failure, true for success.
 	 */
-	public function add_meta( $subscriber_id = 0, $meta_key = '', $meta_value, $unique = false ) {
+	public function add_meta( $subscriber_id, $meta_key, $meta_value, $unique = false ) {
 
 		$subscriber_id = $this->sanitize_subscriber_id( $subscriber_id );
 		if ( false === $subscriber_id ) {
@@ -133,7 +133,7 @@ class NML_DB_Subscriber_Meta extends NML_DB {
 	 * @since  1.0
 	 * @return bool False for failure, true for success.
 	 */
-	public function update_meta( $subscriber_id = 0, $meta_key = '', $meta_value, $prev_value = '' ) {
+	public function update_meta( $subscriber_id, $meta_key, $meta_value, $prev_value = '' ) {
 
 		$subscriber_id = $this->sanitize_subscriber_id( $subscriber_id );
 		if ( false === $subscriber_id ) {
