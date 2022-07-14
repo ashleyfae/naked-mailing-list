@@ -589,7 +589,7 @@ class NML_Subscriber_Table extends WP_List_Table {
 	 */
 	public function no_items() {
 		printf(
-			__( 'No subscribers found. Would you like to %sadd one?%', 'naked-mailing-list' ),
+			__( 'No subscribers found. Would you like to %sadd one?%s', 'naked-mailing-list' ),
 			'<a href="' . esc_url( nml_get_admin_page_add_subscriber() ) . '">',
 			'</a>'
 		);
